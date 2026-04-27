@@ -133,10 +133,10 @@ async function initEarth(container) {
 
   const dots = new THREE.Points(dotGeo, dotMat);
 
-  // Nested groups: outer applies axial tilt, inner spins around the tilted Y axis.
-  // Earth's real axial tilt is 23.5°.
+  // Nested groups: outer applies axial tilt (north pole tips toward the viewer),
+  // inner spins around the tilted polar axis. Earth's real axial tilt is 23.5°.
   const tiltGroup = new THREE.Group();
-  tiltGroup.rotation.z = (23.5 * Math.PI) / 180;
+  tiltGroup.rotation.x = -(23.5 * Math.PI) / 180;   // X-axis tilt = poles toward/away
   scene.add(tiltGroup);
 
   const spinGroup = new THREE.Group();
@@ -150,7 +150,7 @@ async function initEarth(container) {
   const clock = new THREE.Clock();
   function animate() {
     const dt = clock.getDelta();
-    spinGroup.rotation.y += dt * 0.16;
+    spinGroup.rotation.y += dt * 0.14;
     renderer.render(scene, camera);
     raf = requestAnimationFrame(animate);
   }
