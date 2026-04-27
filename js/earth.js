@@ -133,17 +133,12 @@ async function initEarth(container) {
 
   const dots = new THREE.Points(dotGeo, dotMat);
 
-  // Nested groups: outer applies axial tilt (north pole tips toward the viewer),
-  // inner spins around the tilted polar axis. Earth's real axial tilt is 23.5°.
-  const tiltGroup = new THREE.Group();
-  tiltGroup.rotation.x = -(23.5 * Math.PI) / 180;   // X-axis tilt = poles toward/away
-  scene.add(tiltGroup);
-
+  // No tilt — globe spins upright on a vertical polar axis.
   const spinGroup = new THREE.Group();
   spinGroup.add(core, rim, dots);
   // Start oriented to bring Australia into view (lon ≈ 135°E)
   spinGroup.rotation.y = -(135 * Math.PI) / 180;
-  tiltGroup.add(spinGroup);
+  scene.add(spinGroup);
 
   // ---- Animate ----
   let raf;
