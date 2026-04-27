@@ -1,11 +1,9 @@
-/* Spinning dotted earth using globe.gl — a battle-tested three.js wrapper
- * that handles country boundaries, projection, and rotation correctly.
- *
- * Each country is rendered as a hex-polygon mosaic of dots; the globe
- * auto-rotates and is fully transparent so the page background shows
- * through. Pauses when off-screen to save battery. */
+/* Spinning dotted earth using globe.gl.
+ * Renders each country as a mosaic of small hex-polygon dots so the
+ * continents are clearly recognisable. Globe.gl handles the projection,
+ * camera, and rotation correctly — we just feed it country features. */
 
-import Globe from "https://esm.sh/globe.gl@2.36";
+import Globe from "https://esm.sh/globe.gl@2.32";
 import * as topojson from "https://esm.sh/topojson-client@3.1.0";
 
 const stage = document.getElementById("earth");
@@ -14,48 +12,36 @@ if (stage && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 }
 
 async function initEarth(container) {
-  // Fetch country boundaries (Natural Earth 110m via world-atlas)
-  const url = "https://esm.sh/world-atlas@2.0.2/countries-110m.json";
-  const resp = await fetch(url);
+  const resp = await fetch("https://unpkg.com/world-atlas@2.0.2/countries-110m.json");
   if (!resp.ok) throw new Error(`world-atlas fetch failed: ${resp.status}`);
   const topo = await resp.json();
-  const countries = topojson.feature(topo, topo.objects.countries);
+  const features = topojson.feature(topo, topo.objects.countries).features;
 
-  const globe = new Globe(container, { animateIn: false })
+  const globe = Globe()
+    (container)
     .backgroundColor("rgba(0,0,0,0)")
-    .showGlobe(true)
     .showAtmosphere(true)
     .atmosphereColor("#6a2dc7")
     .atmosphereAltitude(0.18)
-    .globeImageUrl(null)
-    .hexPolygonsData(countries.features)
+    .hexPolygonsData(features)
     .hexPolygonResolution(3)
     .hexPolygonMargin(0.35)
-    .hexPolygonUseDots(true)
     .hexPolygonColor(() => "#ffffff");
 
-  // Solid dark sphere underneath the dots so they read against deep ink
-  const scene = globe.scene();
-  const renderer = globe.renderer();
-  if (renderer) renderer.setClearColor(0x000000, 0);
-
-  // Style the underlying globe mesh: transparent dark base
+  // Make the underlying sphere a deep transparent ink so dots stand out
   const mat = globe.globeMaterial();
   if (mat) {
     mat.color.set(0x15123a);
+    mat.opacity = 0.85;
     mat.transparent = true;
-    mat.opacity = 0.9;
   }
 
-  // Auto-rotation
+  // Auto-rotate; disable user pan/zoom so it stays a passive visual
   const controls = globe.controls();
   controls.autoRotate = true;
   controls.autoRotateSpeed = 0.6;
   controls.enableZoom = false;
   controls.enablePan = false;
-
-  // Initial point-of-view: Australia (lat -25, lon 134)
-  globe.pointOfView({ lat: -22, lng: 134, altitude: 2.4 }, 0);
 
   // Resize handling
   const ro = new ResizeObserver(() => {
@@ -68,11 +54,9 @@ async function initEarth(container) {
   });
   ro.observe(container);
 
-  // Pause when off-screen
+  // Pause auto-rotation when off-screen
   const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      controls.autoRotate = e.isIntersecting;
-    }
+    for (const e of entries) controls.autoRotate = e.isIntersecting;
   });
   io.observe(container);
 }
