@@ -44,10 +44,13 @@ async function initEarth(container) {
     mat.transparent = true;
   }
 
+  // Start with Australia front-and-centre
+  globe.pointOfView({ lat: -25, lng: 134, altitude: 2.4 }, 0);
+
   // Auto-rotate; disable user pan/zoom so it stays a passive visual
   const controls = globe.controls();
   controls.autoRotate = true;
-  controls.autoRotateSpeed = 0.6;
+  controls.autoRotateSpeed = 1.6;
   controls.enableZoom = false;
   controls.enablePan = false;
 
