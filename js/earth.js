@@ -12,7 +12,13 @@ if (stage && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 }
 
 async function initEarth(container) {
-  const resp = await fetch("https://unpkg.com/world-atlas@2.0.2/countries-110m.json");
+  // Country boundary data — Natural Earth via the world-atlas npm package.
+  //   countries-110m.json (~110 KB, coarse, drops small countries)
+  //   countries-50m.json  (~756 KB, sweet spot — keeps Australia, full Africa)
+  //   For full 10m detail, fetch directly from naturalearthdata.com
+  const DATA_URL = "https://unpkg.com/world-atlas@2.0.2/countries-50m.json";
+
+  const resp = await fetch(DATA_URL);
   if (!resp.ok) throw new Error(`world-atlas fetch failed: ${resp.status}`);
   const topo = await resp.json();
   const features = topojson.feature(topo, topo.objects.countries).features;
@@ -24,8 +30,10 @@ async function initEarth(container) {
     .atmosphereColor("#6a2dc7")
     .atmosphereAltitude(0.18)
     .hexPolygonsData(features)
-    .hexPolygonResolution(3)
-    .hexPolygonMargin(0.35)
+    // Resolution 4 = ~85k hex cells globally (vs ~12k at res 3).
+    // Required for small countries to have any dots at all.
+    .hexPolygonResolution(4)
+    .hexPolygonMargin(0.3)
     .hexPolygonColor(() => "#ffffff");
 
   // Make the underlying sphere a deep transparent ink so dots stand out
