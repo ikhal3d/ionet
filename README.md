@@ -80,10 +80,40 @@ python3 -m http.server 8000
 1. Push the repo to GitHub.
 2. **Settings → Pages → Source**: select the `main` branch, root directory.
 3. The `.nojekyll` file is already present so Pages serves the static assets as-is.
-4. Site goes live at `https://<your-user>.github.io/<repo>/`.
 
-For a custom domain (e.g. `ionet.com.au`), add a `CNAME` file with the domain
-and configure DNS per GitHub's instructions.
+## Custom domain — `ionet.com.au`
+
+The repo includes a `CNAME` file pointing the site at **ionet.com.au**, which
+overrides any user-level Pages domain (so the site no longer redirects to
+`packettalk.net/ionet`).
+
+For this to work end-to-end you need DNS records at your domain registrar
+for `ionet.com.au`:
+
+**Apex (`ionet.com.au`)** — four `A` records to GitHub Pages:
+```
+A  ionet.com.au.  185.199.108.153
+A  ionet.com.au.  185.199.109.153
+A  ionet.com.au.  185.199.110.153
+A  ionet.com.au.  185.199.111.153
+```
+
+Optionally also AAAA records for IPv6:
+```
+AAAA  ionet.com.au.  2606:50c0:8000::153
+AAAA  ionet.com.au.  2606:50c0:8001::153
+AAAA  ionet.com.au.  2606:50c0:8002::153
+AAAA  ionet.com.au.  2606:50c0:8003::153
+```
+
+**`www.ionet.com.au` subdomain** — CNAME to your user-pages host:
+```
+CNAME  www.ionet.com.au.  ikhal3d.github.io.
+```
+
+After DNS propagates (usually < 1 hour), go to **Repo Settings → Pages**:
+- The "Custom domain" field should show `ionet.com.au` (read from the CNAME file).
+- Click **Save**, then check **Enforce HTTPS** once GitHub finishes provisioning the cert (usually a few minutes).
 
 ## Customization checklist
 
