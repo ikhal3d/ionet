@@ -91,7 +91,7 @@
   //
   // Until the key is set, the form falls back to mailto: (opens the
   // visitor's email client) so it still has a path to delivery.
-  const WEB3FORMS_ACCESS_KEY = "YOUR-WEB3FORMS-KEY";   // ← paste your key here
+  const WEB3FORMS_ACCESS_KEY = "d050a6b2-3148-415f-96d9-5c397421d606";
   const FORM_ENDPOINT = "https://api.web3forms.com/submit";
   const FALLBACK_EMAIL = "info@ionet.com.au";
 
