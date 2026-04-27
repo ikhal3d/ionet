@@ -153,6 +153,11 @@ body::before {
   color: var(--accent-2);
   background: rgba(106, 45, 199, 0.18);
 }
+/* The "Get in touch" button in the nav uses .btn-primary, but .nav-links a
+   has higher specificity than .btn-primary — restore black text on the gold
+   button explicitly. */
+.nav-links a.btn-primary,
+.nav-links a.btn-primary:hover { color: #000; background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
 .nav-toggle {
   display: none;
   background: transparent;

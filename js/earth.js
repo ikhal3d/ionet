@@ -118,7 +118,7 @@ async function initEarth(container) {
 
   // No axial tilt, no initial rotation — model defaults.
   const spinGroup = new THREE.Group();
-  spinGroup.add(core, rim, dots);
+  spinGroup.add(core, dots);
   scene.add(spinGroup);
 
   // ---- Animate ----
