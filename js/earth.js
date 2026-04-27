@@ -111,31 +111,26 @@ async function initEarth(container) {
   const dotMat = new THREE.ShaderMaterial({
     uniforms: {
       uColor: { value: new THREE.Color(0xffffff) },
-      uColor2: { value: new THREE.Color(0xc9b8e8) },
     },
     vertexShader: `
       attribute float size;
-      varying float vDepth;
       void main() {
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        vDepth = -mv.z;
         gl_PointSize = size * (340.0 / -mv.z);
         gl_Position = projectionMatrix * mv;
       }
     `,
+    // Uniform white dots, no depth-based dimming or colour shift.
+    // The opaque inner sphere occludes far-hemisphere dots via the depth
+    // test so the front always reads cleanly without manual fading.
     fragmentShader: `
       uniform vec3 uColor;
-      uniform vec3 uColor2;
-      varying float vDepth;
       void main() {
         vec2 c = gl_PointCoord - 0.5;
         float d = length(c);
         if (d > 0.5) discard;
         float fade = smoothstep(0.5, 0.0, d);
-        // Far-side dots dim and tint slightly purple for depth
-        float depthFade = smoothstep(8.0, 4.0, vDepth);
-        vec3 col = mix(uColor2, uColor, depthFade);
-        gl_FragColor = vec4(col, fade * (0.30 + 0.70 * depthFade));
+        gl_FragColor = vec4(uColor, fade);
       }
     `,
     transparent: true,
@@ -144,18 +139,16 @@ async function initEarth(container) {
 
   const dots = new THREE.Points(dotGeo, dotMat);
 
-  // No axial tilt — globe spins upright on a vertical polar axis.
+  // No axial tilt, no initial rotation — model defaults.
   const spinGroup = new THREE.Group();
   spinGroup.add(core, rim, dots);
-  // Initial orientation: Australia (~135°E) toward the camera.
-  spinGroup.rotation.y = -(135 * Math.PI) / 180;
   scene.add(spinGroup);
 
   // ---- Animate ----
   let raf = null;
   const clock = new THREE.Clock();
   function animate() {
-    spinGroup.rotation.y += clock.getDelta() * 0.22;
+    spinGroup.rotation.y += clock.getDelta() * 0.30;
     renderer.render(scene, camera);
     raf = requestAnimationFrame(animate);
   }
