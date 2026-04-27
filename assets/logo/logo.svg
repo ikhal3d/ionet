@@ -8,13 +8,13 @@
 
   <!-- Mark: two L-shapes forming an offset pinwheel -->
   <g transform="translate(5 5)" fill="none" stroke="url(#markGrad)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M 38 12 V 42 H 88"/>
-    <path d="M 62 88 V 58 H 12"/>
+    <path d="M 62 12 V 42 H 12"/>
+    <path d="M 38 88 V 58 H 88"/>
   </g>
 
   <!-- Wordmark "ionet" -->
   <text x="130" y="85"
-        font-family="Poppins, Helvetica, Arial, sans-serif"
+        font-family="Outfit, Helvetica, Arial, sans-serif"
         font-weight="900"
         font-size="92"
         letter-spacing="-3"

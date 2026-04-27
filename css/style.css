@@ -42,7 +42,7 @@
   --shadow-glow-pink: 0 0 40px rgba(204, 0, 255, 0.35);
   --shadow-glow-gold: 0 0 30px rgba(204, 153, 0, 0.4);
 
-  --font-heading: "Poppins", "Inter", "Helvetica", "Arial", sans-serif;
+  --font-heading: "Outfit", "Inter", "Helvetica", "Arial", sans-serif;
   --font-body: "Open Sans", "Arial", sans-serif;
 
   --container: 1200px;
@@ -451,23 +451,95 @@ section { position: relative; z-index: 1; padding: 100px 0; }
 .service h3 { color: var(--text); margin-bottom: 8px; }
 .service p { font-size: 0.95rem; margin: 0; }
 
-/* Stat banner — gold accent ALLOWED here for the headline number */
-.stat-banner {
-  text-align: center;
-  padding: 80px 0;
+/* ================================================================
+   Australia map section
+   ================================================================ */
+.australia-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
 }
-.stat-banner .big {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: clamp(2.4rem, 6vw, 4rem);
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  letter-spacing: -0.03em;
-  margin-bottom: 0.4em;
+.australia-grid p strong { color: var(--text); }
+.australia-stage {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+  aspect-ratio: 5 / 4;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(600px 400px at 50% 50%, rgba(76, 31, 156, 0.4), transparent 65%),
+    linear-gradient(180deg, rgba(30, 30, 128, 0.35), rgba(12, 10, 36, 0.6));
+  border: 1px solid var(--border);
+  padding: 28px;
+  overflow: hidden;
 }
-.stat-banner p { font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+/* ================================================================
+   Feature deep-dive (cybersecurity / automation / ICN)
+   ================================================================ */
+.feature-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+.feature-split.reverse > :first-child { order: 2; }
+.feature-split.reverse > :last-child { order: 1; }
+.capability-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.capability-list li {
+  position: relative;
+  padding: 14px 18px 14px 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, rgba(76, 31, 156, 0.18), rgba(12, 10, 36, 0.4));
+  color: var(--text-muted);
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+.capability-list li strong { color: var(--text); display: inline-block; margin-right: 4px; }
+.capability-list li::before {
+  content: "";
+  position: absolute;
+  left: 14px; top: 50%;
+  width: 16px; height: 16px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--logo-pink), var(--logo-purple));
+  box-shadow: 0 0 10px rgba(204, 0, 255, 0.4);
+}
+.capability-list li::after {
+  content: "";
+  position: absolute;
+  left: 18px; top: 50%;
+  width: 7px; height: 4px;
+  margin-top: -3px;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: rotate(-45deg);
+}
+
+/* ================================================================
+   Stat callout (toned-down, replaces the giant $55K banner)
+   ================================================================ */
+.stat-callout {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+  padding: 28px 36px;
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--accent-2);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(76, 31, 156, 0.32), rgba(30, 30, 128, 0.32));
+}
 
 /* Philosophy */
 .philosophy {
@@ -627,7 +699,12 @@ form.contact-form {
    Responsive
    ================================================================ */
 @media (max-width: 960px) {
-  .hero-grid, .about-grid, .philosophy, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero-grid, .about-grid, .philosophy, .contact-grid,
+  .australia-grid, .feature-split,
+  .stat-callout { grid-template-columns: 1fr; gap: 40px; }
+  .feature-split.reverse > :first-child { order: 1; }
+  .feature-split.reverse > :last-child { order: 2; }
+  .stat-callout { gap: 20px; padding: 24px 26px; }
   .philosophy, .cta-strip { padding: 40px 28px; }
   .services-grid, .stat-trio { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: 1fr 1fr; }

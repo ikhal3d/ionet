@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 410 110" role="img" aria-label="ionet">
   <g transform="translate(5 5)" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M 38 12 V 42 H 88"/>
-    <path d="M 62 88 V 58 H 12"/>
+    <path d="M 62 12 V 42 H 12"/>
+    <path d="M 38 88 V 58 H 88"/>
   </g>
   <text x="130" y="85"
-        font-family="Poppins, Helvetica, Arial, sans-serif"
+        font-family="Outfit, Helvetica, Arial, sans-serif"
         font-weight="900"
         font-size="92"
         letter-spacing="-3"

@@ -1,11 +1,11 @@
 /* Spinning dotted earth — three.js + real continents from world-atlas topojson.
  *
  * Pipeline:
- *   1. Load Natural Earth 110m countries (topojson) from CDN.
+ *   1. Load Natural Earth 110m land topojson from CDN.
  *   2. Rasterize all land polygons onto a hidden equirectangular canvas.
- *   3. Distribute points on a Fibonacci sphere; keep only those whose
- *      corresponding lat/lon pixel on the canvas is "land".
- *   4. Render as a Points cloud in white.
+ *   3. Distribute points on a Fibonacci sphere; keep only land points.
+ *   4. Render as a Points cloud in white, with proper 23.5° axial tilt
+ *      (nested groups: outer = tilt, inner = spin).
  */
 
 import * as THREE from "https://esm.sh/three@0.160.0";
@@ -17,12 +17,10 @@ if (stage && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 }
 
 async function initEarth(container) {
-  // ---- 1. Build land mask from world-atlas topojson ----
   const MASK_W = 1024;
   const MASK_H = 512;
   const mask = await buildLandMask(MASK_W, MASK_H);
 
-  // ---- 2. Three.js setup ----
   const width = container.clientWidth;
   const height = container.clientHeight;
 
@@ -36,17 +34,16 @@ async function initEarth(container) {
   renderer.setClearColor(0x000000, 0);
   container.appendChild(renderer.domElement);
 
-  // ---- Globe core (subtle, near-invisible sphere for depth occlusion) ----
+  // ---- Globe core (subtle dark sphere for depth occlusion) ----
   const coreGeo = new THREE.SphereGeometry(1.6, 64, 64);
   const coreMat = new THREE.MeshBasicMaterial({
-    color: 0x15123a,         // brand-aligned deep ink
+    color: 0x15123a,
     transparent: true,
     opacity: 0.65,
   });
   const core = new THREE.Mesh(coreGeo, coreMat);
-  scene.add(core);
 
-  // Subtle violet rim glow
+  // Subtle violet rim glow (atmosphere look)
   const rimGeo = new THREE.SphereGeometry(1.62, 64, 64);
   const rimMat = new THREE.ShaderMaterial({
     uniforms: {},
@@ -61,7 +58,6 @@ async function initEarth(container) {
       varying vec3 vNormal;
       void main() {
         float intensity = pow(0.55 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.5);
-        // Brand purple #4c1f9c with a touch of pink — connects globe to logo gradient
         gl_FragColor = vec4(0.55, 0.18, 0.85, 1.0) * intensity;
       }
     `,
@@ -71,11 +67,10 @@ async function initEarth(container) {
     depthWrite: false,
   });
   const rim = new THREE.Mesh(rimGeo, rimMat);
-  scene.add(rim);
 
-  // ---- 3. Fibonacci sphere of dots, keep only land points ----
+  // ---- Fibonacci sphere of dots, keep only land points ----
   const RADIUS = 1.6;
-  const COUNT = 18000;       // dense sample to make continents read clearly after masking
+  const COUNT = 18000;
   const positions = [];
   const sizes = [];
 
@@ -83,25 +78,17 @@ async function initEarth(container) {
     const phi = Math.acos(1 - 2 * (i + 0.5) / COUNT);
     const theta = Math.PI * (1 + Math.sqrt(5)) * i;
 
-    const sx = Math.sin(phi) * Math.cos(theta);
-    const sy = Math.sin(phi) * Math.sin(theta);
-    const sz = Math.cos(phi);
-
-    // Convert sphere coordinates to lat/lon
-    const lat = 90 - (phi * 180 / Math.PI);                // -90..90
-    let lon = ((theta * 180 / Math.PI) % 360);             // 0..360
-    if (lon > 180) lon -= 360;                             // -180..180
+    const lat = 90 - (phi * 180 / Math.PI);
+    let lon = ((theta * 180 / Math.PI) % 360);
+    if (lon > 180) lon -= 360;
 
     if (sampleLand(mask, lon, lat)) {
-      // Map sphere coordinate (Y is up in three.js) — keep math straightforward.
-      // y = sin(lat); xz on equator plane rotated by lon.
       const latR = lat * Math.PI / 180;
       const lonR = lon * Math.PI / 180;
       const y = Math.sin(latR) * RADIUS;
       const r = Math.cos(latR) * RADIUS;
       const x = r * Math.cos(lonR);
       const z = r * Math.sin(lonR);
-
       positions.push(x, y, z);
       sizes.push(0.045 + Math.random() * 0.02);
     }
@@ -135,7 +122,6 @@ async function initEarth(container) {
         float d = length(c);
         if (d > 0.5) discard;
         float fade = smoothstep(0.5, 0.0, d);
-        // Far dots (back of globe) dimmer + slightly tinted lavender
         float depthFade = smoothstep(8.0, 4.0, vDepth);
         vec3 col = mix(uColor2, uColor, depthFade);
         gl_FragColor = vec4(col, fade * (0.30 + 0.70 * depthFade));
@@ -147,29 +133,24 @@ async function initEarth(container) {
 
   const dots = new THREE.Points(dotGeo, dotMat);
 
-  // ---- 4. Decorative orbital ring (brand purple) ----
-  const ringGeo = new THREE.RingGeometry(2.4, 2.42, 128);
-  const ringMat = new THREE.MeshBasicMaterial({
-    color: 0x6a2dc7,
-    side: THREE.DoubleSide,
-    transparent: true,
-    opacity: 0.4,
-  });
-  const ring = new THREE.Mesh(ringGeo, ringMat);
-  ring.rotation.x = Math.PI / 2.6;
-  scene.add(ring);
+  // Nested groups: outer applies axial tilt, inner spins around the tilted Y axis.
+  // Earth's real axial tilt is 23.5°.
+  const tiltGroup = new THREE.Group();
+  tiltGroup.rotation.z = (23.5 * Math.PI) / 180;
+  scene.add(tiltGroup);
 
-  const group = new THREE.Group();
-  group.add(core, rim, dots);
-  scene.add(group);
+  const spinGroup = new THREE.Group();
+  spinGroup.add(core, rim, dots);
+  // Start oriented to bring Australia into view (lon ≈ 135°E)
+  spinGroup.rotation.y = -(135 * Math.PI) / 180;
+  tiltGroup.add(spinGroup);
 
   // ---- Animate ----
   let raf;
   const clock = new THREE.Clock();
   function animate() {
     const dt = clock.getDelta();
-    group.rotation.y += dt * 0.18;
-    ring.rotation.z += dt * 0.05;
+    spinGroup.rotation.y += dt * 0.16;
     renderer.render(scene, camera);
     raf = requestAnimationFrame(animate);
   }
@@ -219,21 +200,18 @@ async function buildLandMask(W, H) {
   ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = "#fff";
 
-  const project = (lon, lat) => {
-    const x = ((lon + 180) / 360) * W;
-    const y = ((90 - lat) / 180) * H;
-    return [x, y];
-  };
+  const project = (lon, lat) => [
+    ((lon + 180) / 360) * W,
+    ((90 - lat) / 180) * H,
+  ];
 
   const drawRing = (ring) => {
     if (ring.length < 3) return;
     ctx.beginPath();
-    const [lon0, lat0] = ring[0];
-    const [x0, y0] = project(lon0, lat0);
+    const [x0, y0] = project(ring[0][0], ring[0][1]);
     ctx.moveTo(x0, y0);
     for (let i = 1; i < ring.length; i++) {
-      const [lon, lat] = ring[i];
-      const [x, y] = project(lon, lat);
+      const [x, y] = project(ring[i][0], ring[i][1]);
       ctx.lineTo(x, y);
     }
     ctx.closePath();
