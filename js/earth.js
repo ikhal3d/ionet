@@ -44,35 +44,12 @@ async function initEarth(container) {
   renderer.setClearColor(0x000000, 0);
   container.appendChild(renderer.domElement);
 
-  // ---- Dark inner sphere (depth occlusion) ----
+  // ---- Opaque dark inner sphere (depth occlusion for back-side dots) ----
+  // Slightly smaller than the dot radius so dots sit just on the surface,
+  // and fully opaque so the depth test reliably culls the back hemisphere.
   const core = new THREE.Mesh(
-    new THREE.SphereGeometry(1.585, 64, 64),
-    new THREE.MeshBasicMaterial({ color: 0x15123a, transparent: true, opacity: 0.85 })
-  );
-
-  // ---- Atmosphere rim glow (brand violet) ----
-  const rim = new THREE.Mesh(
-    new THREE.SphereGeometry(1.62, 64, 64),
-    new THREE.ShaderMaterial({
-      vertexShader: `
-        varying vec3 vN;
-        void main() {
-          vN = normalize(normalMatrix * normal);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        varying vec3 vN;
-        void main() {
-          float i = pow(0.55 - dot(vN, vec3(0.0, 0.0, 1.0)), 2.5);
-          gl_FragColor = vec4(0.55, 0.18, 0.85, 1.0) * i;
-        }
-      `,
-      blending: THREE.AdditiveBlending,
-      transparent: true,
-      side: THREE.BackSide,
-      depthWrite: false,
-    })
+    new THREE.SphereGeometry(1.595, 64, 64),
+    new THREE.MeshBasicMaterial({ color: 0x0c0a24 })
   );
 
   // ---- Fibonacci-distributed dots, masked by land ----
