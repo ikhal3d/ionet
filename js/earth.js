@@ -1,9 +1,23 @@
-/* Spinning dotted earth using globe.gl.
- * Renders each country as a mosaic of small hex-polygon dots so the
- * continents are clearly recognisable. Globe.gl handles the projection,
- * camera, and rotation correctly — we just feed it country features. */
+/* Spinning dotted earth — Fibonacci sphere + topojson land mask.
+ *
+ * Why Fibonacci instead of globe.gl/H3?
+ *   The H3 hexagonal grid that globe.gl uses creates visible diagonal
+ *   "swirl" patterns (Moiré) inside large landmasses. A Fibonacci
+ *   spiral places points with deterministic uniformity and the golden
+ *   angle, so there is no regular grid for the eye to lock onto —
+ *   continents read as smooth dot clouds.
+ *
+ * Pipeline:
+ *   1. Fetch Natural Earth 50m land topojson.
+ *   2. Rasterise to a hidden equirectangular canvas (land = white).
+ *   3. Distribute N points on a Fibonacci sphere; keep only those that
+ *      sample as land.
+ *   4. Render as a Points cloud, with a dark sphere underneath for
+ *      depth occlusion and a violet rim glow for atmosphere.
+ *   5. Apply Earth's natural 23.5° axial tilt and auto-rotate.
+ */
 
-import Globe from "https://esm.sh/globe.gl@2.32";
+import * as THREE from "https://esm.sh/three@0.160.0";
 import * as topojson from "https://esm.sh/topojson-client@3.1.0";
 
 const stage = document.getElementById("earth");
@@ -12,64 +26,226 @@ if (stage && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 }
 
 async function initEarth(container) {
-  // Country boundary data — Natural Earth via the world-atlas npm package.
-  //   countries-110m.json (~110 KB, coarse, drops small countries)
-  //   countries-50m.json  (~756 KB, sweet spot — keeps Australia, full Africa)
-  //   For full 10m detail, fetch directly from naturalearthdata.com
-  const DATA_URL = "https://unpkg.com/world-atlas@2.0.2/countries-50m.json";
+  // Land mask — 50m gives Australia, full Africa, and accurate coastlines.
+  const MASK_W = 2048;
+  const MASK_H = 1024;
+  const mask = await buildLandMask(MASK_W, MASK_H);
 
-  const resp = await fetch(DATA_URL);
-  if (!resp.ok) throw new Error(`world-atlas fetch failed: ${resp.status}`);
-  const topo = await resp.json();
-  const features = topojson.feature(topo, topo.objects.countries).features;
+  const w = container.clientWidth;
+  const h = container.clientHeight;
 
-  const globe = Globe()
-    (container)
-    .backgroundColor("rgba(0,0,0,0)")
-    .showAtmosphere(true)
-    .atmosphereColor("#6a2dc7")
-    .atmosphereAltitude(0.18)
-    .hexPolygonsData(features)
-    // Resolution 4 = ~85k hex cells globally (vs ~12k at res 3).
-    // Required for small countries to have any dots at all.
-    .hexPolygonResolution(4)
-    // Near-zero margin = chunky, near-touching dots — pixel-art mosaic look
-    // that completely hides the H3-grid swirl artifact.
-    .hexPolygonMargin(0.02)
-    .hexPolygonColor(() => "#ffffff");
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+  camera.position.set(0, 0, 5.4);
 
-  // Make the underlying sphere a deep transparent ink so dots stand out
-  const mat = globe.globeMaterial();
-  if (mat) {
-    mat.color.set(0x15123a);
-    mat.opacity = 0.85;
-    mat.transparent = true;
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(w, h);
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+
+  // ---- Dark inner sphere (depth occlusion) ----
+  const core = new THREE.Mesh(
+    new THREE.SphereGeometry(1.585, 64, 64),
+    new THREE.MeshBasicMaterial({ color: 0x15123a, transparent: true, opacity: 0.85 })
+  );
+
+  // ---- Atmosphere rim glow (brand violet) ----
+  const rim = new THREE.Mesh(
+    new THREE.SphereGeometry(1.62, 64, 64),
+    new THREE.ShaderMaterial({
+      vertexShader: `
+        varying vec3 vN;
+        void main() {
+          vN = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        varying vec3 vN;
+        void main() {
+          float i = pow(0.55 - dot(vN, vec3(0.0, 0.0, 1.0)), 2.5);
+          gl_FragColor = vec4(0.55, 0.18, 0.85, 1.0) * i;
+        }
+      `,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      side: THREE.BackSide,
+      depthWrite: false,
+    })
+  );
+
+  // ---- Fibonacci-distributed dots, masked by land ----
+  const RADIUS = 1.6;
+  const COUNT = 32000;
+  const positions = [];
+  const sizes = [];
+
+  for (let i = 0; i < COUNT; i++) {
+    const phi = Math.acos(1 - 2 * (i + 0.5) / COUNT);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+
+    const lat = 90 - (phi * 180 / Math.PI);
+    let lon = (theta * 180 / Math.PI) % 360;
+    lon = ((lon + 180) % 360 + 360) % 360 - 180;
+
+    if (!sampleLand(mask, lon, lat)) continue;
+
+    // Standard (lat, lon) → (x, y, z) with +Y as the polar axis
+    // and longitude 0° at +Z (facing the camera).
+    const latR = lat * Math.PI / 180;
+    const lonR = lon * Math.PI / 180;
+    const cosLat = Math.cos(latR);
+    positions.push(
+      cosLat * Math.sin(lonR) * RADIUS,
+      Math.sin(latR) * RADIUS,
+      cosLat * Math.cos(lonR) * RADIUS
+    );
+    sizes.push(0.05 + Math.random() * 0.02);
   }
 
-  // Start with Australia front-and-centre
-  globe.pointOfView({ lat: -25, lng: 134, altitude: 2.4 }, 0);
+  const dotGeo = new THREE.BufferGeometry();
+  dotGeo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  dotGeo.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 1));
 
-  // Auto-rotate; disable user pan/zoom so it stays a passive visual
-  const controls = globe.controls();
-  controls.autoRotate = true;
-  controls.autoRotateSpeed = 1.6;
-  controls.enableZoom = false;
-  controls.enablePan = false;
+  const dotMat = new THREE.ShaderMaterial({
+    uniforms: {
+      uColor: { value: new THREE.Color(0xffffff) },
+      uColor2: { value: new THREE.Color(0xc9b8e8) },
+    },
+    vertexShader: `
+      attribute float size;
+      varying float vDepth;
+      void main() {
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        vDepth = -mv.z;
+        gl_PointSize = size * (340.0 / -mv.z);
+        gl_Position = projectionMatrix * mv;
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uColor;
+      uniform vec3 uColor2;
+      varying float vDepth;
+      void main() {
+        vec2 c = gl_PointCoord - 0.5;
+        float d = length(c);
+        if (d > 0.5) discard;
+        float fade = smoothstep(0.5, 0.0, d);
+        // Far-side dots dim and tint slightly purple for depth
+        float depthFade = smoothstep(8.0, 4.0, vDepth);
+        vec3 col = mix(uColor2, uColor, depthFade);
+        gl_FragColor = vec4(col, fade * (0.30 + 0.70 * depthFade));
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+  });
 
-  // Resize handling
+  const dots = new THREE.Points(dotGeo, dotMat);
+
+  // ---- Hierarchy: tiltGroup (axial tilt) > spinGroup (rotation) > meshes ----
+  // Earth's natural axial tilt is ~23.5°. Apply it on the X-axis so the
+  // north pole leans toward the viewer — the canonical "globe" look.
+  const tiltGroup = new THREE.Group();
+  tiltGroup.rotation.x = -(23.5 * Math.PI) / 180;
+  scene.add(tiltGroup);
+
+  const spinGroup = new THREE.Group();
+  spinGroup.add(core, rim, dots);
+  // Initial orientation: Australia (~135°E) toward the camera.
+  spinGroup.rotation.y = -(135 * Math.PI) / 180;
+  tiltGroup.add(spinGroup);
+
+  // ---- Animate ----
+  let raf = null;
+  const clock = new THREE.Clock();
+  function animate() {
+    spinGroup.rotation.y += clock.getDelta() * 0.22;
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(animate);
+  }
+  animate();
+
+  // ---- Resize ----
   const ro = new ResizeObserver(() => {
-    const w = container.clientWidth;
-    const h = container.clientHeight;
-    if (w > 0 && h > 0) {
-      globe.width(w);
-      globe.height(h);
+    const ww = container.clientWidth;
+    const hh = container.clientHeight;
+    if (ww > 0 && hh > 0) {
+      camera.aspect = ww / hh;
+      camera.updateProjectionMatrix();
+      renderer.setSize(ww, hh);
     }
   });
   ro.observe(container);
 
-  // Pause auto-rotation when off-screen
+  // ---- Pause when off-screen ----
   const io = new IntersectionObserver((entries) => {
-    for (const e of entries) controls.autoRotate = e.isIntersecting;
+    for (const e of entries) {
+      if (e.isIntersecting && raf === null) {
+        animate();
+      } else if (!e.isIntersecting && raf !== null) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    }
   });
   io.observe(container);
+}
+
+/* Land-mask: rasterise the world-atlas land topojson to an equirectangular
+ * canvas at MASK_W × MASK_H, return the raw RGBA buffer for fast sampling. */
+async function buildLandMask(W, H) {
+  const url = "https://unpkg.com/world-atlas@2.0.2/land-50m.json";
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`world-atlas fetch failed: ${resp.status}`);
+  const topo = await resp.json();
+  const land = topojson.feature(topo, topo.objects.land);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "#fff";
+
+  const project = (lon, lat) => [((lon + 180) / 360) * W, ((90 - lat) / 180) * H];
+
+  const drawRing = (ring) => {
+    if (ring.length < 3) return;
+    ctx.beginPath();
+    const [x0, y0] = project(ring[0][0], ring[0][1]);
+    ctx.moveTo(x0, y0);
+    for (let i = 1; i < ring.length; i++) {
+      const [x, y] = project(ring[i][0], ring[i][1]);
+      ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fill();
+  };
+
+  const drawGeom = (g) => {
+    if (g.type === "Polygon") {
+      for (const r of g.coordinates) drawRing(r);
+    } else if (g.type === "MultiPolygon") {
+      for (const p of g.coordinates) for (const r of p) drawRing(r);
+    }
+  };
+
+  if (land.type === "FeatureCollection") {
+    for (const f of land.features) drawGeom(f.geometry);
+  } else if (land.type === "Feature") {
+    drawGeom(land.geometry);
+  } else {
+    drawGeom(land);
+  }
+
+  return { width: W, height: H, data: ctx.getImageData(0, 0, W, H).data };
+}
+
+function sampleLand(mask, lon, lat) {
+  const x = Math.floor(((lon + 180) / 360) * mask.width) % mask.width;
+  const y = Math.max(0, Math.min(mask.height - 1, Math.floor(((90 - lat) / 180) * mask.height)));
+  return mask.data[(y * mask.width + x) * 4] > 128;
 }
