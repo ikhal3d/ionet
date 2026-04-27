@@ -117,7 +117,7 @@ After DNS propagates (usually < 1 hour), go to **Repo Settings → Pages**:
 
 ## Customization checklist
 
-- [ ] Replace `hello@ionet.com.au` in [`index.html`](index.html) and [`js/main.js`](js/main.js) with your real email
+- [ ] Replace `info@ionet.com.au` in [`index.html`](index.html) and [`js/main.js`](js/main.js) with your real email
 - [ ] Add a real phone number to the contact section
 - [ ] Replace the logo SVGs in `assets/logo/` if you have official brand assets
 - [ ] Wire the contact form to a real backend (Formspree, Netlify Forms, or your own endpoint) — currently uses a `mailto:` fallback

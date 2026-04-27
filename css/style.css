@@ -184,12 +184,12 @@ body::before {
 }
 .btn-primary {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #1a0838;
+  color: #000;
 }
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-glow-gold);
-  color: #1a0838;
+  color: #000;
 }
 .btn-secondary {
   background: linear-gradient(135deg, var(--primary-2), var(--primary-3));
@@ -593,6 +593,22 @@ section { position: relative; z-index: 1; padding: 100px 0; }
 }
 .contact-info .info-row strong { display: block; color: var(--text); font-size: 0.95rem; }
 .contact-info .info-row span { color: var(--text-muted); font-size: 0.9rem; }
+.reveal-phone {
+  appearance: none;
+  background: rgba(106, 45, 199, 0.18);
+  border: 1px solid var(--border);
+  color: var(--accent-2);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease;
+}
+.reveal-phone:hover {
+  background: rgba(106, 45, 199, 0.3);
+  border-color: var(--border-strong);
+}
 
 form.contact-form {
   display: grid;
