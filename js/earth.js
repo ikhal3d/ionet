@@ -39,9 +39,9 @@ async function initEarth(container) {
   // ---- Globe core (subtle, near-invisible sphere for depth occlusion) ----
   const coreGeo = new THREE.SphereGeometry(1.6, 64, 64);
   const coreMat = new THREE.MeshBasicMaterial({
-    color: 0x150330,
+    color: 0x15123a,         // brand-aligned deep ink
     transparent: true,
-    opacity: 0.6,
+    opacity: 0.65,
   });
   const core = new THREE.Mesh(coreGeo, coreMat);
   scene.add(core);
@@ -61,7 +61,8 @@ async function initEarth(container) {
       varying vec3 vNormal;
       void main() {
         float intensity = pow(0.55 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.5);
-        gl_FragColor = vec4(0.49, 0.30, 0.84, 1.0) * intensity;
+        // Brand purple #4c1f9c with a touch of pink — connects globe to logo gradient
+        gl_FragColor = vec4(0.55, 0.18, 0.85, 1.0) * intensity;
       }
     `,
     blending: THREE.AdditiveBlending,
@@ -146,13 +147,13 @@ async function initEarth(container) {
 
   const dots = new THREE.Points(dotGeo, dotMat);
 
-  // ---- 4. Decorative orbital ring (subtle violet) ----
+  // ---- 4. Decorative orbital ring (brand purple) ----
   const ringGeo = new THREE.RingGeometry(2.4, 2.42, 128);
   const ringMat = new THREE.MeshBasicMaterial({
-    color: 0x7c4dd6,
+    color: 0x6a2dc7,
     side: THREE.DoubleSide,
     transparent: true,
-    opacity: 0.35,
+    opacity: 0.4,
   });
   const ring = new THREE.Mesh(ringGeo, ringMat);
   ring.rotation.x = Math.PI / 2.6;

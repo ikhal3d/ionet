@@ -1,24 +1,32 @@
 /* ================================================================
    ionet — Design Tokens
-   Purple-dominant palette inspired by ionet.com.au.
-   Gold (#E09900) is reserved for CTA buttons & a few key accents only.
+   Built from the official ionet brand palette.
+     Logo:    pink #CC00FF, purple #8900FF, grey #3C4049
+     Docs:    purple #4c1f9c (flat), dark blue #1e1e80, orange #cc9900
+              + gradient #1e1e80 → #4c1f9c
+   Orange is reserved for CTA buttons & key accents only.
    ================================================================ */
 :root {
-  --bg: #0F0122;             /* deep night-purple, near-black */
-  --bg-elev: #1a0838;
-  --surface: #2a1057;        /* primary section surface */
-  --surface-2: #381878;      /* elevated cards / hero blocks */
-  --surface-3: #4a1f9c;      /* strongest purple highlight */
+  --bg: #0c0a24;             /* deep ink derived from brand dark blue/purple */
+  --bg-elev: #15123a;
+  --surface: #1e1e80;        /* brand dark blue (used as section backing) */
+  --surface-2: #4c1f9c;      /* brand flat purple */
+  --surface-3: #5e2ab8;      /* slightly lighter for hover/highlight */
 
-  --primary: #381878;
-  --primary-2: #5b2ba8;
-  --primary-3: #7c4dd6;
+  --primary: #4c1f9c;        /* brand flat purple */
+  --primary-2: #1e1e80;      /* brand dark blue */
+  --primary-3: #6a2dc7;      /* lighter brand purple */
 
-  --accent: #E09900;         /* used VERY sparingly — CTA buttons, key stat */
-  --accent-2: #FFB833;
+  --logo-pink: #CC00FF;
+  --logo-purple: #8900FF;
 
-  --border: rgba(124, 77, 214, 0.22);
-  --border-strong: rgba(124, 77, 214, 0.5);
+  --accent: #cc9900;         /* brand orange */
+  --accent-2: #ffb833;
+
+  --brand-grey: #3C4049;
+
+  --border: rgba(106, 45, 199, 0.25);
+  --border-strong: rgba(106, 45, 199, 0.55);
 
   --text: #f5f0ff;
   --text-muted: #b8a8d6;
@@ -30,10 +38,11 @@
 
   --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 40px rgba(124, 77, 214, 0.45);
-  --shadow-glow-gold: 0 0 30px rgba(224, 153, 0, 0.35);
+  --shadow-glow: 0 0 40px rgba(106, 45, 199, 0.5);
+  --shadow-glow-pink: 0 0 40px rgba(204, 0, 255, 0.35);
+  --shadow-glow-gold: 0 0 30px rgba(204, 153, 0, 0.4);
 
-  --font-heading: "Inter", "Helvetica", "Arial", sans-serif;
+  --font-heading: "Poppins", "Inter", "Helvetica", "Arial", sans-serif;
   --font-body: "Open Sans", "Arial", sans-serif;
 
   --container: 1200px;
@@ -86,9 +95,9 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(900px 600px at 15% -10%, rgba(91, 43, 168, 0.55), transparent 60%),
-    radial-gradient(800px 600px at 90% 10%, rgba(56, 24, 120, 0.5), transparent 60%),
-    radial-gradient(900px 700px at 50% 110%, rgba(74, 31, 156, 0.4), transparent 60%);
+    radial-gradient(900px 600px at 15% -10%, rgba(76, 31, 156, 0.55), transparent 60%),
+    radial-gradient(800px 600px at 90% 10%, rgba(30, 30, 128, 0.5), transparent 60%),
+    radial-gradient(900px 700px at 50% 110%, rgba(76, 31, 156, 0.4), transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
@@ -103,14 +112,14 @@ body::before {
   z-index: 50;
   display: flex;
   align-items: center;
-  background: rgba(15, 1, 34, 0.55);
+  background: rgba(12, 10, 36, 0.55);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(245, 240, 255, 0.06);
   transition: background .25s ease, border-color .25s ease;
 }
 .site-header.scrolled {
-  background: rgba(15, 1, 34, 0.88);
+  background: rgba(12, 10, 36, 0.88);
   border-bottom-color: var(--border);
 }
 .nav {
@@ -142,7 +151,7 @@ body::before {
 }
 .nav-links a:hover, .nav-links a.active {
   color: var(--accent-2);
-  background: rgba(124, 77, 214, 0.18);
+  background: rgba(106, 45, 199, 0.18);
 }
 .nav-toggle {
   display: none;
@@ -197,7 +206,7 @@ body::before {
   border-color: var(--border-strong);
 }
 .btn-ghost:hover {
-  background: rgba(124, 77, 214, 0.15);
+  background: rgba(106, 45, 199, 0.15);
   color: var(--text);
   border-color: var(--primary-3);
 }
@@ -227,7 +236,7 @@ body::before {
   color: transparent;
 }
 .hero-copy h1 .accent {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  background: linear-gradient(135deg, var(--logo-pink), var(--logo-purple));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -276,7 +285,7 @@ body::before {
   position: absolute;
   inset: 8%;
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, rgba(124, 77, 214, 0.35), transparent 60%);
+  background: radial-gradient(circle at 50% 50%, rgba(106, 45, 199, 0.35), transparent 60%);
   filter: blur(20px);
   z-index: 0;
 }
@@ -284,7 +293,7 @@ body::before {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1px dashed rgba(124, 77, 214, 0.45);
+  border: 1px dashed rgba(106, 45, 199, 0.45);
   animation: spin 60s linear infinite;
   pointer-events: none;
 }
@@ -306,11 +315,11 @@ section { position: relative; z-index: 1; padding: 100px 0; }
 /* Section variants */
 .bg-purple {
   background:
-    linear-gradient(180deg, transparent, rgba(56, 24, 120, 0.55) 30%, rgba(56, 24, 120, 0.55) 70%, transparent);
+    linear-gradient(180deg, transparent, rgba(30, 30, 128, 0.55) 30%, rgba(30, 30, 128, 0.55) 70%, transparent);
 }
 .bg-purple-strong {
   background:
-    radial-gradient(800px 500px at 50% 0%, rgba(124, 77, 214, 0.35), transparent 60%),
+    radial-gradient(800px 500px at 50% 0%, rgba(106, 45, 199, 0.35), transparent 60%),
     linear-gradient(180deg, var(--primary), var(--surface-2));
 }
 
@@ -340,7 +349,7 @@ section { position: relative; z-index: 1; padding: 100px 0; }
   width: 18px; height: 18px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary-2), var(--primary-3));
-  box-shadow: 0 0 12px rgba(124, 77, 214, 0.6);
+  box-shadow: 0 0 12px rgba(106, 45, 199, 0.6);
 }
 .about-points li::after {
   content: "✓";
@@ -378,7 +387,7 @@ section { position: relative; z-index: 1; padding: 100px 0; }
   text-align: center;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(74, 31, 156, 0.35), rgba(15, 1, 34, 0.5));
+  background: linear-gradient(180deg, rgba(76, 31, 156, 0.35), rgba(12, 10, 36, 0.5));
 }
 .stat-card .num {
   font-family: var(--font-heading);
@@ -411,7 +420,7 @@ section { position: relative; z-index: 1; padding: 100px 0; }
   padding: 30px 28px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(74, 31, 156, 0.32), rgba(15, 1, 34, 0.55));
+  background: linear-gradient(180deg, rgba(76, 31, 156, 0.32), rgba(12, 10, 36, 0.55));
   transition: transform .25s ease, border-color .25s ease, box-shadow .3s ease;
   overflow: hidden;
 }
@@ -419,7 +428,7 @@ section { position: relative; z-index: 1; padding: 100px 0; }
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(400px 200px at var(--mx, 50%) var(--my, 0%), rgba(124, 77, 214, 0.25), transparent 60%);
+  background: radial-gradient(400px 200px at var(--mx, 50%) var(--my, 0%), rgba(106, 45, 199, 0.25), transparent 60%);
   opacity: 0;
   transition: opacity .3s ease;
   pointer-events: none;
@@ -434,7 +443,7 @@ section { position: relative; z-index: 1; padding: 100px 0; }
   width: 52px; height: 52px;
   display: grid; place-items: center;
   border-radius: var(--radius-sm);
-  background: rgba(124, 77, 214, 0.18);
+  background: rgba(106, 45, 199, 0.18);
   border: 1px solid var(--border);
   color: var(--primary-3);
   margin-bottom: 18px;
@@ -470,8 +479,8 @@ section { position: relative; z-index: 1; padding: 100px 0; }
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(700px 400px at 0% 0%, rgba(124, 77, 214, 0.45), transparent 60%),
-    linear-gradient(180deg, rgba(56, 24, 120, 0.55), rgba(15, 1, 34, 0.7));
+    radial-gradient(700px 400px at 0% 0%, rgba(106, 45, 199, 0.45), transparent 60%),
+    linear-gradient(180deg, rgba(30, 30, 128, 0.55), rgba(12, 10, 36, 0.7));
 }
 .philosophy h2 { margin-bottom: 0.6em; }
 .philosophy blockquote {
@@ -500,13 +509,13 @@ section { position: relative; z-index: 1; padding: 100px 0; }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin-bottom: 14px;
-  background: rgba(56, 24, 120, 0.35);
+  background: rgba(30, 30, 128, 0.35);
 }
 .contact-info .info-row .icon {
   width: 40px; height: 40px;
   display: grid; place-items: center;
   border-radius: var(--radius-sm);
-  background: rgba(124, 77, 214, 0.22);
+  background: rgba(106, 45, 199, 0.22);
   color: var(--primary-3);
   flex-shrink: 0;
 }
@@ -519,7 +528,7 @@ form.contact-form {
   padding: 32px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: rgba(56, 24, 120, 0.4);
+  background: rgba(30, 30, 128, 0.4);
 }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .form-field { display: grid; gap: 6px; }
@@ -536,7 +545,7 @@ form.contact-form {
   padding: 12px 14px;
   font-family: var(--font-body);
   font-size: 0.95rem;
-  background: rgba(15, 1, 34, 0.7);
+  background: rgba(12, 10, 36, 0.7);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -546,7 +555,7 @@ form.contact-form {
 .form-field input:focus, .form-field textarea:focus {
   outline: none;
   border-color: var(--primary-3);
-  box-shadow: 0 0 0 3px rgba(124, 77, 214, 0.25);
+  box-shadow: 0 0 0 3px rgba(106, 45, 199, 0.25);
 }
 .form-status {
   font-size: 0.9rem;
@@ -561,7 +570,7 @@ form.contact-form {
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(800px 400px at 50% 0%, rgba(124, 77, 214, 0.45), transparent 70%),
+    radial-gradient(800px 400px at 50% 0%, rgba(106, 45, 199, 0.45), transparent 70%),
     linear-gradient(180deg, var(--surface-2), var(--primary));
 }
 .cta-strip h2 { margin-bottom: 1rem; }
@@ -573,7 +582,7 @@ form.contact-form {
   z-index: 1;
   padding: 60px 0 30px;
   border-top: 1px solid rgba(245, 240, 255, 0.08);
-  background: rgba(15, 1, 34, 0.7);
+  background: rgba(12, 10, 36, 0.7);
 }
 .footer-grid {
   display: grid;
@@ -633,7 +642,7 @@ form.contact-form {
     left: 0; right: 0;
     flex-direction: column;
     align-items: stretch;
-    background: rgba(15, 1, 34, 0.95);
+    background: rgba(12, 10, 36, 0.95);
     backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border);
     padding: 12px;

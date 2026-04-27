@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 410 110" role="img" aria-label="ionet">
-  <g transform="translate(5 5)" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+  <g transform="translate(5 5)" fill="none" stroke="#000000" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
     <path d="M 38 12 V 42 H 88"/>
     <path d="M 62 88 V 58 H 12"/>
   </g>
@@ -8,5 +8,5 @@
         font-weight="900"
         font-size="92"
         letter-spacing="-3"
-        fill="#FFFFFF">ionet</text>
+        fill="#000000">ionet</text>
 </svg>
