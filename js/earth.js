@@ -33,9 +33,9 @@ async function initEarth(container) {
     // Resolution 4 = ~85k hex cells globally (vs ~12k at res 3).
     // Required for small countries to have any dots at all.
     .hexPolygonResolution(4)
-    // Lower margin = larger dots that hide the H3-grid swirl artifact
-    // visible on large landmasses (Asia/Africa) at moderate resolutions.
-    .hexPolygonMargin(0.12)
+    // Near-zero margin = chunky, near-touching dots — pixel-art mosaic look
+    // that completely hides the H3-grid swirl artifact.
+    .hexPolygonMargin(0.02)
     .hexPolygonColor(() => "#ffffff");
 
   // Make the underlying sphere a deep transparent ink so dots stand out
