@@ -144,18 +144,12 @@ async function initEarth(container) {
 
   const dots = new THREE.Points(dotGeo, dotMat);
 
-  // ---- Hierarchy: tiltGroup (axial tilt) > spinGroup (rotation) > meshes ----
-  // Earth's natural axial tilt is ~23.5°. Apply it on the X-axis so the
-  // north pole leans toward the viewer — the canonical "globe" look.
-  const tiltGroup = new THREE.Group();
-  tiltGroup.rotation.x = -(23.5 * Math.PI) / 180;
-  scene.add(tiltGroup);
-
+  // No axial tilt — globe spins upright on a vertical polar axis.
   const spinGroup = new THREE.Group();
   spinGroup.add(core, rim, dots);
   // Initial orientation: Australia (~135°E) toward the camera.
   spinGroup.rotation.y = -(135 * Math.PI) / 180;
-  tiltGroup.add(spinGroup);
+  scene.add(spinGroup);
 
   // ---- Animate ----
   let raf = null;
