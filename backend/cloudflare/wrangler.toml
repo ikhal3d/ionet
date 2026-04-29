@@ -1,0 +1,30 @@
+# ionet — Cloudflare Worker deploy config.
+#
+# Deploy:
+#   cd backend/cloudflare
+#   npx wrangler@latest login         # one-time, opens browser
+#   npx wrangler@latest deploy
+#
+# Bind the Worker to ionet.com.au/api/* in the dashboard, or via the
+# routes directive below (uncomment + edit zone_name).
+
+name = "ionet-tools-proxy"
+main = "worker.js"
+compatibility_date = "2026-04-01"
+
+# Uncomment to bind the Worker to the route via wrangler.toml. You
+# can also do this in the dashboard under Workers Routes for the
+# ionet.com.au zone.
+# routes = [
+#   { pattern = "ionet.com.au/api/*", zone_name = "ionet.com.au" }
+# ]
+
+# Secrets — set with: npx wrangler@latest secret put TURNSTILE_SECRET
+# Do NOT commit secret values here.
+[vars]
+# Public values are fine here. Keep secrets in `wrangler secret put`.
+
+# Observability
+[observability]
+enabled = true
+head_sampling_rate = 1.0
