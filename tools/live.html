@@ -29,7 +29,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=55797c3b">
 
   <script type="application/ld+json">
   {
@@ -294,7 +294,8 @@
 
         <article id="tool-bgp" class="phase2-tool reveal">
           <h3>BGP Route Inspector</h3>
-          <p>Origin AS, prefix announcements, RPKI validity, and sample BGP routes from RIPE RIS collectors worldwide. Honest framing: until ionet has its own BGP gear, this proxies <a href="https://stat.ripe.net/" rel="noopener">RIPEstat</a> rather than running <code>show ip bgp</code> on a router we own. Same data, public source.</p>
+          <p>Origin AS, prefix announcements, RPKI validity, and sample BGP routes from <a href="https://stat.ripe.net/" rel="noopener">RIPE RIS collectors</a> worldwide. AS path positions are numbered <strong>origin-first</strong> (1 = the AS that announced the prefix; higher numbers = each AS that received it next).</p>
+          <p style="font-size:0.9rem;color:var(--text-muted);">Honest framing: until ionet has its own BGP gear, this proxies RIPE RIS instead of running <code>show ip bgp</code> on a router we own. <strong>RIPE has no AU collector</strong> — closest is Singapore (RRC23) or Tokyo (RRC06). Same data quality, public source.</p>
           <div class="tool" style="margin-top:14px;">
             <div class="tool-row">
               <label class="tool-field"><span>Prefix, IP, or ASN</span>
@@ -381,8 +382,8 @@
     </div>
   </footer>
 
-  <script src="/js/main.js"></script>
-  <script src="/js/tools.js"></script>
+  <script src="/js/main.js?v=55797c3b"></script>
+  <script src="/js/tools.js?v=55797c3b"></script>
   <script>
     (function(){
       var input=document.querySelector('.tool-search');

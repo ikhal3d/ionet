@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Bump cache-busting query strings on every JS/CSS include.
+# Computes a hash of all frontend assets; updates ?v=<hash> in every HTML file.
+# Run from the repo root before any commit that touches js/ or css/.
+#
+# Usage:  bin/bump-assets
+#         (or hook it into pre-commit if you want it automatic)
+
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+# Hash all frontend assets together so any JS/CSS change bumps the version
+HASH=$(cat js/main.js js/tools.js css/style.css 2>/dev/null | sha256sum | cut -c1-8)
+
+# Find every script/stylesheet include we own and pin its version
+HTML_FILES=$(git ls-files '*.html')
+
+for f in $HTML_FILES; do
+  # Only touch our own /js/ and /css/ paths (not external CDNs)
+  sed -i -E \
+    -e 's|(/js/[a-z0-9_.-]+\.js)(\?v=[a-f0-9]+)?|\1?v='"$HASH"'|g' \
+    -e 's|(/css/[a-z0-9_.-]+\.css)(\?v=[a-f0-9]+)?|\1?v='"$HASH"'|g' \
+    "$f"
+done
+
+# Show what changed
+git diff --stat -- '*.html' || true
+echo
+echo "Asset hash: $HASH"
+echo "Run \`git add -A && git commit\` to ship."

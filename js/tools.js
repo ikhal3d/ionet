@@ -998,13 +998,21 @@
       // Collapse consecutive duplicates ("45763 45763" → "45763") for readability
       const collapsed = [];
       for (const a of asns) if (collapsed[collapsed.length - 1] !== a) collapsed.push(a);
-      return collapsed.map((a, i) => {
-        const last = i === collapsed.length - 1;
-        const style = last
-          ? `color:var(--logo-pink);font-weight:700;`
-          : `color:var(--accent-2);`;
-        return `<code style="${style}">AS${escapeHTML(a)}</code>`;
-      }).join(`<span style="color:var(--text-dim);margin:0 4px;">→</span>`);
+      // Reverse so position 1 = origin AS (per user request — most natural reading)
+      const ordered = [...collapsed].reverse();
+      return ordered.map((a, i) => {
+        const isOrigin = i === 0;
+        const isPeer   = i === ordered.length - 1 && ordered.length > 1;
+        const num = i + 1;
+        const badgeBg = isOrigin ? "var(--logo-pink)" : "rgba(204,153,0,0.55)";
+        const codeColor = isOrigin ? "color:var(--logo-pink);font-weight:700;" : "color:var(--accent-2);";
+        const role = isOrigin ? '<span style="color:var(--text-muted);font-size:0.78rem;margin-left:4px;">origin</span>' :
+                     isPeer   ? '<span style="color:var(--text-muted);font-size:0.78rem;margin-left:4px;">at peer</span>' : "";
+        return `<span style="display:inline-flex;align-items:center;white-space:nowrap;">` +
+                  `<span style="display:inline-block;min-width:18px;height:18px;border-radius:50%;background:${badgeBg};color:#0c0a24;font-size:11px;font-weight:700;text-align:center;line-height:18px;padding:0 4px;margin-right:5px;">${num}</span>` +
+                  `<code style="${codeColor}">AS${escapeHTML(a)}</code>${role}` +
+               `</span>`;
+      }).join(`<span style="color:var(--text-dim);margin:0 6px;">→</span>`);
     }
 
     btn.addEventListener("click", async () => {
@@ -1029,6 +1037,13 @@
         html += `<tr><th>Vantage points</th><td><code>${d.rrcs_seen}</code> RIPE RIS collector${d.rrcs_seen===1?"":"s"} observe this prefix</td></tr>`;
         html += "</table>";
 
+        // ── Honest geography caveat ───────────────────────────────────
+        html += `<div style="margin:14px 0;padding:12px 14px;background:rgba(204,153,0,0.10);border:1px solid rgba(204,153,0,0.40);border-radius:6px;font-size:0.88rem;color:var(--text-muted);line-height:1.55;">
+          <strong style="color:var(--accent-2);">⚠ No AU vantage point yet</strong> — RIPE RIS has 26 collectors but none in Australia. The closest are
+          <code>RRC23</code> Singapore and <code>RRC06</code> Tokyo. Routes shown below are observed from European, Asian, and American IXPs.
+          An AU-side looking glass (PCH's Sydney IX collector or our own gear) is on the Phase 4 roadmap.
+        </div>`;
+
         // ── Group routes by unique AS path ────────────────────────────
         if (d.routes && d.routes.length) {
           const pathMap = new Map();
@@ -1046,7 +1061,8 @@
             .sort((a, b) => a.length - b.length);
 
           html += `<div class="rdap-section-title">Distinct AS paths observed (${distinctPaths.length})</div>`;
-          html += `<table><tr><th style="width:40px;">#</th><th>AS path · origin highlighted</th><th style="width:60px;">Hops</th><th>Seen at</th></tr>`;
+          html += `<div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:8px;">Position <strong style="color:var(--logo-pink);">1</strong> = origin AS (announced the prefix). Each subsequent number = the next AS that received it. The last number = the AS sending to the RIPE collector.</div>`;
+          html += `<table><tr><th style="width:40px;">#</th><th>AS path · origin first</th><th style="width:60px;">Hops</th><th>Seen at</th></tr>`;
           for (let i = 0; i < distinctPaths.length; i++) {
             const p = distinctPaths[i];
             const rrcList = Array.from(p.rrcs.keys()).slice(0, 3).map(escapeHTML).join("<br>");
