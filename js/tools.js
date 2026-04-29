@@ -689,6 +689,114 @@
   (function whoisLookup() {
     const q = $("p2-whois-q"), btn = $("p2-whois-go"), out = $("p2-whois-out");
     if (!q || !btn || !out) return;
+
+    // Walk RDAP's quirky vCard structure into a flat object.
+    // vcardArray = ["vcard", [["fn",{},"text","Name"], ["email",{},"text","..."], ...]]
+    function parseVcard(vca) {
+      const o = {};
+      if (!Array.isArray(vca) || vca.length < 2 || !Array.isArray(vca[1])) return o;
+      for (const p of vca[1]) {
+        if (!Array.isArray(p) || p.length < 4) continue;
+        const [name, , , value] = p;
+        if (name === "fn")    o.fn    = String(value || "");
+        if (name === "email") o.email = String(value || "");
+        if (name === "tel")   o.tel   = String(Array.isArray(value) ? value[0] : value || "");
+        if (name === "org")   o.org   = String(Array.isArray(value) ? value[0] : value || "");
+        if (name === "adr")   o.adr   = (Array.isArray(value) ? value : [value]).filter(Boolean).join(", ");
+      }
+      return o;
+    }
+
+    function row(k, v) {
+      if (v === undefined || v === null || v === "") return "";
+      return `<tr><th>${escapeHTML(k)}</th><td>${v}</td></tr>`;
+    }
+
+    function renderRdap(d, query, kind) {
+      let html = "";
+
+      // Headline identity ----------------------------------------------------
+      const idRows = [
+        row("Query",      `<code>${escapeHTML(query)}</code> <span style="color:var(--text-muted);">(${escapeHTML(kind)})</span>`),
+        row("Name",       d.name ? escapeHTML(d.name) : ""),
+        row("Handle",     d.handle ? `<code>${escapeHTML(d.handle)}</code>` : ""),
+        row("Type",       d.type ? `<code>${escapeHTML(d.type)}</code>` : ""),
+        row("Country",    d.country ? `<code>${escapeHTML(d.country)}</code>` : ""),
+        row("Status",     Array.isArray(d.status) && d.status.length ? d.status.map(s => `<code>${escapeHTML(s)}</code>`).join(" · ") : ""),
+      ];
+      // IP-network specific
+      if (d.startAddress && d.endAddress) {
+        idRows.push(row("IP range", `<code>${escapeHTML(d.startAddress)}</code> – <code>${escapeHTML(d.endAddress)}</code>`));
+      }
+      if (Array.isArray(d.cidr0_cidrs) && d.cidr0_cidrs.length) {
+        const cidrs = d.cidr0_cidrs.map(c => c.v4prefix || c.v6prefix).filter(Boolean)
+          .map(c => `<code>${escapeHTML(c)}${c.length ? "/" + (c.cidr || "") : ""}</code>`).join(" · ");
+        idRows.push(row("CIDR", d.cidr0_cidrs.map(c => `<code>${escapeHTML((c.v4prefix || c.v6prefix || "") + "/" + (c.length === undefined ? "" : c.length))}</code>`).join(" · ")));
+      }
+      if (d.parentHandle) idRows.push(row("Parent", `<code>${escapeHTML(d.parentHandle)}</code>`));
+      // Domain specific
+      if (d.ldhName) idRows.push(row("Domain", `<code>${escapeHTML(d.ldhName)}</code>`));
+      if (d.unicodeName && d.unicodeName !== d.ldhName) {
+        idRows.push(row("Domain (Unicode)", escapeHTML(d.unicodeName)));
+      }
+      const idHtml = idRows.filter(Boolean).join("");
+      if (idHtml) html += `<table>${idHtml}</table>`;
+
+      // Events --------------------------------------------------------------
+      if (Array.isArray(d.events) && d.events.length) {
+        const evs = d.events.map(e => {
+          const date = (e.eventDate || "").slice(0, 10);
+          return row(e.eventAction || "event", `<code>${escapeHTML(date)}</code>${e.eventActor ? ` <span style="color:var(--text-muted);">by ${escapeHTML(e.eventActor)}</span>` : ""}`);
+        }).filter(Boolean).join("");
+        if (evs) html += `<div class="rdap-section-title">Events</div><table>${evs}</table>`;
+      }
+
+      // Entities (registrar, abuse, admin etc.) -----------------------------
+      if (Array.isArray(d.entities) && d.entities.length) {
+        const entRows = d.entities.map(e => {
+          const roles = (e.roles || []).map(r => `<code>${escapeHTML(r)}</code>`).join(" · ");
+          const v = parseVcard(e.vcardArray);
+          const lines = [];
+          if (v.fn)    lines.push(`<strong>${escapeHTML(v.fn)}</strong>`);
+          if (v.org)   lines.push(escapeHTML(v.org));
+          if (v.email) lines.push(`<a href="mailto:${escapeHTML(v.email)}">${escapeHTML(v.email)}</a>`);
+          if (v.tel)   lines.push(escapeHTML(v.tel));
+          if (v.adr)   lines.push(`<span style="color:var(--text-muted);">${escapeHTML(v.adr)}</span>`);
+          if (e.handle && !lines.length) lines.push(`<code>${escapeHTML(e.handle)}</code>`);
+          return row(roles || (e.handle ? `<code>${escapeHTML(e.handle)}</code>` : "entity"), lines.join("<br>") || "—");
+        }).filter(Boolean).join("");
+        if (entRows) html += `<div class="rdap-section-title">Entities</div><table>${entRows}</table>`;
+      }
+
+      // Nameservers (for domains) -------------------------------------------
+      if (Array.isArray(d.nameservers) && d.nameservers.length) {
+        const ns = d.nameservers.map(n => `<code>${escapeHTML(n.ldhName || n.handle || "")}</code>`).join("<br>");
+        html += `<div class="rdap-section-title">Nameservers</div><table>${row("NS records", ns)}</table>`;
+      }
+
+      // Remarks (registrar / RIR notes) -------------------------------------
+      if (Array.isArray(d.remarks) && d.remarks.length) {
+        const rems = d.remarks.map(r => {
+          const desc = Array.isArray(r.description) ? r.description.join(" / ") : (r.description || "");
+          if (!r.title && !desc) return "";
+          return `<div style="margin:6px 0;color:var(--text-muted);"><strong>${escapeHTML(r.title || "Remark")}</strong>${desc ? ` — ${escapeHTML(desc).slice(0,400)}` : ""}</div>`;
+        }).filter(Boolean).join("");
+        if (rems) html += `<div class="rdap-section-title">Remarks</div>${rems}`;
+      }
+
+      // Source link ---------------------------------------------------------
+      const tos = (d.notices || []).find(n => n.title === "Source");
+      if (tos && Array.isArray(tos.description) && tos.description.length) {
+        html += `<div style="margin-top:12px;color:var(--text-dim);font-size:0.85rem;">Source: ${escapeHTML(tos.description.join(" "))}</div>`;
+      }
+
+      // Collapsible raw JSON for debugging ----------------------------------
+      const raw = escapeHTML(JSON.stringify(d, null, 2));
+      html += `<details style="margin-top:14px;"><summary style="cursor:pointer;color:var(--text-muted);font-size:0.85rem;">View raw RDAP JSON</summary><pre style="margin:8px 0 0;font-size:0.85rem;max-height:380px;overflow:auto;background:rgba(10,8,28,0.7);padding:12px;border-radius:4px;">${raw}</pre></details>`;
+
+      return html;
+    }
+
     btn.addEventListener("click", async () => {
       const query = q.value.trim();
       if (!query) { setOut(out, "Provide a domain or IP address.", true); return; }
@@ -699,13 +807,14 @@
         if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
         const d = r.data;
         if (d.error) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
-        let html = `<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:10px;">Query: <code>${escapeHTML(d.query)}</code> · Kind: <code>${escapeHTML(d.kind)}</code></div>`;
+        let html = "";
         if (d.rdap) {
-          html += `<div style="color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:0.95rem;margin-bottom:6px;">RDAP</div>`;
-          html += `<pre style="margin:0;font-size:0.9rem;overflow-x:auto;">${escapeHTML(JSON.stringify(d.rdap, null, 2))}</pre>`;
+          html = renderRdap(d.rdap, d.query, d.kind);
         } else if (d.whois) {
-          html += `<div style="color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:0.95rem;margin-bottom:6px;">WHOIS</div>`;
-          html += `<pre style="margin:0;font-size:0.9rem;overflow-x:auto;">${escapeHTML(d.whois)}</pre>`;
+          html  = `<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:8px;">Query: <code>${escapeHTML(d.query)}</code> · Kind: <code>${escapeHTML(d.kind)}</code> · <span style="color:var(--accent-2);">RDAP unavailable, showing legacy WHOIS text</span></div>`;
+          html += `<pre style="margin:0;font-size:0.9rem;overflow-x:auto;background:rgba(10,8,28,0.7);padding:12px;border-radius:4px;">${escapeHTML(d.whois)}</pre>`;
+        } else {
+          html = `<div style="color:var(--text-muted);">No RDAP or WHOIS data returned.</div>`;
         }
         setOut(out, html);
       } catch (e) { networkError(out, e); }

@@ -1388,6 +1388,16 @@ form.contact-form {
 .tool-out .copy-btn:hover { background: rgba(106, 45, 199, 0.2); color: var(--text); }
 .tool-out .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
 .tool-out code { font-family: inherit; color: var(--accent-2); font-size: inherit; }
+.tool-out .rdap-section-title {
+  margin: 16px 0 6px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.tool-out details summary { outline: none; padding: 4px 0; }
+.tool-out details summary:hover { color: var(--accent-2); }
 
 @media (max-width: 720px) {
   .cc-stats { grid-template-columns: repeat(2, 1fr); }
