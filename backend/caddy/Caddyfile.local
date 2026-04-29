@@ -1,0 +1,56 @@
+# ionet backend — LOCAL-TEST Caddyfile.
+#
+# Plain HTTP on port 443 inside the container — the host port mapping
+# (default 8443:443) forwards from outside. TLS termination is
+# Cloudflare's job in production. Switch to caddy/Caddyfile (DNS-01
+# via Cloudflare) for production by setting CADDY_CONFIG=Caddyfile
+# in .env.
+
+{
+	auto_https off
+	servers {
+		protocols h1 h2c
+	}
+}
+
+:443 {
+	encode gzip zstd
+
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options        "DENY"
+		Referrer-Policy        "strict-origin-when-cross-origin"
+		Server                 "ionet"
+		-X-Powered-By
+	}
+
+	# CORS — local-test allows any origin for easy curl testing
+	@cors_preflight method OPTIONS
+	header @cors_preflight {
+		Access-Control-Allow-Origin       "*"
+		Access-Control-Allow-Methods      "GET, POST, OPTIONS"
+		Access-Control-Allow-Headers      "Content-Type, X-Turnstile-Token"
+		Access-Control-Max-Age            "86400"
+	}
+	respond @cors_preflight 204
+	header {
+		Access-Control-Allow-Origin "*"
+		Vary                        "Origin"
+	}
+
+	# Explicit routing — avoids directive-order ambiguity between
+	# reverse_proxy and respond 404.
+	handle /healthz {
+		respond 200 {
+			body "ok\n"
+		}
+	}
+
+	handle /api/* {
+		reverse_proxy tools-api:8000
+	}
+
+	handle {
+		respond 404
+	}
+}

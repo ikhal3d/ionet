@@ -27,7 +27,7 @@ services:
       - CF_API_TOKEN=${CF_API_TOKEN}
       - FRONTEND_ORIGIN=${FRONTEND_ORIGIN:-https://ionet.com.au}
     volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/${CADDY_CONFIG:-Caddyfile}:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     networks:
