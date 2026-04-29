@@ -358,6 +358,115 @@
             Submarine cables: <a href="https://www.submarinecablemap.com/" rel="noopener">TeleGeography submarinecablemap.com</a>, licensed CC BY-SA 4.0.
           </p>
         </div>
+
+        <!-- ============ Australia inset panel ============ -->
+        <div class="cc-panel cc-panel--au reveal" style="margin-top:30px;">
+          <div class="cc-toolbar">
+            <div class="cc-status">
+              <span class="cc-dot cc-dot--ok"></span>
+              <span class="cc-status-label">Australia &middot; <span id="au-stat-cables">39</span> AU-landing cables &middot; outage feed lands in Phase 2</span>
+            </div>
+            <div class="cc-legend" aria-label="Australia panel legend">
+              <span><i class="cc-key cc-key--au"></i> Australian IXP</span>
+              <span><i class="cc-key cc-key--cable"></i> AU-landing cable</span>
+              <span class="cc-legend-mute"><i class="cc-key cc-key--alert"></i> Outage <em>· Phase 2</em></span>
+            </div>
+          </div>
+
+          <div class="cc-map-wrap" aria-hidden="true">
+            <span class="cc-corner cc-corner--tl"></span>
+            <span class="cc-corner cc-corner--tr"></span>
+            <span class="cc-corner cc-corner--bl"></span>
+            <span class="cc-corner cc-corner--br"></span>
+
+            <svg class="cc-map cc-map--au" viewBox="0 0 1000 740" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Australia map showing IXPs and AU-landing submarine cables">
+              <defs>
+                <radialGradient id="ccBgAu" cx="50%" cy="50%" r="65%">
+                  <stop offset="0%"  stop-color="#1a1450" stop-opacity="0.85"/>
+                  <stop offset="100%" stop-color="#0a0820" stop-opacity="1"/>
+                </radialGradient>
+                <linearGradient id="ccLandFillAu" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%"   stop-color="#8a3dd8" stop-opacity="0.55"/>
+                  <stop offset="100%" stop-color="#3a1882" stop-opacity="0.55"/>
+                </linearGradient>
+                <linearGradient id="ccLandStrokeAu" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0%"   stop-color="#cc00ff" stop-opacity="0.85"/>
+                  <stop offset="100%" stop-color="#ffb833" stop-opacity="0.85"/>
+                </linearGradient>
+                <radialGradient id="ccVignetteAu" cx="50%" cy="50%" r="80%">
+                  <stop offset="0%"   stop-color="#000" stop-opacity="0"/>
+                  <stop offset="100%" stop-color="#000" stop-opacity="0.55"/>
+                </radialGradient>
+              </defs>
+
+              <rect x="0" y="0" width="1000" height="740" fill="url(#ccBgAu)"/>
+
+              <!-- Lat/lon grid every 5° -->
+              <g class="cc-grid" stroke="rgba(106,45,199,0.18)" stroke-width="0.4" fill="none">
+                <!-- Meridians: lon 110..156 step 5 -> 9 lines (skip first/last) -->
+                <line x1="108.7"  y1="0" x2="108.7"  y2="740"/>
+                <line x1="217.4"  y1="0" x2="217.4"  y2="740"/>
+                <line x1="326.1"  y1="0" x2="326.1"  y2="740"/>
+                <line x1="434.8"  y1="0" x2="434.8"  y2="740"/>
+                <line x1="543.5"  y1="0" x2="543.5"  y2="740"/>
+                <line x1="652.2"  y1="0" x2="652.2"  y2="740"/>
+                <line x1="760.9"  y1="0" x2="760.9"  y2="740"/>
+                <line x1="869.6"  y1="0" x2="869.6"  y2="740"/>
+                <!-- Parallels: lat -10..-44 step 5 -> 7 lines -->
+                <line x1="0" y1="108.8" x2="1000" y2="108.8"/>
+                <line x1="0" y1="217.6" x2="1000" y2="217.6"/>
+                <line x1="0" y1="326.5" x2="1000" y2="326.5"/>
+                <line x1="0" y1="435.3" x2="1000" y2="435.3"/>
+                <line x1="0" y1="544.1" x2="1000" y2="544.1"/>
+                <line x1="0" y1="652.9" x2="1000" y2="652.9"/>
+              </g>
+
+              <!-- AU-landing submarine cables -->
+              <g class="cc-cables" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path id="cc-au-cables" d=""/>
+              </g>
+
+              <!-- Australia + nearby land -->
+              <g class="cc-land">
+                <path id="cc-au-land" d="" fill="url(#ccLandFillAu)" stroke="url(#ccLandStrokeAu)" stroke-width="0.8" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+              </g>
+
+              <!-- AU IXP markers + labels (injected at runtime) -->
+              <g id="cc-au-points"></g>
+              <g id="cc-au-labels"></g>
+
+              <rect x="0" y="0" width="1000" height="740" fill="url(#ccVignetteAu)" pointer-events="none"/>
+
+              <g class="cc-hud" font-family="JetBrains Mono, monospace" fill="rgba(245,240,255,0.55)" font-size="11">
+                <text x="14" y="22">SYS / AU-NOC</text>
+                <text x="14" y="38">PROJ EQUIRECT &middot; LON 110-156 / LAT -10/-44</text>
+                <text x="986" y="22" text-anchor="end">LANDINGS: TELEGEOGRAPHY</text>
+                <text x="986" y="38" text-anchor="end">CC BY-SA 4.0</text>
+                <text x="14" y="724">GRID 5°</text>
+                <text x="986" y="724" text-anchor="end" id="cc-au-clock">— AEST</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="cc-stats">
+            <div class="cc-stat">
+              <strong id="au-ixp-count">7</strong>
+              <span>Australian IXPs</span>
+            </div>
+            <div class="cc-stat">
+              <strong id="au-cable-count">39</strong>
+              <span>AU-landing submarine cables</span>
+            </div>
+            <div class="cc-stat">
+              <strong>0</strong>
+              <span>Live outages tracked <em style="color:var(--text-dim);font-style:normal;">· Phase 2</em></span>
+            </div>
+            <div class="cc-stat">
+              <strong>NBN · Telstra · Optus · TPG</strong>
+              <span>Outage feeds (Phase 2)</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -834,6 +943,7 @@
   <script src="js/world-map.js"></script>
   <script src="js/world-cables.js"></script>
   <script src="js/ixps.js"></script>
+  <script src="js/au-data.js"></script>
   <script src="js/tools.js"></script>
   <script>
     (function () {
@@ -895,15 +1005,64 @@
         });
       }
 
-      // ---- HUD clock ----
+      // ---- AU inset panel: land, cables, IXPs, labels --------------
+      function projectAU(lat, lon) {
+        // viewBox 1000x740, lon[110..156] x lat[-44..-10]
+        return [(lon - 110) / 46 * 1000, (-10 - lat) / 34 * 740];
+      }
+      if (window.IONET_AU_LAND) {
+        var auLand = document.getElementById("cc-au-land");
+        if (auLand) auLand.setAttribute("d", window.IONET_AU_LAND);
+      }
+      if (window.IONET_AU_CABLES) {
+        var auCab = document.getElementById("cc-au-cables");
+        if (auCab) auCab.setAttribute("d", window.IONET_AU_CABLES);
+      }
+      var auPts = document.getElementById("cc-au-points");
+      var auLbls = document.getElementById("cc-au-labels");
+      if (auPts && ixps.length) {
+        ixps.forEach(function (p) {
+          // include any IXP whose coords fall in AU bbox (catches tier:au + Sydney IX tier:1)
+          if (p.lon < 110 || p.lon > 156 || p.lat < -44 || p.lat > -10) return;
+          var c = projectAU(p.lat, p.lon);
+          var x = c[0], y = c[1];
+          var g = document.createElementNS(SVGNS, "g");
+          g.setAttribute("class", "cc-point cc-point--au");
+          g.setAttribute("transform", "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ")");
+          var ttl = document.createElementNS(SVGNS, "title");
+          ttl.textContent = p.name;
+          g.appendChild(ttl);
+          var halo = document.createElementNS(SVGNS, "circle"); halo.setAttribute("class", "halo"); halo.setAttribute("r", 14); g.appendChild(halo);
+          var dot  = document.createElementNS(SVGNS, "circle"); dot.setAttribute("r", 5); g.appendChild(dot);
+          var ring = document.createElementNS(SVGNS, "circle"); ring.setAttribute("class", "ring"); ring.setAttribute("r", 5); g.appendChild(ring);
+          auPts.appendChild(g);
+          // Label: nudge based on city to avoid overlap
+          var dx = 9, anchor = "start";
+          if (p.name.indexOf("Hobart") >= 0)   { dx = 9; }
+          if (p.name.indexOf("Perth") >= 0)    { dx = -9; anchor = "end"; }
+          if (p.name.indexOf("Adelaide") >= 0) { dx = -9; anchor = "end"; }
+          var t = document.createElementNS(SVGNS, "text");
+          t.setAttribute("class", "cc-label cc-label--au");
+          t.setAttribute("x", (x + dx).toFixed(1));
+          t.setAttribute("y", (y + 4).toFixed(1));
+          t.setAttribute("text-anchor", anchor);
+          t.textContent = p.name;
+          auLbls.appendChild(t);
+        });
+      }
+
+      // ---- HUD clocks: UTC for global, AEST for AU panel -----------
       var clock = document.getElementById("cc-clock");
+      var auClock = document.getElementById("cc-au-clock");
+      function pad(n) { return String(n).padStart(2, "0"); }
       function tick() {
-        if (!clock) return;
         var d = new Date();
-        var hh = String(d.getUTCHours()).padStart(2, "0");
-        var mm = String(d.getUTCMinutes()).padStart(2, "0");
-        var ss = String(d.getUTCSeconds()).padStart(2, "0");
-        clock.textContent = hh + ":" + mm + ":" + ss + " UTC";
+        if (clock) clock.textContent = pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes()) + ":" + pad(d.getUTCSeconds()) + " UTC";
+        if (auClock) {
+          // AEST = UTC+10 (no DST adjustment here; AEDT differs by 1h half the year)
+          var au = new Date(d.getTime() + 10 * 3600 * 1000);
+          auClock.textContent = pad(au.getUTCHours()) + ":" + pad(au.getUTCMinutes()) + ":" + pad(au.getUTCSeconds()) + " AEST";
+        }
       }
       tick();
       setInterval(tick, 1000);

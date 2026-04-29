@@ -804,6 +804,7 @@ form.contact-form {
 .cc-legend span { display: inline-flex; align-items: center; gap: 8px; }
 .cc-key { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
 .cc-key--ixp    { background: var(--logo-pink); box-shadow: 0 0 10px rgba(204, 0, 255, 0.7); }
+.cc-key--au     { background: var(--accent-2); box-shadow: 0 0 10px rgba(255, 184, 51, 0.8); }
 .cc-key--cable  { background: linear-gradient(90deg, transparent, var(--accent-2), transparent); height: 3px; border-radius: 2px; width: 18px; box-shadow: 0 0 10px rgba(255, 184, 51, 0.5); }
 .cc-key--alert  { background: #ff4d6d; box-shadow: 0 0 10px rgba(255, 77, 109, 0.8); }
 
