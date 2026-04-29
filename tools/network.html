@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#0c0a24">
 
   <title>Network Calculation Tools — IPv4 Subnet, VLSM, MAC OUI · ionet</title>
-  <meta name="description" content="Free, browser-based network engineering tools — IPv4 subnet/CIDR calculator, VLSM planner, IP address converter, MAC OUI lookup against the full IEEE registry, and What is my IP. No signup, no tracking.">
-  <meta name="keywords" content="subnet calculator, CIDR calculator, VLSM planner, IPv4 calculator, IP converter, MAC OUI lookup, IEEE OUI registry, what is my IP, network engineer tools, online subnet tool">
+  <meta name="description" content="Free, browser-based network engineering tools — IPv4 subnet/CIDR calculator, VLSM planner, IP address converter, MAC OUI lookup against the full IEEE registry. No signup, no tracking.">
+  <meta name="keywords" content="subnet calculator, CIDR calculator, VLSM planner, IPv4 calculator, IP converter, MAC OUI lookup, IEEE OUI registry, network engineer tools, online subnet tool">
   <link rel="canonical" href="https://ionet.com.au/tools/network.html">
 
   <meta property="og:type" content="website">
@@ -61,11 +61,7 @@
         "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
         "url": "https://ionet.com.au/tools/network.html#ip-converter" },
-      { "@type": "SoftwareApplication", "position": 4, "name": "What is my IP",
-        "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
-        "url": "https://ionet.com.au/tools/network.html#what-is-my-ip" },
-      { "@type": "SoftwareApplication", "position": 5, "name": "MAC OUI Lookup",
+      { "@type": "SoftwareApplication", "position": 4, "name": "MAC OUI Lookup",
         "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
         "url": "https://ionet.com.au/tools/network.html#mac-oui" }
@@ -131,12 +127,6 @@
             <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><polyline points="14 7 21 7 21 14"/></svg></div>
             <h3>IP Converter</h3>
             <p>IPv4 between dotted-quad, decimal, hex, and binary.</p>
-          </a>
-          <a class="service tool-card reveal" href="#what-is-my-ip">
-            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
-            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2c2.5 3 4 6.6 4 10s-1.5 7-4 10c-2.5-3-4-6.6-4-10s1.5-7 4-10z"/></svg></div>
-            <h3>What is my IP?</h3>
-            <p>Public IP, reverse DNS, geolocation, ASN. Calls a CORS-friendly public echo service.</p>
           </a>
           <a class="service tool-card reveal" href="#mac-oui">
             <span class="prov-badge prov-badge--browser">🔒 Browser</span>
@@ -212,28 +202,7 @@
       </div>
     </section>
 
-    <section id="what-is-my-ip" class="tool-section">
-      <div class="container">
-        <div class="reveal" style="max-width:880px;">
-          <p class="eyebrow">Diagnostics</p>
-          <h2>What is my IP?</h2>
-          <p>
-            Shows your apparent public IP address, reverse DNS, geolocation, timezone, and the ASN
-            announcing your network. Calls a CORS-friendly public echo service —
-            <a href="https://ipapi.co/" rel="noopener">ipapi.co</a> — and falls back to ipify if that fails.
-            Results render in your browser; ionet doesn't see the request.
-          </p>
-        </div>
-        <div class="tool reveal">
-          <div class="tool-row">
-            <button id="wmi-go" class="btn btn-secondary" type="button">Look me up</button>
-          </div>
-          <div class="tool-out" id="wmi-out" aria-live="polite"></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="mac-oui" class="bg-purple tool-section">
+    <section id="mac-oui" class="tool-section">
       <div class="container">
         <div class="reveal" style="max-width:880px;">
           <p class="eyebrow">Hardware identity</p>

@@ -1,4 +1,6 @@
-/* ionet tools — pure client-side utilities. Nothing sent to a server. */
+/* ionet tools — client-side utilities + Phase 2 server-side tool clients.
+   Browser tools never leave the device.
+   Server tools call /api/* through the Cloudflare Worker → Oracle VM. */
 (function () {
   "use strict";
 
@@ -6,6 +8,40 @@
   const $  = (id) => document.getElementById(id);
   const enc = new TextEncoder();
   const dec = new TextDecoder();
+
+  // Backend API base. Empty string = same-origin (`/api/*` → Cloudflare Worker
+  // → Oracle VM). Override via `localStorage.IONET_API_BASE = "https://...";`
+  // for ad-hoc testing against a Cloudflare quick-tunnel URL.
+  const API_BASE = (function () {
+    try {
+      const ls = localStorage.getItem("IONET_API_BASE");
+      if (ls) return ls.replace(/\/+$/, "");
+    } catch (_) { /* ignore */ }
+    return window.IONET_API_BASE || "";
+  })();
+  function apiUrl(path) { return API_BASE + path; }
+  async function apiPost(path, body) {
+    const r = await fetch(apiUrl(path), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "omit",
+      body: JSON.stringify(body || {}),
+    });
+    let data; try { data = await r.json(); } catch (_) { data = null; }
+    return { ok: r.ok, status: r.status, data };
+  }
+  async function apiGet(path) {
+    const r = await fetch(apiUrl(path), { credentials: "omit" });
+    let data; try { data = await r.json(); } catch (_) { data = null; }
+    return { ok: r.ok, status: r.status, data };
+  }
+  function networkError(out, err) {
+    setOut(out,
+      "Couldn't reach the ionet backend. The Phase 2 backend may not be deployed yet — see <a href=\"https://github.com/ikhal3d/ionet/blob/main/backend/DEPLOY.md\" rel=\"noopener\">backend/DEPLOY.md</a>." +
+      (err && err.message ? `<div style=\"margin-top:8px;color:var(--text-dim);font-size:0.85rem;\">Detail: ${escapeHTML(err.message)}</div>` : ""),
+      true
+    );
+  }
 
   function setOut(el, html, isError) {
     if (!el) return;
@@ -450,9 +486,7 @@
           ["Reverse DNS", d.hostname ? `<code>${escapeHTML(d.hostname)}</code>` : "—"],
           ["City",        escapeHTML(d.city || "—") + (d.region ? `, ${escapeHTML(d.region)}` : "")],
           ["Country",     `${escapeHTML(d.country_name || "")} (<code>${escapeHTML(d.country_code || "")}</code>)`],
-          ["Postal",      escapeHTML(d.postal || "—")],
           ["Timezone",    escapeHTML(d.timezone || "—") + (d.utc_offset ? ` (UTC${escapeHTML(d.utc_offset)})` : "")],
-          ["Latitude / Longitude", (d.latitude !== undefined && d.longitude !== undefined) ? `<code>${d.latitude}, ${d.longitude}</code>` : "—"],
           ["Organisation (ASN)", escapeHTML(d.org || d.asn || "—")],
           ["Network",     d.network ? `<code>${escapeHTML(d.network)}</code>` : "—"],
         ];
@@ -483,22 +517,28 @@
   // ---- MAC OUI vendor lookup ------------------------------------------------
   // The IEEE OUI registry is ~1.4 MB raw (~400 KB gzipped). We don't load it
   // on page boot — too heavy. The first time the user runs a lookup we fetch
-  // js/oui.js dynamically, build a Map, and answer. After that it's instant.
+  // /js/oui.js dynamically, build a Map, and answer. After that it's instant.
+  // Auto-fires the lookup as soon as 6 hex chars are recognised in the input
+  // (debounced ~250ms) so users don't need to click the button.
   (function ouiLookup() {
     const input = $("oui-input"), btn = $("oui-go"), out = $("oui-out");
     if (!input || !btn || !out) return;
-    let loaded = false, ouiMap = null;
+    let loaded = false, loading = null, ouiMap = null;
+
     function ensureLoaded() {
       if (loaded) return Promise.resolve();
-      if (window.IONET_OUI_BLOB) { return Promise.resolve(); }
-      return new Promise((resolve, reject) => {
+      if (window.IONET_OUI_BLOB) { loaded = true; return Promise.resolve(); }
+      if (loading) return loading;
+      loading = new Promise((resolve, reject) => {
         const s = document.createElement("script");
-        s.src = "js/oui.js";
+        // Absolute path — works from /tools.html, /tools/network.html, anywhere
+        s.src = "/js/oui.js";
         s.async = true;
-        s.onload = () => resolve();
-        s.onerror = () => reject(new Error("oui.js failed to load"));
+        s.onload = () => { loaded = true; resolve(); };
+        s.onerror = () => { loading = null; reject(new Error("oui.js failed to load")); };
         document.head.appendChild(s);
       });
+      return loading;
     }
     function buildIndex() {
       if (ouiMap) return;
@@ -518,9 +558,29 @@
       if (cleaned.length < 6) return null;
       return {
         oui: cleaned.slice(0, 6),
-        full: cleaned.length >= 12 ? cleaned.slice(0, 12) : null,
-        formatted: cleaned.match(/.{1,2}/g).join(":"),
+        formatted: cleaned.slice(0, Math.min(12, Math.floor(cleaned.length / 2) * 2)).match(/.{1,2}/g).join(":"),
       };
+    }
+    function render(norm) {
+      const vendor = ouiMap && ouiMap.get(norm.oui);
+      if (!vendor) {
+        setOut(out,
+          `<div style="color:var(--text-muted);">No OUI assignment found for <code>${escapeHTML(norm.oui)}</code>.</div>` +
+          `<div style="margin-top:8px;font-size:0.9rem;color:var(--text-dim);">Either the prefix is unassigned (rare), uses MA-M / MA-S extended assignment (28-bit / 36-bit), or is locally-administered (the second hex digit is 2/6/A/E).</div>`
+        );
+        return;
+      }
+      const rows = [
+        ["Input",         `<code>${escapeHTML(norm.formatted)}</code>`],
+        ["OUI prefix",    `<code>${norm.oui.match(/.{1,2}/g).join(":")}</code>`],
+        ["Vendor",        escapeHTML(vendor)],
+        ["Database size", `${(window.IONET_OUI_COUNT || 0).toLocaleString()} MA-L assignments`],
+      ];
+      setOut(out,
+        `<div style="font-size:1.1rem;color:#4ade80;margin-bottom:10px;"><strong>Vendor identified.</strong></div>` +
+        "<table>" + rows.map(([k, v]) => `<tr><th>${escapeHTML(k)}</th><td>${v}</td></tr>`).join("") + "</table>" +
+        `<div style="margin-top:12px;color:var(--text-dim);font-size:0.85rem;">Source: IEEE Registration Authority (<code>standards-oui.ieee.org</code>). Locally-administered, multicast, and randomised MACs won't appear in the registry.</div>`
+      );
     }
     async function go() {
       const norm = normaliseMac(input.value);
@@ -528,30 +588,13 @@
       btn.disabled = true;
       try {
         if (!ouiMap) {
-          setOut(out, `<div style="color:var(--text-muted);font-size:0.92rem;">Loading IEEE OUI database (~400 KB gzipped, one-time)…</div>`);
+          if (!window.IONET_OUI_BLOB) {
+            setOut(out, `<div style="color:var(--text-muted);font-size:0.92rem;">Loading IEEE OUI database (~400 KB gzipped, one-time)…</div>`);
+          }
           await ensureLoaded();
           buildIndex();
-          loaded = true;
         }
-        const vendor = ouiMap.get(norm.oui);
-        if (!vendor) {
-          setOut(out,
-            `<div style="color:var(--text-muted);">No OUI assignment found for <code>${escapeHTML(norm.oui)}</code>.</div>` +
-            `<div style="margin-top:8px;font-size:0.9rem;color:var(--text-dim);">Either the prefix is unassigned (rare), uses MA-M / MA-S extended assignment (28-bit / 36-bit), or is locally-administered (the second hex digit is 2/6/A/E).</div>`
-          );
-        } else {
-          const rows = [
-            ["MAC entered",      `<code>${escapeHTML(norm.formatted)}</code>`],
-            ["OUI prefix",       `<code>${norm.oui.match(/.{1,2}/g).join(":")}</code>`],
-            ["Vendor",           escapeHTML(vendor)],
-            ["Database size",    `${(window.IONET_OUI_COUNT || 0).toLocaleString()} MA-L assignments`],
-          ];
-          setOut(out,
-            `<div style="font-size:1.1rem;color:#4ade80;margin-bottom:10px;"><strong>Vendor identified.</strong></div>` +
-            "<table>" + rows.map(([k, v]) => `<tr><th>${escapeHTML(k)}</th><td>${v}</td></tr>`).join("") + "</table>" +
-            `<div style="margin-top:12px;color:var(--text-dim);font-size:0.85rem;">Source: IEEE Registration Authority (<code>standards-oui.ieee.org</code>). Locally-administered, multicast, and randomised MACs won't appear in the registry.</div>`
-          );
-        }
+        render(norm);
       } catch (e) {
         setOut(out, "Couldn't load the OUI database: " + escapeHTML(e.message || String(e)), true);
       } finally {
@@ -560,6 +603,264 @@
     }
     btn.addEventListener("click", go);
     input.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+
+    // Auto-detect: fire the lookup as soon as ≥6 hex chars present.
+    // Debounced so paste / fast typing doesn't trigger many lookups.
+    let debounce = null;
+    input.addEventListener("input", () => {
+      clearTimeout(debounce);
+      const norm = normaliseMac(input.value);
+      if (!norm) { setOut(out, ""); return; }
+      debounce = setTimeout(go, 250);
+    });
+
+    // Run once on initial load (the field has a default value)
+    if (input.value && normaliseMac(input.value)) go();
+  })();
+
+  // ===========================================================================
+  // Phase 2 server-side tool clients — fetch from /api/*
+  // ===========================================================================
+
+  // ---- Port reachability ----------------------------------------------------
+  (function portCheck() {
+    const host = $("p2-port-host"), port = $("p2-port-port"), btn = $("p2-port-go"), out = $("p2-port-out");
+    if (!host || !port || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const h = host.value.trim();
+      const p = parseInt(port.value, 10);
+      if (!h || !Number.isFinite(p)) { setOut(out, "Provide a host and pick a port.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Probing ${escapeHTML(h)}:${p} from the ionet network…</div>`);
+      try {
+        const r = await apiPost("/api/port", { host: h, port: p });
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status + (r.data && r.data.error ? ": " + escapeHTML(r.data.error || r.data.detail) : ""), true); btn.disabled = false; return; }
+        const d = r.data;
+        const verdictColor = d.open ? "#4ade80" : "#ff4d6d";
+        const verdictText  = d.open ? "Open" : "Closed";
+        setOut(out,
+          `<div style="font-size:1.15rem;color:${verdictColor};margin-bottom:10px;"><strong>${verdictText}</strong></div>` +
+          "<table>" +
+          `<tr><th>Host</th><td><code>${escapeHTML(d.host)}</code></td></tr>` +
+          `<tr><th>Port</th><td><code>${d.port}</code></td></tr>` +
+          (d.resolved_ip ? `<tr><th>Resolved IP</th><td><code>${escapeHTML(d.resolved_ip)}</code></td></tr>` : "") +
+          (d.ms !== null && d.ms !== undefined ? `<tr><th>RTT</th><td><code>${d.ms} ms</code></td></tr>` : "") +
+          (d.error ? `<tr><th>Error</th><td>${escapeHTML(d.error)}</td></tr>` : "") +
+          "</table>"
+        );
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
+  // ---- DNS lookup -----------------------------------------------------------
+  (function dnsLookup() {
+    const name = $("p2-dns-name"), type = $("p2-dns-type"), server = $("p2-dns-server"), dnssec = $("p2-dns-dnssec"), btn = $("p2-dns-go"), out = $("p2-dns-out");
+    if (!name || !type || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const body = { name: name.value.trim(), type: type.value };
+      if (server && server.value.trim()) body.server = server.value.trim();
+      if (dnssec && dnssec.checked) body.dnssec = true;
+      if (!body.name) { setOut(out, "Provide a DNS name.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Querying ${escapeHTML(body.type)} for ${escapeHTML(body.name)}…</div>`);
+      try {
+        const r = await apiPost("/api/dns", body);
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
+        const d = r.data;
+        if (d.error) { setOut(out, escapeHTML(d.error) + (d.server ? `<div style="color:var(--text-dim);font-size:0.85rem;margin-top:6px;">Resolver: ${escapeHTML(d.server)}</div>` : ""), true); btn.disabled = false; return; }
+        let html = `<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:8px;">Resolver: <code>${escapeHTML(d.server)}</code>${d.dnssec_validated === true ? " · <span style=\"color:#4ade80;\">DNSSEC validated</span>" : d.dnssec_validated === false ? " · <span style=\"color:#ff4d6d;\">DNSSEC failed</span>" : ""}</div>`;
+        if (!d.answers || !d.answers.length) {
+          html += `<div style="color:var(--text-muted);">No ${escapeHTML(d.type)} records.</div>`;
+        } else {
+          html += "<table><tr><th>Type</th><th>TTL</th><th>Data</th></tr>";
+          for (const a of d.answers) {
+            html += `<tr><td><code>${escapeHTML(a.type)}</code></td><td><code>${a.ttl}s</code></td><td><code>${escapeHTML(a.data)}</code></td></tr>`;
+          }
+          html += "</table>";
+        }
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
+  // ---- WHOIS / RDAP ---------------------------------------------------------
+  (function whoisLookup() {
+    const q = $("p2-whois-q"), btn = $("p2-whois-go"), out = $("p2-whois-out");
+    if (!q || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const query = q.value.trim();
+      if (!query) { setOut(out, "Provide a domain or IP address.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Looking up ${escapeHTML(query)}…</div>`);
+      try {
+        const r = await apiPost("/api/whois", { query });
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
+        const d = r.data;
+        if (d.error) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
+        let html = `<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:10px;">Query: <code>${escapeHTML(d.query)}</code> · Kind: <code>${escapeHTML(d.kind)}</code></div>`;
+        if (d.rdap) {
+          html += `<div style="color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:0.95rem;margin-bottom:6px;">RDAP</div>`;
+          html += `<pre style="margin:0;font-size:0.9rem;overflow-x:auto;">${escapeHTML(JSON.stringify(d.rdap, null, 2))}</pre>`;
+        } else if (d.whois) {
+          html += `<div style="color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:0.95rem;margin-bottom:6px;">WHOIS</div>`;
+          html += `<pre style="margin:0;font-size:0.9rem;overflow-x:auto;">${escapeHTML(d.whois)}</pre>`;
+        }
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
+  // ---- ASN / prefix lookup --------------------------------------------------
+  (function asnLookup() {
+    const q = $("p2-asn-q"), btn = $("p2-asn-go"), out = $("p2-asn-out");
+    if (!q || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const query = q.value.trim();
+      if (!query) { setOut(out, "Provide an ASN, IP, or prefix.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Looking up ${escapeHTML(query)} via RIPEstat…</div>`);
+      try {
+        const r = await apiPost("/api/asn", { query });
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
+        const d = r.data;
+        if (d.error) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
+        let html = "<table>";
+        if (d.asn !== null && d.asn !== undefined) html += `<tr><th>ASN</th><td><code>AS${d.asn}</code></td></tr>`;
+        if (d.holder) html += `<tr><th>Holder</th><td>${escapeHTML(d.holder)}</td></tr>`;
+        if (d.kind)   html += `<tr><th>Lookup kind</th><td><code>${escapeHTML(d.kind)}</code></td></tr>`;
+        if (d.origin_asns && d.origin_asns.length) html += `<tr><th>Origin ASNs</th><td>${d.origin_asns.map(a => `<code>AS${a}</code>`).join(" · ")}</td></tr>`;
+        html += "</table>";
+        if (d.prefixes && d.prefixes.length) {
+          html += `<div style="margin-top:14px;color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:0.95rem;margin-bottom:6px;">Announced prefixes (${d.prefixes.length})</div>`;
+          html += `<pre style="margin:0;font-size:0.9rem;max-height:300px;overflow-y:auto;">${d.prefixes.map(p => escapeHTML(p)).join("\n")}</pre>`;
+        }
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
+  // ---- TLS inspector --------------------------------------------------------
+  (function tlsInspect() {
+    const host = $("p2-tls-host"), port = $("p2-tls-port"), btn = $("p2-tls-go"), out = $("p2-tls-out");
+    if (!host || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const body = { host: host.value.trim(), port: parseInt((port && port.value) || "443", 10) };
+      if (!body.host) { setOut(out, "Provide a hostname.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Handshake with ${escapeHTML(body.host)}:${body.port}…</div>`);
+      try {
+        const r = await apiPost("/api/tls", body);
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
+        const d = r.data;
+        if (d.error) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
+        const cert = (d.chain && d.chain[0]) || null;
+        let html = `<table>`;
+        html += `<tr><th>Host</th><td><code>${escapeHTML(d.host)}:${d.port}</code></td></tr>`;
+        if (d.protocol) html += `<tr><th>Protocol</th><td><code>${escapeHTML(d.protocol)}</code></td></tr>`;
+        if (d.cipher)   html += `<tr><th>Cipher</th><td><code>${escapeHTML(d.cipher)}</code></td></tr>`;
+        html += `</table>`;
+        if (cert) {
+          const dr = cert.days_remaining;
+          const drColor = dr < 0 ? "#ff4d6d" : dr < 14 ? "#ffb833" : "#4ade80";
+          html += `<div style="margin-top:14px;color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:0.95rem;margin-bottom:6px;">Certificate</div>`;
+          html += `<table>`;
+          html += `<tr><th>Subject</th><td><code>${escapeHTML(cert.subject)}</code></td></tr>`;
+          html += `<tr><th>Issuer</th><td><code>${escapeHTML(cert.issuer)}</code></td></tr>`;
+          html += `<tr><th>Serial</th><td><code>${escapeHTML(cert.serial)}</code></td></tr>`;
+          html += `<tr><th>Valid from</th><td><code>${escapeHTML(cert.not_before)}</code></td></tr>`;
+          html += `<tr><th>Valid until</th><td><code>${escapeHTML(cert.not_after)}</code> · <span style="color:${drColor};font-weight:600;">${dr} days remaining</span></td></tr>`;
+          html += `<tr><th>Key</th><td><code>${escapeHTML(cert.key_type)}${cert.key_size ? " (" + cert.key_size + " bits)" : ""}</code></td></tr>`;
+          html += `<tr><th>Sig algorithm</th><td><code>${escapeHTML(cert.signature_algorithm)}</code></td></tr>`;
+          html += `<tr><th>Self-signed</th><td>${cert.is_self_signed ? "yes" : "no"}</td></tr>`;
+          if (cert.sans && cert.sans.length) html += `<tr><th>SANs (${cert.sans.length})</th><td><code>${cert.sans.map(escapeHTML).join("</code> · <code>")}</code></td></tr>`;
+          html += `</table>`;
+        }
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
+  // ---- HTTP security headers grader -----------------------------------------
+  (function headersGrade() {
+    const url = $("p2-headers-url"), btn = $("p2-headers-go"), out = $("p2-headers-out");
+    if (!url || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const u = url.value.trim();
+      if (!u) { setOut(out, "Provide an https URL.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Fetching headers from ${escapeHTML(u)}…</div>`);
+      try {
+        const r = await apiPost("/api/headers", { url: u });
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
+        const d = r.data;
+        if (d.error) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
+        const gradeColor = d.grade.startsWith("A") ? "#4ade80" : d.grade === "B" ? "#a8e88b" : d.grade === "C" ? "#ffb833" : "#ff4d6d";
+        const dashOffset = 528 - (d.score / 100) * 528;
+        let html = `<div class="score-mock" style="margin:0 0 8px;padding:18px;">`;
+        html += `<div class="score-gauge"><svg viewBox="0 0 200 200" width="160" height="160">`;
+        html += `<circle cx="100" cy="100" r="84" fill="none" stroke="rgba(106,45,199,0.25)" stroke-width="14"/>`;
+        html += `<circle cx="100" cy="100" r="84" fill="none" stroke="${gradeColor}" stroke-width="14" stroke-linecap="round" stroke-dasharray="528" stroke-dashoffset="${dashOffset.toFixed(1)}" transform="rotate(-90 100 100)"/>`;
+        html += `<text x="100" y="92" text-anchor="middle" font-family="Outfit, sans-serif" font-size="58" font-weight="800" fill="#f5f0ff">${escapeHTML(d.grade)}</text>`;
+        html += `<text x="100" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b8a8d6">${d.score} / 100</text>`;
+        html += `</svg><div class="score-label"><code>${escapeHTML(d.url)}</code><br><span>HTTP ${d.status} · ${d.checks.length} checks</span></div></div>`;
+        html += `<ul class="score-checks">`;
+        for (const c of d.checks) {
+          const cls = c.score > 0 ? "ok" : c.score < -10 ? "fail" : "warn";
+          const sign = c.score > 0 ? "+" : "";
+          html += `<li class="${cls}"><span>${escapeHTML(c.name)}</span><span>${escapeHTML(c.note || (c.value || ""))}</span><span class="pts">${sign}${c.score}</span></li>`;
+        }
+        html += `</ul></div>`;
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
+  // ---- AU outage feed -------------------------------------------------------
+  (function outagesView() {
+    const btn = $("p2-outages-go"), out = $("p2-outages-out");
+    if (!btn || !out) return;
+    async function go() {
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Fetching aggregator snapshot…</div>`);
+      try {
+        const r = await apiGet("/api/outages");
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
+        const d = r.data;
+        let html = `<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:12px;">Refreshed: <code>${escapeHTML(d.refreshed_at || "")}</code> · Active incidents: <strong>${d.totals && d.totals.active_incidents || 0}</strong> · Feeds responding: <strong>${d.totals && d.totals.feeds_responding || 0}</strong> / ${d.totals && d.totals.feeds_implemented || 0}</div>`;
+        const feeds = d.feeds || {};
+        for (const name of Object.keys(feeds)) {
+          const f = feeds[name];
+          const status = !f.implemented ? `<span style="color:var(--text-dim);">not yet implemented</span>` : f.responding ? `<span style="color:#4ade80;">responding · ${f.events.length} events</span>` : `<span style="color:#ff4d6d;">no response · ${escapeHTML(f.error || "")}</span>`;
+          html += `<div style="border-top:1px solid var(--border);padding:10px 0;"><strong style="text-transform:uppercase;font-family:var(--font-heading);font-size:0.92rem;">${escapeHTML(name)}</strong> · ${status}</div>`;
+          if (f.events && f.events.length) {
+            html += `<ul style="margin:6px 0 6px 18px;padding:0;font-size:0.9rem;color:var(--text-muted);">`;
+            for (const ev of f.events.slice(0, 5)) html += `<li><strong>${escapeHTML(ev.title || "")}</strong>${ev.published ? ` <span style="color:var(--text-dim);">· ${escapeHTML(ev.published)}</span>` : ""}</li>`;
+            html += `</ul>`;
+          }
+        }
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    }
+    btn.addEventListener("click", go);
+    // Auto-load when section visible the first time
+    if ("IntersectionObserver" in window) {
+      const wrap = btn.closest("section, article");
+      if (wrap) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) { go(); io.disconnect(); break; }
+          }
+        }, { threshold: 0.2 });
+        io.observe(wrap);
+      }
+    }
   })();
 
   // ---- Hash reverse-lookup --------------------------------------------------

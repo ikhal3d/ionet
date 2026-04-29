@@ -126,41 +126,18 @@
         </article>
 
         <article id="tool-web-score" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
           <h3>Website Security Score</h3>
-          <p>Composite grade — Mozilla Observatory + SSL Labs + our own checks. Below is a preview of the result UI:</p>
-
-          <div class="score-mock" role="img" aria-label="Mock-up of the website security score gauge — example grade A-, score 87 of 100">
-            <div class="score-gauge">
-              <svg viewBox="0 0 200 200" width="180" height="180">
-                <circle cx="100" cy="100" r="84" fill="none" stroke="rgba(106,45,199,0.25)" stroke-width="14"/>
-                <circle cx="100" cy="100" r="84" fill="none" stroke="url(#scoreGrad)" stroke-width="14"
-                        stroke-linecap="round" stroke-dasharray="528"
-                        stroke-dashoffset="69"
-                        transform="rotate(-90 100 100)"/>
-                <defs>
-                  <linearGradient id="scoreGrad" x1="0" x2="1" y1="0" y2="1">
-                    <stop offset="0%"  stop-color="#4ade80"/>
-                    <stop offset="100%" stop-color="#ffb833"/>
-                  </linearGradient>
-                </defs>
-                <text x="100" y="92" text-anchor="middle" font-family="Outfit, sans-serif" font-size="58" font-weight="800" fill="#f5f0ff">A-</text>
-                <text x="100" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b8a8d6">87 / 100</text>
-              </svg>
-              <div class="score-label">example.com<br><span>scanned 14&nbsp;hops · 7 checks · 1 finding</span></div>
+          <p>Live composite grade — fetches the URL via the ionet backend and grades response headers (HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy) using the same checklist Mozilla Observatory uses.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>URL to score</span>
+                <input id="p2-headers-url" type="text" autocomplete="off" spellcheck="false" placeholder="https://example.com" value="https://cloudflare.com">
+              </label>
+              <button id="p2-headers-go" class="btn btn-secondary" type="button">Score it</button>
             </div>
-            <ul class="score-checks">
-              <li class="ok"><span>HSTS</span><span>max-age 31536000 + includeSubDomains</span><span class="pts">+25</span></li>
-              <li class="ok"><span>X-Content-Type-Options</span><span>nosniff</span><span class="pts">+10</span></li>
-              <li class="ok"><span>Referrer-Policy</span><span>strict-origin-when-cross-origin</span><span class="pts">+10</span></li>
-              <li class="ok"><span>TLS</span><span>1.3 · ECDHE-RSA-CHACHA20 · A grade chain</span><span class="pts">+25</span></li>
-              <li class="warn"><span>Content-Security-Policy</span><span>contains 'unsafe-inline'</span><span class="pts">−12</span></li>
-              <li class="ok"><span>Cookies</span><span>all Secure · HttpOnly · SameSite=Lax</span><span class="pts">+8</span></li>
-              <li class="warn"><span>Mixed content</span><span>1 http:// resource on /assets/old-logo.png</span><span class="pts">−4</span></li>
-            </ul>
+            <div class="tool-out" id="p2-headers-out" aria-live="polite"></div>
           </div>
-
-          <p style="margin-top:18px;color:var(--text-dim);font-size:0.92rem;">Mock-up — values are illustrative. Live scoring goes through the Phase 2 backend so API keys (Mozilla Observatory, SSL Labs, etc.) stay secret and rate limits apply per IP.</p>
+          <p style="margin-top:18px;color:var(--text-dim);font-size:0.85rem;">Future: combine with SSL Labs grade + cookie / mixed-content scans for a fuller composite. Currently scores headers only.</p>
         </article>
 
         <article id="tool-cve" class="phase2-tool reveal">

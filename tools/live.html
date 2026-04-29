@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0c0a24">
 
-  <title>Live Network Tools — BGP Looking Glass, Traceroute, DNS · ionet</title>
-  <meta name="description" content="Server-side network diagnostics from the ionet network — BGP looking glass, live traceroute & ping, TCP port reachability, DNS / DNSSEC, WHOIS / RDAP, ASN lookup, TLS inspector, HTTP security headers, AU outage feed. Phase 2 deployment.">
-  <meta name="keywords" content="bgp looking glass, online traceroute, mtr online, port checker, dns lookup online, dnssec validator, whois rdap, asn lookup, online tls checker, http security headers grader, nbn outage, telstra outage, australia outage feed">
+  <title>Live Network Tools — BGP, Traceroute, DNS, What is my IP · ionet</title>
+  <meta name="description" content="Live network diagnostics — BGP looking glass, traceroute & ping, TCP port reachability, DNS / DNSSEC, WHOIS / RDAP, ASN lookup, TLS inspector, HTTP security headers, AU outage feed, plus a What-is-my-IP utility.">
+  <meta name="keywords" content="bgp looking glass, online traceroute, mtr online, port checker, dns lookup online, dnssec validator, whois rdap, asn lookup, online tls checker, http security headers grader, what is my ip, public ip lookup, nbn outage, telstra outage, australia outage feed">
   <link rel="canonical" href="https://ionet.com.au/tools/live.html">
 
   <meta property="og:type" content="website">
@@ -84,6 +84,12 @@
     <section id="tool-grid">
       <div class="container">
         <div class="services-grid">
+          <a class="service tool-card reveal" href="#what-is-my-ip">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2c2.5 3 4 6.6 4 10s-1.5 7-4 10c-2.5-3-4-6.6-4-10s1.5-7 4-10z"/></svg></div>
+            <h3>What is my IP?</h3>
+            <p>Public IP, reverse DNS, geolocation, ASN of your current connection. Calls a CORS-friendly public echo service.</p>
+          </a>
           <a class="service tool-card reveal" href="#tool-bgp">
             <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
             <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div>
@@ -142,61 +148,160 @@
       </div>
     </section>
 
+    <section id="what-is-my-ip" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">🔒 Browser tool</p>
+          <h2>What is my IP?</h2>
+          <p>
+            Discover your apparent public IP, reverse DNS, city/country, timezone, and the ASN
+            announcing your network — all from your current connection. Calls
+            <a href="https://ipapi.co/" rel="noopener">ipapi.co</a> with ipify as a fallback. Runs
+            in your browser; nothing is sent through the ionet backend.
+          </p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <button id="wmi-go" class="btn btn-secondary" type="button">Look me up</button>
+          </div>
+          <div class="tool-out" id="wmi-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
     <section id="phase-2" class="bg-purple">
       <div class="container">
-        <article id="tool-bgp" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
-          <h3>BGP Looking Glass</h3>
-          <p><code>show ip bgp &lt;prefix&gt;</code>, peer summary, AS-path views, plus ping &amp; traceroute from our routers. Powered by <a href="https://hyperglass.dev" rel="noopener">hyperglass</a> at <code>lg.ionet.com.au</code>.</p>
-        </article>
-
-        <article id="tool-traceroute" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
-          <h3>Traceroute &amp; Ping (Live)</h3>
-          <p>Real-time hop-by-hop ICMP path tracing from our PoP, with rolling RTT &amp; loss per hop. Output rendered as a hop table plus an inline sparkline per hop.</p>
-        </article>
 
         <article id="tool-port" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
           <h3>Port Reachability Check</h3>
-          <p>Single host, single port from a small allowlist (22 / 25 / 53 / 80 / 443 / …). Cloudflare Turnstile captcha required, rate-limited per IP, RFC1918/loopback rejected. Deliberately narrow — this is not a scanner.</p>
+          <p>Probe a single TCP port on any host from the ionet network. Allowlisted ports only (22 / 25 / 53 / 80 / 443 / 465 / 587 / 853 / 993 / 995 / 3306 / 5432 / 6379 / 8080 / 8443 / 9200). Rejects RFC1918, loopback, link-local. Not a scanner.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>Host</span>
+                <input id="p2-port-host" type="text" autocomplete="off" spellcheck="false" placeholder="example.com" value="cloudflare.com">
+              </label>
+              <label class="tool-field"><span>Port</span>
+                <select id="p2-port-port">
+                  <option>22</option><option>25</option><option>53</option><option selected>80</option>
+                  <option>443</option><option>465</option><option>587</option><option>853</option>
+                  <option>993</option><option>995</option><option>3306</option><option>5432</option>
+                  <option>6379</option><option>8080</option><option>8443</option><option>9200</option>
+                </select>
+              </label>
+              <button id="p2-port-go" class="btn btn-secondary" type="button">Probe</button>
+            </div>
+            <div class="tool-out" id="p2-port-out" aria-live="polite"></div>
+          </div>
         </article>
 
         <article id="tool-dns" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
           <h3>DNS / DNSSEC Lookup</h3>
-          <p>A, AAAA, CNAME, MX, TXT, NS, SOA, CAA, SRV, PTR, DS, DNSKEY queries via dnspython. Optional DNSSEC chain validation. Configurable resolver (default 1.1.1.1, 8.8.8.8, 9.9.9.9).</p>
+          <p>Authoritative DNS queries via dnspython, optional DNSSEC chain validation, configurable resolver.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>Name</span>
+                <input id="p2-dns-name" type="text" autocomplete="off" spellcheck="false" placeholder="ionet.com.au" value="cloudflare.com">
+              </label>
+              <label class="tool-field"><span>Type</span>
+                <select id="p2-dns-type">
+                  <option selected>A</option><option>AAAA</option><option>CNAME</option><option>MX</option>
+                  <option>TXT</option><option>NS</option><option>SOA</option><option>CAA</option>
+                  <option>SRV</option><option>PTR</option><option>DS</option><option>DNSKEY</option>
+                </select>
+              </label>
+              <label class="tool-field"><span>Resolver (optional)</span>
+                <input id="p2-dns-server" type="text" autocomplete="off" spellcheck="false" placeholder="1.1.1.1">
+              </label>
+              <label class="tool-check"><input type="checkbox" id="p2-dns-dnssec"> Validate DNSSEC</label>
+              <button id="p2-dns-go" class="btn btn-secondary" type="button">Query</button>
+            </div>
+            <div class="tool-out" id="p2-dns-out" aria-live="polite"></div>
+          </div>
         </article>
 
         <article id="tool-whois" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
           <h3>WHOIS / RDAP</h3>
-          <p>Modern <a href="https://about.rdap.org/" rel="noopener">RDAP</a>-first lookups for domains and IPs (proper structured JSON), with <code>python-whois</code> fallback for legacy gTLDs &amp; ccTLDs that haven't migrated.</p>
+          <p>RDAP-first lookups (modern, structured) with python-whois fallback for legacy TLDs.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>Domain or IP</span>
+                <input id="p2-whois-q" type="text" autocomplete="off" spellcheck="false" placeholder="cloudflare.com or 1.1.1.1" value="1.1.1.1">
+              </label>
+              <button id="p2-whois-go" class="btn btn-secondary" type="button">Look up</button>
+            </div>
+            <div class="tool-out" id="p2-whois-out" aria-live="polite"></div>
+          </div>
         </article>
 
         <article id="tool-asn" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
           <h3>ASN / Prefix Lookup</h3>
-          <p>AS holder, country, announced prefixes; or IP/prefix → origin ASN. Backed by <a href="https://stat.ripe.net/" rel="noopener">RIPEstat</a> (free, fair-use).</p>
+          <p>AS holder + announced prefixes for an ASN, or origin ASN(s) for an IP / prefix. Backed by <a href="https://stat.ripe.net/" rel="noopener">RIPEstat</a>.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>ASN, IP, or prefix</span>
+                <input id="p2-asn-q" type="text" autocomplete="off" spellcheck="false" placeholder="AS13335, 1.1.1.1, or 1.1.1.0/24" value="AS13335">
+              </label>
+              <button id="p2-asn-go" class="btn btn-secondary" type="button">Look up</button>
+            </div>
+            <div class="tool-out" id="p2-asn-out" aria-live="polite"></div>
+          </div>
         </article>
 
         <article id="tool-tls" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
           <h3>TLS / SSL Inspector</h3>
-          <p>Live handshake against host:port; reports the certificate chain, expiry countdown, key type / size, signature algorithm, and supported ciphers. Reports what the server actually presents — doesn't enforce trust.</p>
+          <p>Live handshake — certificate chain, expiry countdown, key type / size, signature algorithm, and negotiated cipher. Reports what the server actually presents.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>Host</span>
+                <input id="p2-tls-host" type="text" autocomplete="off" spellcheck="false" placeholder="example.com" value="cloudflare.com">
+              </label>
+              <label class="tool-field"><span>Port</span>
+                <input id="p2-tls-port" type="number" min="1" max="65535" value="443">
+              </label>
+              <button id="p2-tls-go" class="btn btn-secondary" type="button">Inspect</button>
+            </div>
+            <div class="tool-out" id="p2-tls-out" aria-live="polite"></div>
+          </div>
         </article>
 
         <article id="tool-headers" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
           <h3>HTTP Security Headers</h3>
-          <p>Grades CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy. Returns A+ to F with a per-check score and rationale, like Mozilla Observatory.</p>
+          <p>Grades HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy — the Mozilla-Observatory checklist. Returns A+ to F with a per-check breakdown and a fancy gauge.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>URL</span>
+                <input id="p2-headers-url" type="text" autocomplete="off" spellcheck="false" placeholder="https://example.com" value="https://cloudflare.com">
+              </label>
+              <button id="p2-headers-go" class="btn btn-secondary" type="button">Grade</button>
+            </div>
+            <div class="tool-out" id="p2-headers-out" aria-live="polite"></div>
+          </div>
         </article>
 
         <article id="tool-outages" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
           <h3>AU Outage Status</h3>
-          <p>Aggregated NBN Co · Telstra · Optus · TPG · Aussie Outages feeds, refreshed every 5 minutes. Surfaces incidents on the AU command-centre map as red dots with tooltip detail.</p>
+          <p>Aggregated NBN Co · Telstra · Optus · TPG · Aussie Outages feeds, refreshed every 5 minutes by the outage-aggregator container.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <button id="p2-outages-go" class="btn btn-secondary" type="button">Refresh</button>
+              <span style="font-size:0.85rem;color:var(--text-dim);">Auto-loads when this section comes into view.</span>
+            </div>
+            <div class="tool-out" id="p2-outages-out" aria-live="polite"></div>
+          </div>
         </article>
+
+        <article id="tool-bgp" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Hyperglass not yet deployed</span>
+          <h3>BGP Looking Glass</h3>
+          <p><code>show ip bgp &lt;prefix&gt;</code>, peer summary, AS-path views, plus ping &amp; traceroute from our routers. Powered by <a href="https://hyperglass.dev" rel="noopener">hyperglass</a> at <code>lg.ionet.com.au</code>. Lights up once a router target (real BGP gear or FRR/BIRD on the VM) is configured — see <a href="https://github.com/ikhal3d/ionet/blob/main/backend/hyperglass/README.md" rel="noopener">backend/hyperglass/README.md</a>.</p>
+        </article>
+
+        <article id="tool-traceroute" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Endpoint pending</span>
+          <h3>Traceroute &amp; Ping (Live)</h3>
+          <p>Real-time hop-by-hop ICMP path tracing from our PoP, with rolling RTT &amp; loss per hop. Endpoint will land in a follow-up commit (<code>/api/trace</code>) once we wire WebSocket streaming for the live hop updates.</p>
+        </article>
+
       </div>
     </section>
 
@@ -259,6 +364,7 @@
   </footer>
 
   <script src="/js/main.js"></script>
+  <script src="/js/tools.js"></script>
   <script>
     (function(){
       var input=document.querySelector('.tool-search');
