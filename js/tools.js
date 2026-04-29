@@ -1000,19 +1000,34 @@
       for (const a of asns) if (collapsed[collapsed.length - 1] !== a) collapsed.push(a);
       // Reverse so position 1 = origin AS (per user request — most natural reading)
       const ordered = [...collapsed].reverse();
-      return ordered.map((a, i) => {
+
+      // Build pill+arrow pairs. The whole list lives inside a flex-wrap
+      // container so long paths (6+ hops) wrap to multiple lines instead
+      // of forcing horizontal scroll. Each pill is itself nowrap so an
+      // AS code never breaks across lines.
+      const pieces = [];
+      ordered.forEach((a, i) => {
         const isOrigin = i === 0;
         const isPeer   = i === ordered.length - 1 && ordered.length > 1;
-        const num = i + 1;
-        const badgeBg = isOrigin ? "var(--logo-pink)" : "rgba(204,153,0,0.55)";
+        const num      = i + 1;
+        const badgeBg  = isOrigin ? "var(--logo-pink)" : "rgba(204,153,0,0.55)";
         const codeColor = isOrigin ? "color:var(--logo-pink);font-weight:700;" : "color:var(--accent-2);";
-        const role = isOrigin ? '<span style="color:var(--text-muted);font-size:0.78rem;margin-left:4px;">origin</span>' :
-                     isPeer   ? '<span style="color:var(--text-muted);font-size:0.78rem;margin-left:4px;">at peer</span>' : "";
-        return `<span style="display:inline-flex;align-items:center;white-space:nowrap;">` +
-                  `<span style="display:inline-block;min-width:18px;height:18px;border-radius:50%;background:${badgeBg};color:#0c0a24;font-size:11px;font-weight:700;text-align:center;line-height:18px;padding:0 4px;margin-right:5px;">${num}</span>` +
-                  `<code style="${codeColor}">AS${escapeHTML(a)}</code>${role}` +
-               `</span>`;
-      }).join(`<span style="color:var(--text-dim);margin:0 6px;">→</span>`);
+        const role     = isOrigin ? '<span style="color:var(--text-muted);font-size:0.78rem;margin-left:4px;">origin</span>' :
+                         isPeer   ? '<span style="color:var(--text-muted);font-size:0.78rem;margin-left:4px;">at peer</span>' : "";
+        pieces.push(
+          `<span style="display:inline-flex;align-items:center;white-space:nowrap;">` +
+            `<span style="display:inline-block;min-width:18px;height:18px;border-radius:50%;background:${badgeBg};color:#0c0a24;font-size:11px;font-weight:700;text-align:center;line-height:18px;padding:0 4px;margin-right:5px;">${num}</span>` +
+            `<code style="${codeColor}">AS${escapeHTML(a)}</code>${role}` +
+          `</span>`
+        );
+        if (i < ordered.length - 1) {
+          pieces.push(`<span style="color:var(--text-dim);">→</span>`);
+        }
+      });
+
+      return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;white-space:normal;line-height:1.7;">` +
+             pieces.join("") +
+             `</div>`;
     }
 
     btn.addEventListener("click", async () => {

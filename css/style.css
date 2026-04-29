@@ -1363,6 +1363,9 @@ form.contact-form {
   overflow-wrap: normal;
   word-break: normal;
 }
+/* Cells that explicitly contain a wrapping path container should let it wrap.
+   The flex container's own white-space:normal handles per-pill rendering. */
+.tool-out td:has(> div[style*="flex-wrap"]) { white-space: normal; }
 .tool-out th {
   color: var(--text-muted);
   font-weight: 500;
