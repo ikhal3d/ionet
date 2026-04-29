@@ -429,6 +429,232 @@
     go();
   })();
 
+  // ---- What is my IP --------------------------------------------------------
+  // Calls a public CORS-enabled service to discover the client's apparent
+  // public IP. Primary: ipapi.co (returns IP + city/region/country/org).
+  // Fallback: ipify.org (just the IP). User input/data is the request itself
+  // — no input fields to send.
+  (function whatIsMyIp() {
+    const btn = $("wmi-go"), out = $("wmi-out");
+    if (!btn || !out) return;
+    async function go() {
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);font-size:0.92rem;">Asking ipapi.co…</div>`);
+      try {
+        const r = await fetch("https://ipapi.co/json/", { credentials: "omit" });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        const d = await r.json();
+        if (d.error) throw new Error(d.reason || "ipapi error");
+        const rows = [
+          ["IP address",  `<code>${escapeHTML(d.ip || "")}</code> ${copyButton(d.ip || "")}`],
+          ["Reverse DNS", d.hostname ? `<code>${escapeHTML(d.hostname)}</code>` : "—"],
+          ["City",        escapeHTML(d.city || "—") + (d.region ? `, ${escapeHTML(d.region)}` : "")],
+          ["Country",     `${escapeHTML(d.country_name || "")} (<code>${escapeHTML(d.country_code || "")}</code>)`],
+          ["Postal",      escapeHTML(d.postal || "—")],
+          ["Timezone",    escapeHTML(d.timezone || "—") + (d.utc_offset ? ` (UTC${escapeHTML(d.utc_offset)})` : "")],
+          ["Latitude / Longitude", (d.latitude !== undefined && d.longitude !== undefined) ? `<code>${d.latitude}, ${d.longitude}</code>` : "—"],
+          ["Organisation (ASN)", escapeHTML(d.org || d.asn || "—")],
+          ["Network",     d.network ? `<code>${escapeHTML(d.network)}</code>` : "—"],
+        ];
+        const html = "<table>" + rows.map(([k, v]) => `<tr><th>${escapeHTML(k)}</th><td>${v}</td></tr>`).join("") + "</table>" +
+          `<div style="margin-top:12px;color:var(--text-dim);font-size:0.85rem;">Data source: <a href="https://ipapi.co/" rel="noopener">ipapi.co</a> (free public API, rate-limited).</div>`;
+        setOut(out, html);
+      } catch (e) {
+        // Fallback to ipify (just the IP)
+        try {
+          const r2 = await fetch("https://api.ipify.org?format=json", { credentials: "omit" });
+          const d2 = await r2.json();
+          setOut(out,
+            `<div style="color:#ffb1bf;margin-bottom:8px;">ipapi.co didn't respond — falling back to ipify.</div>` +
+            `<table><tr><th>IP address</th><td><code>${escapeHTML(d2.ip)}</code> ${copyButton(d2.ip)}</td></tr></table>`
+          );
+        } catch (e2) {
+          setOut(out, "Couldn't reach any IP-echo service. Are you online?", true);
+        }
+      } finally {
+        btn.disabled = false;
+      }
+    }
+    btn.addEventListener("click", go);
+    // auto-run on page load if the user navigates straight to the section
+    if (location.hash === "#what-is-my-ip") setTimeout(go, 200);
+  })();
+
+  // ---- MAC OUI vendor lookup ------------------------------------------------
+  // The IEEE OUI registry is ~1.4 MB raw (~400 KB gzipped). We don't load it
+  // on page boot — too heavy. The first time the user runs a lookup we fetch
+  // js/oui.js dynamically, build a Map, and answer. After that it's instant.
+  (function ouiLookup() {
+    const input = $("oui-input"), btn = $("oui-go"), out = $("oui-out");
+    if (!input || !btn || !out) return;
+    let loaded = false, ouiMap = null;
+    function ensureLoaded() {
+      if (loaded) return Promise.resolve();
+      if (window.IONET_OUI_BLOB) { return Promise.resolve(); }
+      return new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "js/oui.js";
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error("oui.js failed to load"));
+        document.head.appendChild(s);
+      });
+    }
+    function buildIndex() {
+      if (ouiMap) return;
+      ouiMap = new Map();
+      const blob = window.IONET_OUI_BLOB || "";
+      let i = 0;
+      while (i < blob.length) {
+        const sep = blob.indexOf("\x1f", i);
+        const eol = blob.indexOf("\n", i);
+        if (sep === -1 || eol === -1 || sep > eol) break;
+        ouiMap.set(blob.slice(i, sep), blob.slice(sep + 1, eol));
+        i = eol + 1;
+      }
+    }
+    function normaliseMac(s) {
+      const cleaned = s.toUpperCase().replace(/[^0-9A-F]/g, "");
+      if (cleaned.length < 6) return null;
+      return {
+        oui: cleaned.slice(0, 6),
+        full: cleaned.length >= 12 ? cleaned.slice(0, 12) : null,
+        formatted: cleaned.match(/.{1,2}/g).join(":"),
+      };
+    }
+    async function go() {
+      const norm = normaliseMac(input.value);
+      if (!norm) { setOut(out, "Provide at least 3 bytes (6 hex chars) — any of <code>AA:BB:CC</code>, <code>AA-BB-CC</code>, or <code>AABBCC</code> is fine.", true); return; }
+      btn.disabled = true;
+      try {
+        if (!ouiMap) {
+          setOut(out, `<div style="color:var(--text-muted);font-size:0.92rem;">Loading IEEE OUI database (~400 KB gzipped, one-time)…</div>`);
+          await ensureLoaded();
+          buildIndex();
+          loaded = true;
+        }
+        const vendor = ouiMap.get(norm.oui);
+        if (!vendor) {
+          setOut(out,
+            `<div style="color:var(--text-muted);">No OUI assignment found for <code>${escapeHTML(norm.oui)}</code>.</div>` +
+            `<div style="margin-top:8px;font-size:0.9rem;color:var(--text-dim);">Either the prefix is unassigned (rare), uses MA-M / MA-S extended assignment (28-bit / 36-bit), or is locally-administered (the second hex digit is 2/6/A/E).</div>`
+          );
+        } else {
+          const rows = [
+            ["MAC entered",      `<code>${escapeHTML(norm.formatted)}</code>`],
+            ["OUI prefix",       `<code>${norm.oui.match(/.{1,2}/g).join(":")}</code>`],
+            ["Vendor",           escapeHTML(vendor)],
+            ["Database size",    `${(window.IONET_OUI_COUNT || 0).toLocaleString()} MA-L assignments`],
+          ];
+          setOut(out,
+            `<div style="font-size:1.1rem;color:#4ade80;margin-bottom:10px;"><strong>Vendor identified.</strong></div>` +
+            "<table>" + rows.map(([k, v]) => `<tr><th>${escapeHTML(k)}</th><td>${v}</td></tr>`).join("") + "</table>" +
+            `<div style="margin-top:12px;color:var(--text-dim);font-size:0.85rem;">Source: IEEE Registration Authority (<code>standards-oui.ieee.org</code>). Locally-administered, multicast, and randomised MACs won't appear in the registry.</div>`
+          );
+        }
+      } catch (e) {
+        setOut(out, "Couldn't load the OUI database: " + escapeHTML(e.message || String(e)), true);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+    btn.addEventListener("click", go);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  })();
+
+  // ---- Hash reverse-lookup --------------------------------------------------
+  // Cryptographic hashes are one-way functions: there is no mathematical
+  // "unhash". The only avenue is a rainbow-table lookup — hash every entry
+  // in a wordlist, compare. We bundle the SecLists top-10000 common
+  // passwords (~83 KB) and check input hashes against MD5/SHA-1/256/384/512
+  // of each.
+  (function hashCrack() {
+    const input = $("hc-input"), btn = $("hc-go"), out = $("hc-out");
+    if (!input || !btn || !out) return;
+
+    function detectAlgo(hex) {
+      const h = hex.trim().toLowerCase();
+      if (!/^[0-9a-f]+$/.test(h)) return null;
+      switch (h.length) {
+        case 32:  return { algo: "MD5",      digest: md5Digest };
+        case 40:  return { algo: "SHA-1",    digest: webDigest("SHA-1") };
+        case 64:  return { algo: "SHA-256",  digest: webDigest("SHA-256") };
+        case 96:  return { algo: "SHA-384",  digest: webDigest("SHA-384") };
+        case 128: return { algo: "SHA-512",  digest: webDigest("SHA-512") };
+        default:  return null;
+      }
+    }
+    async function md5Digest(s) { return window.IONET_MD5(s); }
+    function webDigest(name) {
+      return async function (s) {
+        const buf = await crypto.subtle.digest(name, enc.encode(s));
+        return bytesToHex(buf);
+      };
+    }
+
+    async function go() {
+      const target = input.value.trim().toLowerCase();
+      if (!target) { setOut(out, "Paste a hash to look up.", true); return; }
+      const det = detectAlgo(target);
+      if (!det) {
+        setOut(out, "Couldn't detect a hash algorithm from the input length. Expected 32 (MD5) / 40 (SHA-1) / 64 (SHA-256) / 96 (SHA-384) / 128 (SHA-512) hex characters.", true);
+        return;
+      }
+      if (det.algo === "MD5" && typeof window.IONET_MD5 !== "function") {
+        setOut(out, "MD5 helper not loaded. (Reload the page.)", true);
+        return;
+      }
+      const wordlist = window.IONET_WORDLIST_TOP10K || [];
+      if (!wordlist.length) {
+        setOut(out, "Wordlist not loaded. (Reload the page.)", true);
+        return;
+      }
+
+      btn.disabled = true;
+      const startedAt = performance.now();
+      setOut(out, `<div style="color:var(--text-muted);font-size:0.92rem;">Searching ${det.algo} against ${wordlist.length.toLocaleString()} common passwords…</div>`);
+
+      // Yield to the browser every batch so the UI can paint progress
+      let found = null;
+      const BATCH = det.algo === "MD5" ? 1000 : 500;   // sync MD5 is faster than async webcrypto round-trip
+      for (let i = 0; i < wordlist.length && !found; i += BATCH) {
+        const slice = wordlist.slice(i, i + BATCH);
+        for (const word of slice) {
+          // For MD5 (sync), compute directly. For others (async), Promise.all is slow per-call;
+          // sequential await is fine for 10k * ~50µs each.
+          const hashHex = await det.digest(word);
+          if (hashHex === target) { found = { word, rank: i + slice.indexOf(word) + 1 }; break; }
+        }
+        if (!found && i % 2000 === 0) {
+          const pct = Math.min(100, Math.round((i / wordlist.length) * 100));
+          setOut(out, `<div style="color:var(--text-muted);font-size:0.92rem;">Searching ${det.algo}… ${pct}%</div>`);
+          // Yield to event loop so the progress text actually paints
+          await new Promise(r => setTimeout(r, 0));
+        }
+      }
+      const ms = Math.round(performance.now() - startedAt);
+      btn.disabled = false;
+
+      if (found) {
+        const row = (k, v) => `<tr><th>${escapeHTML(k)}</th><td>${v}</td></tr>`;
+        setOut(out,
+          `<div style="font-size:1.1rem;color:#4ade80;margin-bottom:10px;"><strong>Match found.</strong></div>` +
+          `<table>${row("Algorithm",     `<code>${escapeHTML(det.algo)}</code>`)}` +
+          `${row("Plaintext",     `<code>${escapeHTML(found.word)}</code> ${copyButton(found.word)}`)}` +
+          `${row("Wordlist rank", `#${found.rank.toLocaleString()} of ${wordlist.length.toLocaleString()}`)}` +
+          `${row("Search time",   `${ms} ms`)}</table>`);
+      } else {
+        setOut(out,
+          `<div style="font-size:1.05rem;color:var(--accent-2);margin-bottom:10px;"><strong>No match in top-${wordlist.length.toLocaleString()} common passwords.</strong></div>` +
+          `<div style="color:var(--text-muted);">Searched ${det.algo} (${ms} ms). The hash isn't of a common weak password — its plaintext, if recoverable at all, requires a much larger wordlist or GPU brute-force (try <code>hashcat</code> or <code>john</code>).</div>` +
+          `<div style="margin-top:14px;color:var(--text-dim);font-size:0.92rem;">Reminder: hashes are one-way. Lookup tools only succeed for already-known hash → plaintext mappings.</div>`
+        );
+      }
+    }
+    btn.addEventListener("click", go);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); go(); } });
+  })();
+
   // ---- Text ↔ Hex ↔ Binary --------------------------------------------------
   (function textconv() {
     const input = $("tx-input"), out = $("tx-out");
