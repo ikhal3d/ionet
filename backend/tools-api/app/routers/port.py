@@ -1,7 +1,15 @@
 """TCP port reachability check.
 
-Deliberately narrow: a single host + a single port from a small allowlist.
-Not a port scanner. Rejects RFC1918, loopback, link-local, and multicast.
+Probes one host on **up to 10 user-specified ports** in parallel.
+Still narrow enough that this isn't a scanner — nmap scans 65k ports
+across thousands of hosts; we cap one host × ten ports per request.
+
+Guards:
+  * Resolves the target once and connects by IP — defeats DNS rebinding.
+  * Refuses RFC1918 / loopback / link-local / multicast / reserved IPs.
+  * Per-probe timeout 5s; total request budget ~6s for 10 parallel probes.
+  * Cloudflare Turnstile gate (REQUIRE_TURNSTILE=true) for abuse control.
+  * Cloudflare WAF rate limits hit before we ever see the request.
 """
 
 import asyncio
@@ -15,26 +23,32 @@ from ..turnstile import verify as verify_turnstile
 
 router = APIRouter()
 
-# Common service ports — keep the surface small.
-ALLOWED_PORTS = {
-    22, 25, 53, 80, 443, 465, 587, 853, 993, 995,
-    3306, 5432, 6379, 8080, 8443, 9200,
-}
+MAX_PORTS_PER_REQUEST = 10
 TIMEOUT_SECONDS = 5.0
 
 
 class PortReq(BaseModel):
     host: str = Field(..., min_length=1, max_length=253)
-    port: int = Field(..., ge=1, le=65535)
+    # Accept either a single port (legacy) or a list (new, preferred)
+    port: int | None = Field(None, ge=1, le=65535)
+    ports: list[int] | None = Field(None)
     turnstile_token: str | None = None
+
+
+class PortProbe(BaseModel):
+    port: int
+    open: bool
+    ms: float | None = None
+    error: str | None = None
 
 
 class PortRes(BaseModel):
     host: str
-    port: int
-    open: bool
-    ms: float | None = None
     resolved_ip: str | None = None
+    probes: list[PortProbe] = []
+    open_count: int = 0
+    total_count: int = 0
+    summary: str | None = None
     error: str | None = None
 
 
@@ -49,45 +63,67 @@ def _is_private_or_reserved(addr: str) -> bool:
     )
 
 
-@router.post("/port", response_model=PortRes)
-async def port_check(req: PortReq, request: Request):
-    if req.port not in ALLOWED_PORTS:
-        raise HTTPException(
-            400,
-            f"port {req.port} not in allow-list. Supported: {sorted(ALLOWED_PORTS)}",
-        )
-
-    if not await verify_turnstile(req.turnstile_token, request.client.host if request.client else None):
-        raise HTTPException(403, "turnstile verification failed")
-
-    # Resolve to confirm the target isn't private. We resolve once and
-    # connect by IP so DNS rebinding can't slip in a private address
-    # between the check and the connect.
-    try:
-        infos = socket.getaddrinfo(req.host, req.port, type=socket.SOCK_STREAM)
-    except socket.gaierror as e:
-        return PortRes(host=req.host, port=req.port, open=False, error=f"DNS: {e}")
-
-    if not infos:
-        return PortRes(host=req.host, port=req.port, open=False, error="DNS: no records")
-
-    family, _, _, _, sockaddr = infos[0]
-    ip = sockaddr[0]
-    if _is_private_or_reserved(ip):
-        raise HTTPException(400, f"target resolves to a private / reserved address ({ip})")
-
+async def _probe_one(ip: str, port: int) -> PortProbe:
     start = time.monotonic()
     try:
-        fut = asyncio.open_connection(ip, req.port)
+        fut = asyncio.open_connection(ip, port)
         reader, writer = await asyncio.wait_for(fut, timeout=TIMEOUT_SECONDS)
         writer.close()
         try:
             await writer.wait_closed()
         except Exception:
             pass
-        ms = (time.monotonic() - start) * 1000
-        return PortRes(host=req.host, port=req.port, open=True, ms=round(ms, 2), resolved_ip=ip)
+        return PortProbe(port=port, open=True, ms=round((time.monotonic() - start) * 1000, 2))
     except asyncio.TimeoutError:
-        return PortRes(host=req.host, port=req.port, open=False, resolved_ip=ip, error="timeout")
+        return PortProbe(port=port, open=False, error="timeout")
     except (OSError, ConnectionError) as e:
-        return PortRes(host=req.host, port=req.port, open=False, resolved_ip=ip, error=str(e))
+        return PortProbe(port=port, open=False, error=str(e))
+
+
+@router.post("/port", response_model=PortRes)
+async def port_check(req: PortReq, request: Request):
+    # Reconcile single vs list, dedupe, sort
+    ports: list[int] = []
+    if req.ports:
+        ports.extend(req.ports)
+    if req.port is not None:
+        ports.append(req.port)
+    ports = sorted({p for p in ports if 1 <= p <= 65535})
+    if not ports:
+        raise HTTPException(400, "provide 'ports' (list, up to 10) or 'port' (single int)")
+    if len(ports) > MAX_PORTS_PER_REQUEST:
+        raise HTTPException(400, f"max {MAX_PORTS_PER_REQUEST} distinct ports per request — got {len(ports)}")
+
+    if not await verify_turnstile(req.turnstile_token, request.client.host if request.client else None):
+        raise HTTPException(403, "turnstile verification failed")
+
+    # Resolve once, refuse private destinations
+    try:
+        infos = socket.getaddrinfo(req.host, ports[0], type=socket.SOCK_STREAM)
+    except socket.gaierror as e:
+        return PortRes(host=req.host, error=f"DNS: {e}", total_count=len(ports))
+    if not infos:
+        return PortRes(host=req.host, error="DNS: no records", total_count=len(ports))
+
+    ip = infos[0][4][0]
+    if _is_private_or_reserved(ip):
+        raise HTTPException(400, f"target resolves to a private / reserved address ({ip})")
+
+    # Probe all ports in parallel — bounded by TIMEOUT_SECONDS for the whole request
+    probes = await asyncio.gather(*(_probe_one(ip, p) for p in ports))
+    probes_list = list(probes)
+    open_count = sum(1 for p in probes_list if p.open)
+    total = len(probes_list)
+    summary = (
+        f"{open_count} / {total} open" if total > 1
+        else ("open" if open_count == 1 else "closed")
+    )
+
+    return PortRes(
+        host=req.host,
+        resolved_ip=ip,
+        probes=probes_list,
+        open_count=open_count,
+        total_count=total,
+        summary=summary,
+    )

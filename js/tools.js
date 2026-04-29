@@ -622,32 +622,71 @@
   // Phase 2 server-side tool clients — fetch from /api/*
   // ===========================================================================
 
-  // ---- Port reachability ----------------------------------------------------
+  // ---- Port reachability (multi-port, up to 10 in parallel) -----------------
   (function portCheck() {
-    const host = $("p2-port-host"), port = $("p2-port-port"), btn = $("p2-port-go"), out = $("p2-port-out");
-    if (!host || !port || !btn || !out) return;
+    const host = $("p2-port-host"), portsInput = $("p2-port-ports"), btn = $("p2-port-go"), out = $("p2-port-out");
+    if (!host || !portsInput || !btn || !out) return;
+
+    // Wire the preset buttons (web+ssh, mail, webapp+DBs, DNS)
+    document.querySelectorAll("[data-port-preset]").forEach((b) => {
+      b.addEventListener("click", () => {
+        portsInput.value = b.getAttribute("data-port-preset");
+        portsInput.focus();
+      });
+    });
+
+    function parsePorts(text) {
+      const out = [];
+      const seen = new Set();
+      for (const tok of text.split(/[,\s]+/)) {
+        if (!tok) continue;
+        const n = parseInt(tok, 10);
+        if (!Number.isFinite(n) || n < 1 || n > 65535) {
+          throw new Error(`"${tok}" isn't a valid port (1-65535)`);
+        }
+        if (!seen.has(n)) { seen.add(n); out.push(n); }
+      }
+      return out;
+    }
+
     btn.addEventListener("click", async () => {
       const h = host.value.trim();
-      const p = parseInt(port.value, 10);
-      if (!h || !Number.isFinite(p)) { setOut(out, "Provide a host and pick a port.", true); return; }
+      if (!h) { setOut(out, "Provide a host.", true); return; }
+      let ports;
+      try { ports = parsePorts(portsInput.value); }
+      catch (e) { setOut(out, escapeHTML(e.message), true); return; }
+      if (!ports.length) { setOut(out, "Provide at least one port.", true); return; }
+      if (ports.length > 10) { setOut(out, `Up to 10 ports per request (got ${ports.length}).`, true); return; }
+
       btn.disabled = true;
-      setOut(out, `<div style="color:var(--text-muted);">Probing ${escapeHTML(h)}:${p} from the ionet network…</div>`);
+      setOut(out, `<div style="color:var(--text-muted);">Probing ${ports.length} port${ports.length>1?"s":""} on ${escapeHTML(h)} in parallel…</div>`);
       try {
-        const r = await apiPost("/api/port", { host: h, port: p });
-        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status + (r.data && r.data.error ? ": " + escapeHTML(r.data.error || r.data.detail) : ""), true); btn.disabled = false; return; }
+        const r = await apiPost("/api/port", { host: h, ports });
+        if (!r.ok || !r.data) {
+          setOut(out, "Server returned " + r.status + (r.data && (r.data.detail || r.data.error) ? ": " + escapeHTML(r.data.detail || r.data.error) : ""), true);
+          btn.disabled = false; return;
+        }
         const d = r.data;
-        const verdictColor = d.open ? "#4ade80" : "#ff4d6d";
-        const verdictText  = d.open ? "Open" : "Closed";
-        setOut(out,
-          `<div style="font-size:1.15rem;color:${verdictColor};margin-bottom:10px;"><strong>${verdictText}</strong></div>` +
-          "<table>" +
-          `<tr><th>Host</th><td><code>${escapeHTML(d.host)}</code></td></tr>` +
-          `<tr><th>Port</th><td><code>${d.port}</code></td></tr>` +
-          (d.resolved_ip ? `<tr><th>Resolved IP</th><td><code>${escapeHTML(d.resolved_ip)}</code></td></tr>` : "") +
-          (d.ms !== null && d.ms !== undefined ? `<tr><th>RTT</th><td><code>${d.ms} ms</code></td></tr>` : "") +
-          (d.error ? `<tr><th>Error</th><td>${escapeHTML(d.error)}</td></tr>` : "") +
-          "</table>"
-        );
+        if (d.error) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
+
+        const open = d.open_count, total = d.total_count;
+        const allOpen = open === total, noneOpen = open === 0;
+        const verdictColor = allOpen ? "#4ade80" : noneOpen ? "#ff4d6d" : "var(--accent-2)";
+        const verdictText = allOpen ? `All ${total} ports open` :
+                            noneOpen ? `All ${total} ports closed / filtered` :
+                            `${open} of ${total} ports open`;
+
+        let html = `<div style="font-size:1.2rem;color:${verdictColor};margin-bottom:8px;"><strong>${verdictText}</strong></div>`;
+        html += `<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:14px;">Host: <code>${escapeHTML(d.host)}</code>${d.resolved_ip ? ` → <code>${escapeHTML(d.resolved_ip)}</code>` : ""}</div>`;
+        html += "<table><tr><th>Port</th><th>Status</th><th>RTT</th><th>Detail</th></tr>";
+        for (const p of d.probes) {
+          const c = p.open ? "#4ade80" : "#ff7a93";
+          const status = p.open ? "open" : (p.error === "timeout" ? "filtered" : "closed");
+          const rtt = p.ms !== null && p.ms !== undefined ? `<code>${p.ms} ms</code>` : `<code style="color:var(--text-dim);">—</code>`;
+          html += `<tr><td><code>${p.port}</code></td><td><strong style="color:${c};text-transform:uppercase;font-size:0.85rem;letter-spacing:0.06em;">${status}</strong></td><td>${rtt}</td><td><span style="color:var(--text-muted);font-size:0.88rem;">${escapeHTML(p.error || (p.open ? "TCP handshake completed" : ""))}</span></td></tr>`;
+        }
+        html += "</table>";
+        setOut(out, html);
       } catch (e) { networkError(out, e); }
       btn.disabled = false;
     });
@@ -934,6 +973,40 @@
   (function bgpInspector() {
     const q = $("p2-bgp-q"), btn = $("p2-bgp-go"), out = $("p2-bgp-out");
     if (!q || !btn || !out) return;
+
+    function renderRpki(rpki, originAsn) {
+      if (!rpki || !rpki.length) return `<span style="color:var(--text-dim);">no data</span>`;
+      const rp = rpki[0];
+      const status = rp.status || "unknown";
+      const color = status === "valid" ? "#4ade80" :
+                    status === "invalid" ? "#ff4d6d" :
+                    status === "not-found" ? "var(--accent-2)" : "var(--text-muted)";
+      const explainer = {
+        "valid":     "the origin AS is cryptographically authorised to announce this prefix",
+        "invalid":   "the announcement does NOT match any signed ROA — possible misconfiguration or hijack",
+        "not-found": "no ROA published — the prefix owner hasn't signed an authorisation yet",
+        "unknown":   "RPKI lookup didn't return a definitive status",
+      }[status] || "";
+      const roas = (rp.validating_roas && rp.validating_roas.length)
+        ? ` · <code>${rp.validating_roas.length}</code> matching ROA${rp.validating_roas.length>1?"s":""}` : "";
+      return `<span style="color:${color};font-weight:600;text-transform:uppercase;letter-spacing:0.04em;font-size:0.85rem;">${escapeHTML(status)}</span>${roas}<div style="color:var(--text-muted);font-size:0.85rem;margin-top:3px;">${escapeHTML(explainer)}</div>`;
+    }
+
+    function renderAsPath(asPath, originAsn) {
+      if (!asPath) return "";
+      const asns = asPath.trim().split(/\s+/).filter(Boolean);
+      // Collapse consecutive duplicates ("45763 45763" → "45763") for readability
+      const collapsed = [];
+      for (const a of asns) if (collapsed[collapsed.length - 1] !== a) collapsed.push(a);
+      return collapsed.map((a, i) => {
+        const last = i === collapsed.length - 1;
+        const style = last
+          ? `color:var(--logo-pink);font-weight:700;`
+          : `color:var(--accent-2);`;
+        return `<code style="${style}">AS${escapeHTML(a)}</code>`;
+      }).join(`<span style="color:var(--text-dim);margin:0 4px;">→</span>`);
+    }
+
     btn.addEventListener("click", async () => {
       const query = q.value.trim();
       if (!query) { setOut(out, "Provide a prefix, IP, or ASN.", true); return; }
@@ -944,26 +1017,65 @@
         if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
         const d = r.data;
         if (d.error) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
+
+        // ── Identity card ─────────────────────────────────────────────
         let html = "<table>";
-        if (d.asn !== null && d.asn !== undefined) html += `<tr><th>Origin AS</th><td><code>AS${d.asn}</code></td></tr>`;
-        if (d.holder) html += `<tr><th>Holder</th><td>${escapeHTML(d.holder)}</td></tr>`;
-        if (d.prefix) html += `<tr><th>Prefix</th><td><code>${escapeHTML(d.prefix)}</code></td></tr>`;
-        if (d.rpki && d.rpki.length) {
-          const rp = d.rpki[0];
-          const c = rp.status === "valid" ? "#4ade80" : rp.status === "invalid" ? "#ff4d6d" : "var(--text-muted)";
-          html += `<tr><th>RPKI</th><td><span style="color:${c};font-weight:600;">${escapeHTML(rp.status || "—")}</span>${rp.validating_roas && rp.validating_roas.length ? ` · ${rp.validating_roas.length} ROA${rp.validating_roas.length>1?"s":""}` : ""}</td></tr>`;
+        html += `<tr><th>Query</th><td><code>${escapeHTML(d.query)}</code></td></tr>`;
+        if (d.asn !== null && d.asn !== undefined) {
+          html += `<tr><th>Origin AS</th><td><code style="color:var(--logo-pink);font-weight:700;">AS${d.asn}</code>${d.holder ? ` <span style="color:var(--text-muted);">${escapeHTML(d.holder)}</span>` : ""}</td></tr>`;
         }
-        if (d.rrcs_seen) html += `<tr><th>RRCs seen</th><td>${d.rrcs_seen} collector${d.rrcs_seen>1?"s":""}</td></tr>`;
+        if (d.prefix) html += `<tr><th>Prefix</th><td><code>${escapeHTML(d.prefix)}</code></td></tr>`;
+        html += `<tr><th>RPKI</th><td>${renderRpki(d.rpki, d.asn)}</td></tr>`;
+        html += `<tr><th>Vantage points</th><td><code>${d.rrcs_seen}</code> RIPE RIS collector${d.rrcs_seen===1?"":"s"} observe this prefix</td></tr>`;
         html += "</table>";
+
+        // ── Group routes by unique AS path ────────────────────────────
         if (d.routes && d.routes.length) {
-          html += `<div style="margin-top:14px;color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:0.95rem;margin-bottom:6px;">Sample BGP routes from collectors</div>`;
-          html += "<table><tr><th>RRC</th><th>Location</th><th>Peer</th><th>AS path</th><th>Next hop</th></tr>";
-          for (const r of d.routes.slice(0, 12)) {
-            html += `<tr><td><code>${escapeHTML(r.rrc || "")}</code></td><td>${escapeHTML(r.rrc_location || "")}</td><td><code>${escapeHTML(r.peer || "")}</code></td><td><code>${escapeHTML(r.as_path || "")}</code></td><td><code>${escapeHTML(r.next_hop || "")}</code></td></tr>`;
+          const pathMap = new Map();
+          for (const r of d.routes) {
+            const key = (r.as_path || "").trim();
+            if (!key) continue;
+            if (!pathMap.has(key)) pathMap.set(key, { path: key, rrcs: new Map() });
+            const entry = pathMap.get(key);
+            const loc = `${r.rrc || ""} ${r.rrc_location || ""}`.trim();
+            entry.rrcs.set(loc, (entry.rrcs.get(loc) || 0) + 1);
+          }
+          const distinctPaths = Array.from(pathMap.values())
+            .map(p => ({ ...p, asns: p.path.split(/\s+/).filter(Boolean) }))
+            .map(p => ({ ...p, length: new Set(p.asns).size }))
+            .sort((a, b) => a.length - b.length);
+
+          html += `<div class="rdap-section-title">Distinct AS paths observed (${distinctPaths.length})</div>`;
+          html += `<table><tr><th style="width:40px;">#</th><th>AS path · origin highlighted</th><th style="width:60px;">Hops</th><th>Seen at</th></tr>`;
+          for (let i = 0; i < distinctPaths.length; i++) {
+            const p = distinctPaths[i];
+            const rrcList = Array.from(p.rrcs.keys()).slice(0, 3).map(escapeHTML).join("<br>");
+            const more = p.rrcs.size > 3 ? `<span style="color:var(--text-muted);font-size:0.85rem;">+${p.rrcs.size - 3} more</span>` : "";
+            html += `<tr><td><code>${i + 1}</code></td><td>${renderAsPath(p.path, d.asn)}</td><td><code>${p.length}</code></td><td>${rrcList}${more ? "<br>" + more : ""}</td></tr>`;
           }
           html += "</table>";
+
+          // ── MOAS / hijack detection ─────────────────────────────────
+          const origins = new Set(distinctPaths.map(p => p.asns[p.asns.length - 1]));
+          if (origins.size > 1) {
+            html += `<div style="margin-top:14px;padding:12px 14px;background:rgba(255,77,109,0.10);border:1px solid rgba(255,77,109,0.45);border-radius:6px;color:#ffb1bf;">
+              ⚠ <strong>Multiple distinct origin ASes</strong> seen: ${Array.from(origins).map(o => `<code>AS${escapeHTML(o)}</code>`).join(", ")} — possible MOAS configuration or hijack. Investigate.
+            </div>`;
+          }
         }
-        html += `<div style="margin-top:12px;color:var(--text-dim);font-size:0.85rem;">Source: <a href="https://stat.ripe.net/" rel="noopener">RIPEstat</a> — RIPE NCC Information Service collectors.</div>`;
+
+        // ── Glossary (collapsed) ──────────────────────────────────────
+        html += `<details style="margin-top:14px;"><summary style="cursor:pointer;color:var(--text-muted);font-size:0.85rem;">What do these terms mean?</summary>
+          <ul style="margin:10px 0 0 18px;padding:0;font-size:0.88rem;color:var(--text-muted);line-height:1.7;">
+            <li><strong style="color:var(--text);">Origin AS</strong> — the Autonomous System that announces the prefix into global BGP. <code>AS</code> = Autonomous System (a routing entity, e.g. an ISP).</li>
+            <li><strong style="color:var(--text);">AS path</strong> — the chain of ASes a packet would traverse, read left-to-right. The <span style="color:var(--logo-pink);font-weight:600;">rightmost AS</span> is the origin; the leftmost is closest to the BGP collector.</li>
+            <li><strong style="color:var(--text);">RPKI</strong> — Resource PKI. A "valid" status means the origin AS holds a cryptographically signed Route Origin Authorization (ROA) for this prefix.</li>
+            <li><strong style="color:var(--text);">Vantage points / RRC</strong> — RIPE Route Collectors are passive BGP listeners at major IXPs (RRC00 = Amsterdam AMS-IX, RRC01 = London LINX, RRC25 = Amsterdam NL-ix, etc.). Each one sees BGP from a different perspective.</li>
+            <li><strong style="color:var(--text);">MOAS</strong> — Multiple Origin AS. Same prefix announced by two or more origin ASes — sometimes legitimate (multi-homing), often a hijack signal.</li>
+          </ul>
+        </details>`;
+
+        html += `<div style="margin-top:12px;color:var(--text-dim);font-size:0.85rem;">Source: <a href="https://stat.ripe.net/" rel="noopener">RIPEstat</a> · RIPE NCC Information Service collectors.</div>`;
         setOut(out, html);
       } catch (e) { networkError(out, e); }
       btn.disabled = false;

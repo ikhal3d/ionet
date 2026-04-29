@@ -174,21 +174,23 @@
 
         <article id="tool-port" class="phase2-tool reveal">
           <h3>Port Reachability Check</h3>
-          <p>Probe a single TCP port on any host from the ionet network. Allowlisted ports only (22 / 25 / 53 / 80 / 443 / 465 / 587 / 853 / 993 / 995 / 3306 / 5432 / 6379 / 8080 / 8443 / 9200). Rejects RFC1918, loopback, link-local. Not a scanner.</p>
+          <p>Probe up to <strong>10 TCP ports</strong> on a single host in parallel from the ionet network. Any port 1-65535. Rejects RFC1918 / loopback / link-local destinations. Not a scanner — bounded surface, captcha-gated, rate-limited at the Cloudflare edge.</p>
           <div class="tool" style="margin-top:14px;">
             <div class="tool-row">
-              <label class="tool-field"><span>Host</span>
+              <label class="tool-field" style="flex:1.4 1 280px;"><span>Host</span>
                 <input id="p2-port-host" type="text" autocomplete="off" spellcheck="false" placeholder="example.com" value="cloudflare.com">
               </label>
-              <label class="tool-field"><span>Port</span>
-                <select id="p2-port-port">
-                  <option>22</option><option>25</option><option>53</option><option selected>80</option>
-                  <option>443</option><option>465</option><option>587</option><option>853</option>
-                  <option>993</option><option>995</option><option>3306</option><option>5432</option>
-                  <option>6379</option><option>8080</option><option>8443</option><option>9200</option>
-                </select>
+              <label class="tool-field"><span>Ports (single, comma-separated, or "common")</span>
+                <input id="p2-port-ports" type="text" autocomplete="off" spellcheck="false" placeholder="80, 443  ·  or  22, 80, 443, 8080, 8443" value="80, 443">
               </label>
               <button id="p2-port-go" class="btn btn-secondary" type="button">Probe</button>
+            </div>
+            <div class="tool-row" style="margin-top:-8px;gap:8px;flex-wrap:wrap;">
+              <span style="font-size:0.85rem;color:var(--text-muted);align-self:center;">Quick presets:</span>
+              <button class="btn btn-ghost" type="button" data-port-preset="22, 80, 443" style="padding:6px 12px;font-size:0.82rem;">web + ssh</button>
+              <button class="btn btn-ghost" type="button" data-port-preset="22, 25, 80, 443, 465, 587, 993, 995" style="padding:6px 12px;font-size:0.82rem;">mail server</button>
+              <button class="btn btn-ghost" type="button" data-port-preset="80, 443, 3306, 5432, 6379, 8080, 8443, 9200" style="padding:6px 12px;font-size:0.82rem;">webapp + DBs</button>
+              <button class="btn btn-ghost" type="button" data-port-preset="53, 853" style="padding:6px 12px;font-size:0.82rem;">DNS</button>
             </div>
             <div class="tool-out" id="p2-port-out" aria-live="polite"></div>
           </div>
