@@ -1,10 +1,11 @@
 /* ionet — Internet Exchange Points dataset.
    Curated list of major IXPs by traffic / member count + complete Australian set.
-   Source: PCH IXP database, IX Australia, operator websites.
-   tier: 1 = always labelled · 2 = small dot, label on hover · au = full AU set */
+   Source: PCH IXP database, IX Australia, NextDC, Equinix, Megaport, operator sites.
+   tier: 1 = global hub · 2 = secondary · au = Australian peering hub
+   Tooltips show name + members list when present (no on-screen labels).      */
 
 window.IONET_IXPS = [
-  // ─── Tier 1 — global hubs (always labelled) ─────────────────────────
+  // ─── Tier 1 — global hubs (large dot, gold pulse ring) ──────────────
   { name: "LINX London",         lat: 51.51, lon:  -0.13, tier: 1 },
   { name: "AMS-IX Amsterdam",    lat: 52.35, lon:   4.94, tier: 1 },
   { name: "DE-CIX Frankfurt",    lat: 50.11, lon:   8.68, tier: 1 },
@@ -19,9 +20,8 @@ window.IONET_IXPS = [
   { name: "Equinix Singapore",   lat:  1.29, lon: 103.85, tier: 1 },
   { name: "NIXI Mumbai",         lat: 19.08, lon:  72.88, tier: 1 },
   { name: "NAPAfrica J'burg",    lat:-26.20, lon:  28.04, tier: 1 },
-  { name: "Sydney IX",           lat:-33.87, lon: 151.21, tier: 1 },
 
-  // ─── Tier 2 — significant secondary hubs (hover label) ──────────────
+  // ─── Tier 2 — significant secondary hubs ────────────────────────────
   { name: "MSK-IX Moscow",       lat: 55.75, lon:  37.62, tier: 2 },
   { name: "VIX Vienna",          lat: 48.21, lon:  16.37, tier: 2 },
   { name: "NIX.CZ Prague",       lat: 50.08, lon:  14.44, tier: 2 },
@@ -46,11 +46,39 @@ window.IONET_IXPS = [
   { name: "NAPAfrica Cape Town", lat:-33.92, lon:  18.42, tier: 2 },
   { name: "Equinix Auckland",    lat:-36.85, lon: 174.76, tier: 2 },
 
-  // ─── Australia — complete major-IXP set (also rendered in AU panel) ─
-  { name: "MIX Melbourne",       lat:-37.81, lon: 144.96, tier: "au" },
-  { name: "BIX Brisbane",        lat:-27.47, lon: 153.03, tier: "au" },
-  { name: "PIX Perth",           lat:-31.95, lon: 115.86, tier: "au" },
-  { name: "ADIX Adelaide",       lat:-34.93, lon: 138.60, tier: "au" },
-  { name: "CBR-IX Canberra",     lat:-35.28, lon: 149.13, tier: "au" },
-  { name: "HOX Hobart",          lat:-42.88, lon: 147.32, tier: "au" }
+  // ─── Australian peering hubs — one entry per city, members list every
+  //     IXP and major carrier-neutral DC at that location. ───────────
+  { name: "Sydney",   lat: -33.87, lon: 151.21, tier: "au",
+    members: ["Sydney IX (IX Australia)",
+              "Equinix SY1 / SY2 / SY3 (Mascot)",
+              "Equinix SY4 / SY5 (Alexandria)",
+              "NextDC S1 (Pyrmont)",
+              "NextDC S2 (Macquarie Park)",
+              "NextDC S3 (Artarmon)",
+              "Megaport Sydney"] },
+  { name: "Melbourne", lat: -37.81, lon: 144.96, tier: "au",
+    members: ["MIX (IX Australia Melbourne)",
+              "Equinix ME1 / ME2 (Port Melbourne)",
+              "NextDC M1 (Port Melbourne)",
+              "NextDC M2 / M3 (Tullamarine)",
+              "Megaport Melbourne"] },
+  { name: "Brisbane",  lat: -27.47, lon: 153.03, tier: "au",
+    members: ["BIX (IX Australia Brisbane)",
+              "NextDC B1 / B2 (Fortitude Valley)",
+              "Megaport Brisbane"] },
+  { name: "Perth",     lat: -31.95, lon: 115.86, tier: "au",
+    members: ["PIX (IX Australia Perth)",
+              "NextDC P1 / P2 (Malaga)",
+              "Megaport Perth"] },
+  { name: "Adelaide",  lat: -34.93, lon: 138.60, tier: "au",
+    members: ["ADIX (IX Australia Adelaide)",
+              "NextDC A1 (Hindmarsh)",
+              "Megaport Adelaide"] },
+  { name: "Canberra",  lat: -35.28, lon: 149.13, tier: "au",
+    members: ["CBR-IX (IX Australia Canberra)",
+              "NextDC C1 / C2"] },
+  { name: "Hobart",    lat: -42.88, lon: 147.32, tier: "au",
+    members: ["HOX (IX Australia Hobart)"] },
+  { name: "Darwin",    lat: -12.46, lon: 130.84, tier: "au",
+    members: ["NextDC D1 (Darwin)"] }
 ];

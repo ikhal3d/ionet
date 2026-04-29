@@ -875,18 +875,9 @@ form.contact-form {
 }
 .cc-point--au .ring { stroke: var(--accent-2); }
 
-/* Labels */
-.cc-label {
-  font-family: "JetBrains Mono", "Menlo", monospace;
-  font-size: 10px;
-  fill: rgba(245, 240, 255, 0.92);
-  paint-order: stroke;
-  stroke: rgba(7, 6, 26, 0.85);
-  stroke-width: 3px;
-  stroke-linejoin: round;
-  pointer-events: none;
-}
-.cc-label--au { fill: #ffe6a8; }
+/* IXP markers carry a native <title> tooltip — no on-screen labels.
+   Hovering a dot shows its name (and members list for AU hubs). */
+.cc-point { cursor: help; }
 
 .cc-legend-mute { opacity: 0.55; }
 .cc-legend-mute em { font-style: normal; color: var(--text-dim); margin-left: 4px; }

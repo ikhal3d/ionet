@@ -316,9 +316,10 @@
                 <path id="cc-cables-real" d=""/>
               </g>
 
-              <!-- IXP markers — generated from js/ixps.js at runtime -->
+              <!-- IXP markers — generated from js/ixps.js at runtime.
+                   No on-screen labels: each marker has a native <title> element,
+                   browsers render it as a tooltip on hover. -->
               <g class="cc-points" id="cc-points"></g>
-              <g class="cc-labels" id="cc-labels"></g>
 
               <!-- Vignette on top -->
               <rect x="0" y="0" width="1000" height="500" fill="url(#ccVignette)" pointer-events="none"/>
@@ -379,7 +380,7 @@
             <span class="cc-corner cc-corner--bl"></span>
             <span class="cc-corner cc-corner--br"></span>
 
-            <svg class="cc-map cc-map--au" viewBox="0 0 1000 740" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Australia map showing IXPs and AU-landing submarine cables">
+            <svg class="cc-map cc-map--au" viewBox="0 0 1000 692" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Australia map showing IXPs and AU-landing submarine cables">
               <defs>
                 <radialGradient id="ccBgAu" cx="50%" cy="50%" r="65%">
                   <stop offset="0%"  stop-color="#1a1450" stop-opacity="0.85"/>
@@ -399,26 +400,32 @@
                 </radialGradient>
               </defs>
 
-              <rect x="0" y="0" width="1000" height="740" fill="url(#ccBgAu)"/>
+              <rect x="0" y="0" width="1000" height="692" fill="url(#ccBgAu)"/>
 
-              <!-- Lat/lon grid every 5° -->
+              <!-- Lat/lon grid every 5°. Bbox lon[100..165] (65°), lat[-50..-5] (45°), 76.9px per 5° -->
               <g class="cc-grid" stroke="rgba(106,45,199,0.18)" stroke-width="0.4" fill="none">
-                <!-- Meridians: lon 110..156 step 5 -> 9 lines (skip first/last) -->
-                <line x1="108.7"  y1="0" x2="108.7"  y2="740"/>
-                <line x1="217.4"  y1="0" x2="217.4"  y2="740"/>
-                <line x1="326.1"  y1="0" x2="326.1"  y2="740"/>
-                <line x1="434.8"  y1="0" x2="434.8"  y2="740"/>
-                <line x1="543.5"  y1="0" x2="543.5"  y2="740"/>
-                <line x1="652.2"  y1="0" x2="652.2"  y2="740"/>
-                <line x1="760.9"  y1="0" x2="760.9"  y2="740"/>
-                <line x1="869.6"  y1="0" x2="869.6"  y2="740"/>
-                <!-- Parallels: lat -10..-44 step 5 -> 7 lines -->
-                <line x1="0" y1="108.8" x2="1000" y2="108.8"/>
-                <line x1="0" y1="217.6" x2="1000" y2="217.6"/>
-                <line x1="0" y1="326.5" x2="1000" y2="326.5"/>
-                <line x1="0" y1="435.3" x2="1000" y2="435.3"/>
-                <line x1="0" y1="544.1" x2="1000" y2="544.1"/>
-                <line x1="0" y1="652.9" x2="1000" y2="652.9"/>
+                <!-- Meridians: lon 105..160 step 5 -->
+                <line x1="76.9"  y1="0" x2="76.9"  y2="692"/>
+                <line x1="153.8" y1="0" x2="153.8" y2="692"/>
+                <line x1="230.8" y1="0" x2="230.8" y2="692"/>
+                <line x1="307.7" y1="0" x2="307.7" y2="692"/>
+                <line x1="384.6" y1="0" x2="384.6" y2="692"/>
+                <line x1="461.5" y1="0" x2="461.5" y2="692"/>
+                <line x1="538.5" y1="0" x2="538.5" y2="692"/>
+                <line x1="615.4" y1="0" x2="615.4" y2="692"/>
+                <line x1="692.3" y1="0" x2="692.3" y2="692"/>
+                <line x1="769.2" y1="0" x2="769.2" y2="692"/>
+                <line x1="846.2" y1="0" x2="846.2" y2="692"/>
+                <line x1="923.1" y1="0" x2="923.1" y2="692"/>
+                <!-- Parallels: lat -10..-45 step 5 -->
+                <line x1="0" y1="76.9"  x2="1000" y2="76.9"/>
+                <line x1="0" y1="153.8" x2="1000" y2="153.8"/>
+                <line x1="0" y1="230.7" x2="1000" y2="230.7"/>
+                <line x1="0" y1="307.6" x2="1000" y2="307.6"/>
+                <line x1="0" y1="384.4" x2="1000" y2="384.4"/>
+                <line x1="0" y1="461.3" x2="1000" y2="461.3"/>
+                <line x1="0" y1="538.2" x2="1000" y2="538.2"/>
+                <line x1="0" y1="615.1" x2="1000" y2="615.1"/>
               </g>
 
               <!-- AU-landing submarine cables -->
@@ -431,39 +438,38 @@
                 <path id="cc-au-land" d="" fill="url(#ccLandFillAu)" stroke="url(#ccLandStrokeAu)" stroke-width="0.8" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
               </g>
 
-              <!-- AU IXP markers + labels (injected at runtime) -->
+              <!-- AU IXP markers — tooltip on hover, no on-screen labels -->
               <g id="cc-au-points"></g>
-              <g id="cc-au-labels"></g>
 
-              <rect x="0" y="0" width="1000" height="740" fill="url(#ccVignetteAu)" pointer-events="none"/>
+              <rect x="0" y="0" width="1000" height="692" fill="url(#ccVignetteAu)" pointer-events="none"/>
 
               <g class="cc-hud" font-family="JetBrains Mono, monospace" fill="rgba(245,240,255,0.55)" font-size="11">
                 <text x="14" y="22">SYS / AU-NOC</text>
                 <text x="14" y="38">PROJ EQUIRECT &middot; LON 110-156 / LAT -10/-44</text>
                 <text x="986" y="22" text-anchor="end">LANDINGS: TELEGEOGRAPHY</text>
                 <text x="986" y="38" text-anchor="end">CC BY-SA 4.0</text>
-                <text x="14" y="724">GRID 5°</text>
-                <text x="986" y="724" text-anchor="end" id="cc-au-clock">— AEST</text>
+                <text x="14" y="676">GRID 5°</text>
+                <text x="986" y="676" text-anchor="end" id="cc-au-clock">— AEST</text>
               </g>
             </svg>
           </div>
 
           <div class="cc-stats">
             <div class="cc-stat">
-              <strong id="au-ixp-count">7</strong>
-              <span>Australian IXPs</span>
+              <strong id="au-ixp-count">8</strong>
+              <span>Australian peering hubs (cities)</span>
+            </div>
+            <div class="cc-stat">
+              <strong id="au-total-points">0</strong>
+              <span>Carrier-neutral peering points</span>
             </div>
             <div class="cc-stat">
               <strong id="au-cable-count">39</strong>
               <span>AU-landing submarine cables</span>
             </div>
             <div class="cc-stat">
-              <strong>0</strong>
-              <span>Live outages tracked <em style="color:var(--text-dim);font-style:normal;">· Phase 2</em></span>
-            </div>
-            <div class="cc-stat">
               <strong>NBN · Telstra · Optus · TPG</strong>
-              <span>Outage feeds (Phase 2)</span>
+              <span>Outage feeds <em style="color:var(--text-dim);font-style:normal;">· Phase 2</em></span>
             </div>
           </div>
         </div>
@@ -962,14 +968,17 @@
         if (c) c.setAttribute("d", cables);
       }
 
-      // ---- Render IXP dots + labels onto the global map -------------
+      // ---- Render IXP dots onto the global map -----------------------
       // Equirectangular projection: lon -> [0, 1000], lat -> [0, 500]
       function project(lat, lon) {
         return [(lon + 180) / 360 * 1000, (90 - lat) / 180 * 500];
       }
+      function tooltipText(p) {
+        if (!p.members || !p.members.length) return p.name;
+        return p.name + " — " + p.members.length + " peering points: " + p.members.join(" · ");
+      }
       var SVGNS = "http://www.w3.org/2000/svg";
-      var ixpHost   = document.getElementById("cc-points");
-      var labelHost = document.getElementById("cc-labels");
+      var ixpHost = document.getElementById("cc-points");
       var ixps = window.IONET_IXPS || [];
       if (ixpHost && ixps.length) {
         ixps.forEach(function (p) {
@@ -979,36 +988,24 @@
           var g = document.createElementNS(SVGNS, "g");
           g.setAttribute("class", "cc-point cc-point--ixp cc-point--" + tier);
           g.setAttribute("transform", "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ")");
-          // Native tooltip
           var ttl = document.createElementNS(SVGNS, "title");
-          ttl.textContent = p.name;
+          ttl.textContent = tooltipText(p);
           g.appendChild(ttl);
-          // Halo + dot + ring
           var radius = (tier === "t1") ? 4 : (tier === "au") ? 3.5 : 2.5;
           var halo = document.createElementNS(SVGNS, "circle"); halo.setAttribute("class", "halo"); halo.setAttribute("r", radius * 2.4); g.appendChild(halo);
           var dot  = document.createElementNS(SVGNS, "circle"); dot.setAttribute("r",  radius); g.appendChild(dot);
           var ring = document.createElementNS(SVGNS, "circle"); ring.setAttribute("class", "ring"); ring.setAttribute("r", radius); g.appendChild(ring);
           ixpHost.appendChild(g);
-          // Always-on label for tier 1 + AU
-          if (tier === "t1" || tier === "au") {
-            var t = document.createElementNS(SVGNS, "text");
-            t.setAttribute("class", "cc-label cc-label--" + tier);
-            // Smart label offset: nudge left if near right edge, up if near bottom
-            var dx = (x > 920) ? -7 : 7;
-            var anchor = (x > 920) ? "end" : "start";
-            t.setAttribute("x", (x + dx).toFixed(1));
-            t.setAttribute("y", (y + 3.2).toFixed(1));
-            t.setAttribute("text-anchor", anchor);
-            t.textContent = p.name;
-            labelHost.appendChild(t);
-          }
         });
       }
 
-      // ---- AU inset panel: land, cables, IXPs, labels --------------
+      // ---- AU inset panel: land, cables, IXPs (tooltip-only) -------
+      var auBbox = window.IONET_AU_BBOX || { lonMin: 100, lonMax: 165, latMin: -50, latMax: -5, vw: 1000, vh: 692 };
       function projectAU(lat, lon) {
-        // viewBox 1000x740, lon[110..156] x lat[-44..-10]
-        return [(lon - 110) / 46 * 1000, (-10 - lat) / 34 * 740];
+        return [
+          (lon - auBbox.lonMin) / (auBbox.lonMax - auBbox.lonMin) * auBbox.vw,
+          (auBbox.latMax - lat)  / (auBbox.latMax - auBbox.latMin)  * auBbox.vh
+        ];
       }
       if (window.IONET_AU_LAND) {
         var auLand = document.getElementById("cc-au-land");
@@ -1019,37 +1016,41 @@
         if (auCab) auCab.setAttribute("d", window.IONET_AU_CABLES);
       }
       var auPts = document.getElementById("cc-au-points");
-      var auLbls = document.getElementById("cc-au-labels");
       if (auPts && ixps.length) {
         ixps.forEach(function (p) {
-          // include any IXP whose coords fall in AU bbox (catches tier:au + Sydney IX tier:1)
-          if (p.lon < 110 || p.lon > 156 || p.lat < -44 || p.lat > -10) return;
+          if (p.lon < auBbox.lonMin || p.lon > auBbox.lonMax ||
+              p.lat < auBbox.latMin || p.lat > auBbox.latMax) return;
           var c = projectAU(p.lat, p.lon);
           var x = c[0], y = c[1];
           var g = document.createElementNS(SVGNS, "g");
           g.setAttribute("class", "cc-point cc-point--au");
           g.setAttribute("transform", "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ")");
           var ttl = document.createElementNS(SVGNS, "title");
-          ttl.textContent = p.name;
+          ttl.textContent = tooltipText(p);
           g.appendChild(ttl);
           var halo = document.createElementNS(SVGNS, "circle"); halo.setAttribute("class", "halo"); halo.setAttribute("r", 14); g.appendChild(halo);
           var dot  = document.createElementNS(SVGNS, "circle"); dot.setAttribute("r", 5); g.appendChild(dot);
           var ring = document.createElementNS(SVGNS, "circle"); ring.setAttribute("class", "ring"); ring.setAttribute("r", 5); g.appendChild(ring);
           auPts.appendChild(g);
-          // Label: nudge based on city to avoid overlap
-          var dx = 9, anchor = "start";
-          if (p.name.indexOf("Hobart") >= 0)   { dx = 9; }
-          if (p.name.indexOf("Perth") >= 0)    { dx = -9; anchor = "end"; }
-          if (p.name.indexOf("Adelaide") >= 0) { dx = -9; anchor = "end"; }
-          var t = document.createElementNS(SVGNS, "text");
-          t.setAttribute("class", "cc-label cc-label--au");
-          t.setAttribute("x", (x + dx).toFixed(1));
-          t.setAttribute("y", (y + 4).toFixed(1));
-          t.setAttribute("text-anchor", anchor);
-          t.textContent = p.name;
-          auLbls.appendChild(t);
         });
       }
+
+      // ---- Update stat counters from the dataset --------------------
+      var auEntries = ixps.filter(function (p) { return p.tier === "au"; });
+      var auTotalMembers = auEntries.reduce(function (n, p) {
+        return n + (p.members ? p.members.length : 1);
+      }, 0);
+      var auCityStat = document.getElementById("au-ixp-count");
+      if (auCityStat) auCityStat.textContent = auEntries.length;
+      var auMembersStat = document.getElementById("au-stat-cables");
+      // (Note: the panel header shows AU-landing cable count — that's already 39.)
+      // ccStatAu reflects city count as before; new helper exposes total peering points.
+      var auTotalEl = document.getElementById("au-total-points");
+      if (auTotalEl) auTotalEl.textContent = auTotalMembers;
+      var ccStatAu = document.getElementById("cc-stat-au");
+      if (ccStatAu) ccStatAu.textContent = auEntries.length;
+      var ccStatIxps = document.getElementById("cc-stat-ixps");
+      if (ccStatIxps) ccStatIxps.textContent = ixps.length;
 
       // ---- HUD clocks: UTC for global, AEST for AU panel -----------
       var clock = document.getElementById("cc-clock");
