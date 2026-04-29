@@ -109,41 +109,46 @@
     <section id="phase-2" class="bg-purple">
       <div class="container">
         <article id="tool-ip-recon" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
-          <h3>IP Reputation &amp; CVE Recon</h3>
-          <p>
-            Aggregated <strong>passive</strong> intelligence — no scanning of the target.
-            Combines:
-          </p>
-          <ul class="phase2-bullets">
-            <li><strong>AbuseIPDB</strong> · abuse confidence score 0–100, recent reports</li>
-            <li><strong>GreyNoise</strong> · is this IP a known scanner / benign noise / unknown?</li>
-            <li><strong>VirusTotal</strong> · 90+ vendor verdicts on the IP</li>
-            <li><strong>Shodan</strong> · open ports, banners, service versions, exposed devices</li>
-            <li><strong>NVD</strong> · CVE matching for any service banners returned</li>
-          </ul>
-          <p>Returns a synthesized 0–100 risk score with a per-source breakdown and a list of CVEs ranked by CVSS.</p>
+          <h3>IP Reputation</h3>
+          <p>Passive lookup across multiple sources — no scanning of the target. <strong>GreyNoise Community</strong> always works (no key). <strong>AbuseIPDB</strong> activates when <code>ABUSEIPDB_API_KEY</code> is set on the backend (free tier: 1,000/day). Returns a composite 0–100 risk score with a per-source breakdown.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>Public IPv4 / IPv6</span>
+                <input id="p3-ipr-ip" type="text" autocomplete="off" spellcheck="false" placeholder="8.8.8.8" value="45.79.0.1">
+              </label>
+              <button id="p3-ipr-go" class="btn btn-secondary" type="button">Look up</button>
+            </div>
+            <div class="tool-out" id="p3-ipr-out" aria-live="polite"></div>
+          </div>
         </article>
 
         <article id="tool-web-score" class="phase2-tool reveal">
-          <h3>Website Security Score</h3>
-          <p>Live composite grade — fetches the URL via the ionet backend and grades response headers (HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy) using the same checklist Mozilla Observatory uses.</p>
+          <h3>Website Security Score (Composite)</h3>
+          <p>Two-source composite grade — runs our own header check (fast) and pulls Mozilla Observatory's cached scan in parallel (no fresh scan kicked off, ~2-3s total). Returns A+ to F with a fancy gauge plus the per-source breakdown.</p>
           <div class="tool" style="margin-top:14px;">
             <div class="tool-row">
               <label class="tool-field"><span>URL to score</span>
-                <input id="p2-headers-url" type="text" autocomplete="off" spellcheck="false" placeholder="https://example.com" value="https://cloudflare.com">
+                <input id="p3-ws-url" type="text" autocomplete="off" spellcheck="false" placeholder="https://example.com" value="https://github.com">
               </label>
-              <button id="p2-headers-go" class="btn btn-secondary" type="button">Score it</button>
+              <button id="p3-ws-go" class="btn btn-secondary" type="button">Score it</button>
             </div>
-            <div class="tool-out" id="p2-headers-out" aria-live="polite"></div>
+            <div class="tool-out" id="p3-ws-out" aria-live="polite"></div>
           </div>
-          <p style="margin-top:18px;color:var(--text-dim);font-size:0.85rem;">Future: combine with SSL Labs grade + cookie / mixed-content scans for a fuller composite. Currently scores headers only.</p>
+          <p style="margin-top:18px;color:var(--text-dim);font-size:0.85rem;">Source: Mozilla HTTP Observatory (free, no API key) + ionet's own header grader. Future: chain SSL Labs grade.</p>
         </article>
 
         <article id="tool-cve" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Awaiting deployment</span>
           <h3>CVE / NVD Search</h3>
-          <p>Direct search of the <a href="https://nvd.nist.gov/" rel="noopener">NIST National Vulnerability Database</a> via its public API. Search by product (e.g. <code>nginx 1.18.0</code>), CVE ID (<code>CVE-2024-3094</code>), or vendor. Results show CVSS v3.1 score, vector, affected versions, and exploit links where known.</p>
+          <p>Direct search of the <a href="https://nvd.nist.gov/" rel="noopener">NIST National Vulnerability Database</a>. Search by keyword (e.g. <code>nginx 1.18</code>), product, or CVE ID (<code>CVE-2024-3094</code>). Results show CVSS score + severity, description, and a link to the full NVD record.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>Keyword or CVE ID</span>
+                <input id="p3-cve-q" type="text" autocomplete="off" spellcheck="false" placeholder="CVE-2024-3094 or 'nginx 1.18'" value="CVE-2024-3094">
+              </label>
+              <button id="p3-cve-go" class="btn btn-secondary" type="button">Search</button>
+            </div>
+            <div class="tool-out" id="p3-cve-out" aria-live="polite"></div>
+          </div>
         </article>
       </div>
     </section>

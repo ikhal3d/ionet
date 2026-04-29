@@ -291,15 +291,31 @@
         </article>
 
         <article id="tool-bgp" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Hyperglass not yet deployed</span>
-          <h3>BGP Looking Glass</h3>
-          <p><code>show ip bgp &lt;prefix&gt;</code>, peer summary, AS-path views, plus ping &amp; traceroute from our routers. Powered by <a href="https://hyperglass.dev" rel="noopener">hyperglass</a> at <code>lg.ionet.com.au</code>. Lights up once a router target (real BGP gear or FRR/BIRD on the VM) is configured — see <a href="https://github.com/ikhal3d/ionet/blob/main/backend/hyperglass/README.md" rel="noopener">backend/hyperglass/README.md</a>.</p>
+          <h3>BGP Route Inspector</h3>
+          <p>Origin AS, prefix announcements, RPKI validity, and sample BGP routes from RIPE RIS collectors worldwide. Honest framing: until ionet has its own BGP gear, this proxies <a href="https://stat.ripe.net/" rel="noopener">RIPEstat</a> rather than running <code>show ip bgp</code> on a router we own. Same data, public source.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>Prefix, IP, or ASN</span>
+                <input id="p2-bgp-q" type="text" autocomplete="off" spellcheck="false" placeholder="1.1.1.0/24, 8.8.8.8, AS13335" value="1.1.1.0/24">
+              </label>
+              <button id="p2-bgp-go" class="btn btn-secondary" type="button">Inspect</button>
+            </div>
+            <div class="tool-out" id="p2-bgp-out" aria-live="polite"></div>
+          </div>
         </article>
 
         <article id="tool-traceroute" class="phase2-tool reveal">
-          <span class="phase2-status">⚡ Endpoint pending</span>
-          <h3>Traceroute &amp; Ping (Live)</h3>
-          <p>Real-time hop-by-hop ICMP path tracing from our PoP, with rolling RTT &amp; loss per hop. Endpoint will land in a follow-up commit (<code>/api/trace</code>) once we wire WebSocket streaming for the live hop updates.</p>
+          <h3>Traceroute (Live)</h3>
+          <p>Layer-3 hop-by-hop path from the ionet PoP to any public host, with per-hop RTT. Runs on the VM via <code>traceroute</code> with <code>CAP_NET_RAW</code> only — no root. Up to 20 hops, 60-second cap.</p>
+          <div class="tool" style="margin-top:14px;">
+            <div class="tool-row">
+              <label class="tool-field"><span>Target host or IP</span>
+                <input id="p2-trace-target" type="text" autocomplete="off" spellcheck="false" placeholder="example.com or 1.1.1.1" value="1.1.1.1">
+              </label>
+              <button id="p2-trace-go" class="btn btn-secondary" type="button">Trace</button>
+            </div>
+            <div class="tool-out" id="p2-trace-out" aria-live="polite"></div>
+          </div>
         </article>
 
       </div>

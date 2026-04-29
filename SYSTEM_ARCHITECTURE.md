@@ -119,19 +119,25 @@ parts fit together.
 | IP converter | `#ip-converter` | IPv4 dotted-quad ↔ decimal ↔ hex ↔ binary | Browser |
 | Text converter | `#text-converter` | ASCII ↔ hex ↔ binary | Browser |
 
-### 3.2 Phase 2 tools — server-side, need the VM
+### 3.2 Phase 2 / 2.5 / 3 tools — server-side, run via the Oracle VM
 
-| Tool | Endpoint | What it does | Notes |
+All endpoints accessible at `https://ionet.com.au/api/<endpoint>`
+(Cloudflare Worker → origin.ionet.com.au:8443 → Caddy → FastAPI).
+
+| Tool | Endpoint | What it does | Phase |
 |------|----------|--------------|-------|
-| BGP looking glass | `lg.ionet.com.au` | `show ip bgp`, AS-path, ping/traceroute from our network | Hyperglass; needs a real router or FRR/BIRD on the VM announcing a test prefix |
-| TCP port reachability | `POST /api/port` | Check whether one well-known port is open on a target | Allowlist of ports; rejects RFC1918; Turnstile-gated |
-| Traceroute / MTR | `POST /api/trace` | Layer-3 path with hop loss/latency from our PoP | `CAP_NET_RAW` only, never root |
-| DNS / DNSSEC | `POST /api/dns` | A, AAAA, MX, TXT, NS, CNAME, SOA, CAA, SRV, PTR with DNSSEC validation | dnspython |
-| WHOIS / RDAP | `POST /api/whois` | Domain & IP registration, RDAP-first | python-whois fallback |
-| ASN / prefix lookup | `POST /api/asn` | AS announcements, peers, hijack alerts | pyasn local DB + RIPEstat |
-| TLS chain inspector | `POST /api/tls` | Certificate chain, expiry, key strength, ciphers, HSTS, CAA, OCSP | cryptography stdlib |
-| HTTP security headers | `POST /api/headers` | Grade headers like Mozilla Observatory does | Custom |
-| Australian outage status | `GET /api/outages` | Aggregated NBN / Telstra / Optus / TPG status | Background job, cached |
+| TCP port reachability | `POST /api/port` | Probe one well-known port on a target — allowlist, RFC1918 reject | 2 |
+| DNS / DNSSEC | `POST /api/dns` | A/AAAA/MX/TXT/NS/CNAME/SOA/CAA/SRV/PTR/DS/DNSKEY + DNSSEC validation | 2 |
+| WHOIS / RDAP | `POST /api/whois` | RDAP-first, python-whois fallback for legacy gTLDs | 2 |
+| ASN / prefix lookup | `POST /api/asn` | AS holder + announced prefixes; or IP/prefix → origin ASN | 2 |
+| TLS chain inspector | `POST /api/tls` | Live cert chain, expiry, key type/size, sig algorithm, cipher | 2 |
+| HTTP security headers | `POST /api/headers` | Grades CSP/HSTS/XFO/XCTO/RP/PP — A+ to F | 2 |
+| AU outage feed | `GET /api/outages` | Cloudflare Radar AU + global; explicit "no feed" stubs for telcos | 2 |
+| BGP route inspector | `POST /api/bgp` | RIPEstat: origin AS, prefix, RPKI, sample routes from RIS collectors | 2.5 |
+| Live traceroute | `POST /api/trace` | Hop-by-hop ICMP path from VM, RTT per hop, max 20 hops | 2.5 |
+| IP reputation | `POST /api/ip-recon` | GreyNoise Community + (optional) AbuseIPDB; composite 0-100 risk score | 3 |
+| Website security score | `POST /api/web-score` | Composite — headers grader + Mozilla Observatory cached scan | 3 |
+| CVE / NVD search | `POST /api/cve` | Direct NIST NVD API: CVE ID or keyword, CVSS scores | 3 |
 
 ---
 
@@ -274,11 +280,12 @@ publicly readable on GitHub itself, which is fine for source code
 
 | Phase | Status | Scope |
 |-------|--------|-------|
-| **Phase 1** | ✅ shipped | 11 client-side tools, command centre with real world map and 710 real cables |
-| **Phase 1.5** | in progress | Cleaner IXP labels, AU-zoom inset panel, AU outage placeholders |
-| **Phase 2** | next | Backend stack on the VM: caddy + FastAPI tools-api + hyperglass + outage-aggregator |
-| **Phase 3** | future | Live BGP advisory feed (Cloudflare Radar / RIPE RIS), live cable status (TeleGeography events), public API tier with API keys |
-| **Phase 4** | future | Account-backed features: saved scans, scheduled checks, alert webhooks |
+| **Phase 1** | ✅ shipped | 12 client-side tools (subnet/CIDR, VLSM, IP convert, MAC OUI, hash gen + reverse, HMAC, base64/URL/text, JWT, password, UUID, what-is-my-IP); command centre with real world map and 710 real cables |
+| **Phase 2** | ✅ shipped | Backend stack live: Caddy + FastAPI + outage-aggregator on Oracle VM; Cloudflare Worker on `ionet.com.au/api/*`; 7 endpoints (DNS, ASN, port, WHOIS, TLS, headers, outages) |
+| **Phase 2.5** | ✅ shipped | `/api/bgp` (RIPEstat-backed BGP route inspector), `/api/trace` (live traceroute from VM) |
+| **Phase 3** | ✅ shipped | `/api/ip-recon` (GreyNoise + AbuseIPDB), `/api/web-score` (composite headers + Mozilla Observatory), `/api/cve` (NVD search) |
+| **Phase 3.5** | future | Optional API-key uplifts: AbuseIPDB / Shodan / VirusTotal / NVD higher rate-limit; SSL Labs scanner |
+| **Phase 4** | future | Hyperglass on real BGP gear; Account-backed features (saved scans, scheduled checks, alert webhooks) |
 
 ---
 

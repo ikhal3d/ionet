@@ -821,6 +821,221 @@
     });
   })();
 
+  // ---- BGP route inspector (Phase 2.5) --------------------------------------
+  (function bgpInspector() {
+    const q = $("p2-bgp-q"), btn = $("p2-bgp-go"), out = $("p2-bgp-out");
+    if (!q || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const query = q.value.trim();
+      if (!query) { setOut(out, "Provide a prefix, IP, or ASN.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Querying RIPE RIS collectors for ${escapeHTML(query)}…</div>`);
+      try {
+        const r = await apiPost("/api/bgp", { query });
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
+        const d = r.data;
+        if (d.error) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
+        let html = "<table>";
+        if (d.asn !== null && d.asn !== undefined) html += `<tr><th>Origin AS</th><td><code>AS${d.asn}</code></td></tr>`;
+        if (d.holder) html += `<tr><th>Holder</th><td>${escapeHTML(d.holder)}</td></tr>`;
+        if (d.prefix) html += `<tr><th>Prefix</th><td><code>${escapeHTML(d.prefix)}</code></td></tr>`;
+        if (d.rpki && d.rpki.length) {
+          const rp = d.rpki[0];
+          const c = rp.status === "valid" ? "#4ade80" : rp.status === "invalid" ? "#ff4d6d" : "var(--text-muted)";
+          html += `<tr><th>RPKI</th><td><span style="color:${c};font-weight:600;">${escapeHTML(rp.status || "—")}</span>${rp.validating_roas && rp.validating_roas.length ? ` · ${rp.validating_roas.length} ROA${rp.validating_roas.length>1?"s":""}` : ""}</td></tr>`;
+        }
+        if (d.rrcs_seen) html += `<tr><th>RRCs seen</th><td>${d.rrcs_seen} collector${d.rrcs_seen>1?"s":""}</td></tr>`;
+        html += "</table>";
+        if (d.routes && d.routes.length) {
+          html += `<div style="margin-top:14px;color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:0.95rem;margin-bottom:6px;">Sample BGP routes from collectors</div>`;
+          html += "<table><tr><th>RRC</th><th>Location</th><th>Peer</th><th>AS path</th><th>Next hop</th></tr>";
+          for (const r of d.routes.slice(0, 12)) {
+            html += `<tr><td><code>${escapeHTML(r.rrc || "")}</code></td><td>${escapeHTML(r.rrc_location || "")}</td><td><code>${escapeHTML(r.peer || "")}</code></td><td><code>${escapeHTML(r.as_path || "")}</code></td><td><code>${escapeHTML(r.next_hop || "")}</code></td></tr>`;
+          }
+          html += "</table>";
+        }
+        html += `<div style="margin-top:12px;color:var(--text-dim);font-size:0.85rem;">Source: <a href="https://stat.ripe.net/" rel="noopener">RIPEstat</a> — RIPE NCC Information Service collectors.</div>`;
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
+  // ---- Live traceroute (Phase 2.5) ------------------------------------------
+  (function liveTrace() {
+    const target = $("p2-trace-target"), btn = $("p2-trace-go"), out = $("p2-trace-out");
+    if (!target || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const t = target.value.trim();
+      if (!t) { setOut(out, "Provide a target host or IP.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Tracing ${escapeHTML(t)} from the ionet network — up to 60s for unreachable targets…</div>`);
+      try {
+        const r = await apiPost("/api/trace", { target: t, max_hops: 20 });
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
+        const d = r.data;
+        if (d.error && (!d.hops || !d.hops.length)) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
+        let html = `<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:10px;">Target: <code>${escapeHTML(d.target)}</code>${d.resolved_ip ? ` → <code>${escapeHTML(d.resolved_ip)}</code>` : ""} · ${d.hops.length} hops · ${d.duration_s}s</div>`;
+        html += "<table><tr><th>#</th><th>IP</th><th>RTT (ms)</th></tr>";
+        for (const h of d.hops) {
+          const ip = h.ip ? `<code>${escapeHTML(h.ip)}</code>` : `<span style="color:var(--text-dim);">*</span>`;
+          const rtt = h.rtt_ms.length ? h.rtt_ms.map(x => x.toFixed(2)).join(" · ") : `<span style="color:var(--text-dim);">timeout</span>`;
+          html += `<tr><td>${h.hop}</td><td>${ip}</td><td><code>${rtt}</code></td></tr>`;
+        }
+        html += "</table>";
+        if (!d.completed) html += `<div style="margin-top:8px;color:var(--text-dim);font-size:0.85rem;">${escapeHTML(d.error || "")}</div>`;
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
+  // ---- IP reputation & CVE recon (Phase 3) ----------------------------------
+  (function ipRecon() {
+    const ip = $("p3-ipr-ip"), btn = $("p3-ipr-go"), out = $("p3-ipr-out");
+    if (!ip || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const v = ip.value.trim();
+      if (!v) { setOut(out, "Provide an IP address.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Checking reputation across GreyNoise, AbuseIPDB…</div>`);
+      try {
+        const r = await apiPost("/api/ip-recon", { ip: v });
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status + (r.data && r.data.detail ? ": " + escapeHTML(r.data.detail) : ""), true); btn.disabled = false; return; }
+        const d = r.data;
+        const score = d.risk_score, label = d.risk_label;
+        const scoreColor = score == null ? "var(--text-muted)" :
+                           score >= 75 ? "#ff4d6d" :
+                           score >= 40 ? "#ffb833" :
+                           score >= 10 ? "#ffe1ff" : "#4ade80";
+        let html = `<div style="display:flex;align-items:center;gap:18px;margin-bottom:14px;">
+          <div style="font-size:2.4rem;font-family:var(--font-heading);font-weight:800;color:${scoreColor};">${score == null ? "—" : score}</div>
+          <div>
+            <div style="color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:1.05rem;">${label ? escapeHTML(label).toUpperCase() : "no signal"} risk</div>
+            <div style="color:var(--text-muted);font-size:0.88rem;">composite score, 0 (clean) – 100 (high)</div>
+          </div>
+        </div>`;
+        const gn = d.sources.greynoise || {};
+        const ab = d.sources.abuseipdb || {};
+        html += `<div style="color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:0.95rem;margin:18px 0 6px;">GreyNoise Community</div>`;
+        if (gn.responding) {
+          html += `<table>` +
+            `<tr><th>Classification</th><td><code>${escapeHTML(gn.classification || "—")}</code></td></tr>` +
+            (gn.name ? `<tr><th>Tag</th><td>${escapeHTML(gn.name)}</td></tr>` : "") +
+            (gn.last_seen ? `<tr><th>Last seen</th><td>${escapeHTML(gn.last_seen)}</td></tr>` : "") +
+            (gn.note ? `<tr><th>Note</th><td>${escapeHTML(gn.note)}</td></tr>` : "") +
+            (gn.link ? `<tr><th>Detail</th><td><a href="${escapeHTML(gn.link)}" rel="noopener">${escapeHTML(gn.link)}</a></td></tr>` : "") +
+            `</table>`;
+        } else {
+          html += `<div style="color:#ffb1bf;font-size:0.9rem;">${escapeHTML(gn.error || "no response")}</div>`;
+        }
+        html += `<div style="color:var(--text);font-family:var(--font-heading);font-weight:600;font-size:0.95rem;margin:18px 0 6px;">AbuseIPDB</div>`;
+        if (ab.responding) {
+          html += `<table>` +
+            `<tr><th>Abuse confidence</th><td><code>${ab.abuse_confidence_score}/100</code></td></tr>` +
+            (ab.country_code ? `<tr><th>Country</th><td><code>${escapeHTML(ab.country_code)}</code></td></tr>` : "") +
+            (ab.isp ? `<tr><th>ISP</th><td>${escapeHTML(ab.isp)}</td></tr>` : "") +
+            (ab.usage_type ? `<tr><th>Usage</th><td>${escapeHTML(ab.usage_type)}</td></tr>` : "") +
+            (ab.total_reports !== undefined ? `<tr><th>Reports (90d)</th><td><code>${ab.total_reports}</code> from ${ab.num_distinct_users} reporters</td></tr>` : "") +
+            (ab.last_reported_at ? `<tr><th>Last reported</th><td>${escapeHTML(ab.last_reported_at)}</td></tr>` : "") +
+            (ab.is_tor ? `<tr><th>Tor</th><td><span style="color:#ffb833;">yes</span></td></tr>` : "") +
+            `</table>`;
+        } else if (ab.implemented === false) {
+          html += `<div style="color:var(--text-dim);font-size:0.9rem;">${escapeHTML(ab.error || "")}</div>`;
+        } else {
+          html += `<div style="color:#ffb1bf;font-size:0.9rem;">${escapeHTML(ab.error || "no response")}</div>`;
+        }
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
+  // ---- Composite Website Security Score (Phase 3) ---------------------------
+  (function webScore() {
+    const u = $("p3-ws-url"), btn = $("p3-ws-go"), out = $("p3-ws-out");
+    if (!u || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const url = u.value.trim();
+      if (!url) { setOut(out, "Provide an https URL.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Scoring ${escapeHTML(url)} — running header check + Mozilla Observatory lookup in parallel…</div>`);
+      try {
+        const r = await apiPost("/api/web-score", { url });
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
+        const d = r.data;
+        if (d.error) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
+        const grade = d.composite_grade, score = d.composite_score;
+        const gradeColor = grade.startsWith("A") ? "#4ade80" : grade === "B" ? "#a8e88b" : grade === "C" ? "#ffb833" : "#ff4d6d";
+        const dashOffset = 528 - (score / 100) * 528;
+        let html = `<div class="score-mock" style="margin:0 0 14px;padding:18px;">`;
+        html += `<div class="score-gauge"><svg viewBox="0 0 200 200" width="170" height="170">`;
+        html += `<circle cx="100" cy="100" r="84" fill="none" stroke="rgba(106,45,199,0.25)" stroke-width="14"/>`;
+        html += `<circle cx="100" cy="100" r="84" fill="none" stroke="${gradeColor}" stroke-width="14" stroke-linecap="round" stroke-dasharray="528" stroke-dashoffset="${dashOffset.toFixed(1)}" transform="rotate(-90 100 100)"/>`;
+        html += `<text x="100" y="92" text-anchor="middle" font-family="Outfit, sans-serif" font-size="58" font-weight="800" fill="#f5f0ff">${escapeHTML(grade)}</text>`;
+        html += `<text x="100" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b8a8d6">${score} / 100</text>`;
+        html += `</svg><div class="score-label"><code>${escapeHTML(d.url)}</code><br><span>composite — headers + Mozilla Observatory</span></div></div>`;
+        // Per-source breakdown
+        html += `<ul class="score-checks">`;
+        const h = d.headers || {};
+        if (h.checks) {
+          for (const c of h.checks) {
+            const cls = c.score > 0 ? "ok" : c.score < -10 ? "fail" : "warn";
+            const sign = c.score > 0 ? "+" : "";
+            html += `<li class="${cls}"><span>${escapeHTML(c.name)}</span><span>${escapeHTML(c.note || c.value || "")}</span><span class="pts">${sign}${c.score}</span></li>`;
+          }
+        }
+        const obs = d.observatory || {};
+        if (obs.responding) {
+          html += `<li class="${obs.score >= 75 ? "ok" : obs.score >= 50 ? "warn" : "fail"}"><span>Mozilla Observatory</span><span>grade ${escapeHTML(obs.grade || "—")} · ${obs.tests_passed || 0}/${(obs.tests_passed || 0) + (obs.tests_failed || 0)} tests passed · <a href="${escapeHTML(obs.report_url)}" rel="noopener">report</a></span><span class="pts">${obs.score}</span></li>`;
+        } else if (obs.error) {
+          html += `<li class="warn"><span>Mozilla Observatory</span><span style="color:var(--text-dim);">${escapeHTML(obs.error)}</span><span class="pts">—</span></li>`;
+        }
+        html += `</ul></div>`;
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
+  // ---- CVE / NVD search (Phase 3) -------------------------------------------
+  (function cveSearch() {
+    const q = $("p3-cve-q"), btn = $("p3-cve-go"), out = $("p3-cve-out");
+    if (!q || !btn || !out) return;
+    btn.addEventListener("click", async () => {
+      const query = q.value.trim();
+      if (!query) { setOut(out, "Provide a keyword or CVE ID.", true); return; }
+      btn.disabled = true;
+      setOut(out, `<div style="color:var(--text-muted);">Searching the NIST NVD…</div>`);
+      try {
+        const r = await apiPost("/api/cve", { query, limit: 20 });
+        if (!r.ok || !r.data) { setOut(out, "Server returned " + r.status, true); btn.disabled = false; return; }
+        const d = r.data;
+        if (d.error) { setOut(out, escapeHTML(d.error), true); btn.disabled = false; return; }
+        let html = `<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:10px;">${d.total} match${d.total === 1 ? "" : "es"}, showing ${d.items.length}</div>`;
+        if (!d.items.length) {
+          html += `<div style="color:var(--text-muted);">No CVEs matched. Try a more specific keyword (e.g. <code>nginx 1.18</code>) or paste a CVE ID like <code>CVE-2024-3094</code>.</div>`;
+        } else {
+          html += "<table><tr><th>CVE</th><th>CVSS</th><th>Description</th></tr>";
+          for (const c of d.items) {
+            const sevColor = c.severity === "CRITICAL" ? "#ff4d6d" :
+                             c.severity === "HIGH" ? "#ff7a93" :
+                             c.severity === "MEDIUM" ? "#ffb833" :
+                             c.severity === "LOW" ? "#a8e88b" : "var(--text-muted)";
+            const score = c.score != null ? c.score.toFixed(1) : "—";
+            html += `<tr><td><a href="${escapeHTML(c.url)}" rel="noopener"><code>${escapeHTML(c.id)}</code></a></td>` +
+                    `<td><span style="color:${sevColor};font-weight:600;">${score}</span> ${c.severity ? `<span style="font-size:0.78rem;color:var(--text-muted);">${escapeHTML(c.severity)}</span>` : ""}</td>` +
+                    `<td>${escapeHTML(c.description)}</td></tr>`;
+          }
+          html += "</table>";
+        }
+        html += `<div style="margin-top:12px;color:var(--text-dim);font-size:0.85rem;">Source: <a href="https://nvd.nist.gov/" rel="noopener">NIST NVD API 2.0</a>.</div>`;
+        setOut(out, html);
+      } catch (e) { networkError(out, e); }
+      btn.disabled = false;
+    });
+  })();
+
   // ---- AU outage feed -------------------------------------------------------
   (function outagesView() {
     const btn = $("p2-outages-go"), out = $("p2-outages-out");

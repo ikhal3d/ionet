@@ -52,6 +52,9 @@ services:
       - REQUIRE_TURNSTILE=${REQUIRE_TURNSTILE:-false}
       - ALLOWED_ORIGIN=${FRONTEND_ORIGIN:-https://ionet.com.au}
       - OUTAGE_DATA_PATH=/var/data/outages.json
+      # Optional Phase 3 API keys — endpoints degrade gracefully if unset
+      - ABUSEIPDB_API_KEY=${ABUSEIPDB_API_KEY:-}
+      - NVD_API_KEY=${NVD_API_KEY:-}
     volumes:
       - outage_data:/var/data:ro
     cap_drop:

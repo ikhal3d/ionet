@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import health, port, dns, whois, asn, tls, headers, outages
+from .routers import bgp, trace, ip_recon, web_score, cve
 
 app = FastAPI(
     title="ionet tools API",
@@ -30,10 +31,17 @@ app.add_middleware(
 
 # /healthz lives at root, all functional endpoints under /api
 app.include_router(health.router)
-app.include_router(port.router,    prefix="/api", tags=["port"])
-app.include_router(dns.router,     prefix="/api", tags=["dns"])
-app.include_router(whois.router,   prefix="/api", tags=["whois"])
-app.include_router(asn.router,     prefix="/api", tags=["asn"])
-app.include_router(tls.router,     prefix="/api", tags=["tls"])
-app.include_router(headers.router, prefix="/api", tags=["headers"])
-app.include_router(outages.router, prefix="/api", tags=["outages"])
+app.include_router(port.router,      prefix="/api", tags=["port"])
+app.include_router(dns.router,       prefix="/api", tags=["dns"])
+app.include_router(whois.router,     prefix="/api", tags=["whois"])
+app.include_router(asn.router,       prefix="/api", tags=["asn"])
+app.include_router(tls.router,       prefix="/api", tags=["tls"])
+app.include_router(headers.router,   prefix="/api", tags=["headers"])
+app.include_router(outages.router,   prefix="/api", tags=["outages"])
+# Phase 2.5
+app.include_router(bgp.router,       prefix="/api", tags=["bgp"])
+app.include_router(trace.router,     prefix="/api", tags=["trace"])
+# Phase 3
+app.include_router(ip_recon.router,  prefix="/api", tags=["ip-recon"])
+app.include_router(web_score.router, prefix="/api", tags=["web-score"])
+app.include_router(cve.router,       prefix="/api", tags=["cve"])

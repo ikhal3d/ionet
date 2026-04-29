@@ -14,6 +14,8 @@ you replace one.
 | Cloudflare **API Token** (zone DNS edit) | Private | 2026-04-29 | `backend/.env` on VM only — used by Caddy for Let's Encrypt DNS-01 | quarterly recommended | 2026-04-29 | VM compromise — revoke at https://dash.cloudflare.com/profile/api-tokens |
 | Cloudflare **API Token** (Workers edit) | Private | 2026-04-29 | `backend/.env` as `CF_RADAR_TOKEN` (used by outage-aggregator for Radar API) **AND** exported as `CLOUDFLARE_API_TOKEN` at `wrangler deploy` time | quarterly | 2026-04-29 | revoke if leaked — covers Workers + Routes + Account Analytics (Radar). Scope it to Radar-only if you want to tighten. |
 | Worker **secret** `TURNSTILE_SECRET` (on Worker) | Private | 2026-04-29 | encrypted at Cloudflare via `wrangler secret put` (re-run to rotate) | follow Turnstile Secret rotation | 2026-04-29 | rotate alongside the source Turnstile Secret |
+| **AbuseIPDB API key** (optional) | Private | not yet created | `backend/.env` as `ABUSEIPDB_API_KEY` (used by `/api/ip-recon`) | yearly | n/a | get a free 1,000/day key at https://www.abuseipdb.com/account/api — endpoint works without it (falls back to GreyNoise-only score) |
+| **NVD API key** (optional) | Private | not yet created | `backend/.env` as `NVD_API_KEY` (used by `/api/cve`) | yearly | n/a | request at https://nvd.nist.gov/developers/request-an-api-key — without one, NVD limits to 5 requests / 30s |
 | Let's Encrypt **TLS cert** (origin.ionet.com.au) | Auto-managed | first issue: pending | Caddy data volume `caddy_data` (Docker named volume on VM) | auto-renew every ~60 days by Caddy | n/a | private key leak — `docker volume rm ionet-tools_caddy_data && docker compose up -d caddy` to force re-issue |
 
 ### Where placeholder values go in `backend/.env.example`
