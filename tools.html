@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0c0a24">
+
+  <title>Network &amp; Security Tools — ionet Command Centre</title>
+  <meta name="description" content="Free network &amp; security tools for engineers — subnet/CIDR calculator, VLSM planner, JWT decoder, SHA/HMAC hashing, Base64/URL encoders, password &amp; UUID generators. Built by ionet, Australia's specialist ICT &amp; cybersecurity partner.">
+  <meta name="keywords" content="subnet calculator, CIDR calculator, VLSM planner, JWT decoder, SHA-256 hash, HMAC, base64 encode decode, URL encoder, password generator, UUID generator, network engineer tools, BGP looking glass, traceroute online, port reachability check, network operations centre, command centre, ionet tools">
+  <meta name="author" content="ionet">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://ionet.com.au/tools.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_AU">
+  <meta property="og:site_name" content="ionet">
+  <meta property="og:url" content="https://ionet.com.au/tools.html">
+  <meta property="og:title" content="Network &amp; Security Tools — ionet Command Centre">
+  <meta property="og:description" content="A growing set of fast, no-signup tools for working network &amp; security engineers — built and hosted in Australia by ionet.">
+  <meta property="og:image" content="https://ionet.com.au/assets/og/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="ionet — Network &amp; Security Tools Command Centre">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ionet_au">
+  <meta name="twitter:title" content="Network &amp; Security Tools — ionet Command Centre">
+  <meta name="twitter:description" content="Free, fast, no-signup network &amp; security tools for engineers — by ionet.">
+  <meta name="twitter:image" content="https://ionet.com.au/assets/og/og-image.png">
+
+  <link rel="icon" type="image/png" href="assets/logo/logo-mark.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/logo/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/logo/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/logo/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ionet.com.au/" },
+      { "@type": "ListItem", "position": 2, "name": "Network & Security Tools", "item": "https://ionet.com.au/tools.html" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Network & Security Tools — ionet Command Centre",
+    "url": "https://ionet.com.au/tools.html",
+    "inLanguage": "en-AU",
+    "isPartOf": { "@type": "WebSite", "name": "ionet", "url": "https://ionet.com.au/" },
+    "about": [
+      { "@type": "Thing", "name": "Network engineering" },
+      { "@type": "Thing", "name": "Cybersecurity" },
+      { "@type": "Thing", "name": "BGP" },
+      { "@type": "Thing", "name": "Subnetting" }
+    ],
+    "audience": { "@type": "Audience", "audienceType": "Network engineers, security engineers, system administrators" }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "ionet network & security tools",
+    "itemListOrder": "https://schema.org/ItemListOrderAscending",
+    "itemListElement": [
+      { "@type": "SoftwareApplication", "position": 1, "name": "IPv4 Subnet / CIDR Calculator",
+        "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#subnet-calculator",
+        "description": "Calculate network address, broadcast, usable host range, mask, wildcard mask, and host count for any IPv4 CIDR." },
+      { "@type": "SoftwareApplication", "position": 2, "name": "VLSM Subnet Planner",
+        "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#vlsm-planner",
+        "description": "Allocate variable-length subnets from a parent prefix in optimal address order." },
+      { "@type": "SoftwareApplication", "position": 3, "name": "JWT Decoder",
+        "applicationCategory": "SecurityApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#jwt-decoder",
+        "description": "Decode JSON Web Token header and payload entirely client-side. No data leaves your browser." },
+      { "@type": "SoftwareApplication", "position": 4, "name": "Hash Generator (SHA-1, SHA-256, SHA-384, SHA-512)",
+        "applicationCategory": "SecurityApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#hash-generator",
+        "description": "Generate cryptographic hashes via the Web Crypto API — runs locally, never sent." },
+      { "@type": "SoftwareApplication", "position": 5, "name": "HMAC Generator (HMAC-SHA256)",
+        "applicationCategory": "SecurityApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#hmac-generator",
+        "description": "Generate keyed-hash message authentication codes locally using HMAC-SHA256." },
+      { "@type": "SoftwareApplication", "position": 6, "name": "Base64 Encode / Decode",
+        "applicationCategory": "DeveloperApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#base64",
+        "description": "Encode and decode text to and from Base64." },
+      { "@type": "SoftwareApplication", "position": 7, "name": "URL Encode / Decode",
+        "applicationCategory": "DeveloperApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#url-encode",
+        "description": "Percent-encode and decode URL components." },
+      { "@type": "SoftwareApplication", "position": 8, "name": "Password Generator",
+        "applicationCategory": "SecurityApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#password-generator",
+        "description": "Cryptographically-secure password generator. Configurable length and character classes." },
+      { "@type": "SoftwareApplication", "position": 9, "name": "UUID v4 Generator",
+        "applicationCategory": "DeveloperApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#uuid-generator",
+        "description": "Generate cryptographically-random RFC 4122 UUID v4 values." },
+      { "@type": "SoftwareApplication", "position": 10, "name": "IP Address Converter",
+        "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#ip-converter",
+        "description": "Convert IPv4 between dotted-quad, decimal, hexadecimal, and binary." },
+      { "@type": "SoftwareApplication", "position": 11, "name": "Text Encoding Converter",
+        "applicationCategory": "DeveloperApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools.html#text-converter",
+        "description": "Convert text between ASCII, hexadecimal, and binary representations." }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Are these network tools free to use?",
+        "acceptedAnswer": { "@type": "Answer",
+          "text": "Yes. Every tool on this page is free, requires no signup, and runs entirely in your browser. Inputs you type — passwords, JWTs, hashes, IPs — never leave your device." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does ionet have a BGP looking glass?",
+        "acceptedAnswer": { "@type": "Answer",
+          "text": "A public BGP looking glass at lg.ionet.com.au is on our Phase 2 roadmap. It will run on hyperglass and expose ping, traceroute, and BGP route lookups from our network vantage point." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I traceroute or check a port from ionet's network?",
+        "acceptedAnswer": { "@type": "Answer",
+          "text": "Live traceroute, MTR, and TCP port reachability tools are part of our Phase 2 launch and will run from a hardened Australian-hosted endpoint with rate limiting and a usage policy." }
+      },
+      {
+        "@type": "Question",
+        "name": "Where do these tools run?",
+        "acceptedAnswer": { "@type": "Answer",
+          "text": "Client-side tools run inside your browser using the Web Crypto API and standard JavaScript. Future server-side tools (BGP, traceroute, WHOIS) will run from an ionet-operated Australian endpoint." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container nav">
+      <a class="nav-brand" href="/" aria-label="ionet home">
+        <img src="assets/logo/logo.png" alt="ionet">
+      </a>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="tools.html" class="active">Tools</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="contact.html" class="btn btn-primary" style="padding:10px 18px">Get in touch</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ Hero ============ -->
+    <section class="tools-hero">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Command centre</p>
+          <h1>Network &amp; security tools, <span class="accent">built for engineers.</span></h1>
+          <p class="hero-lead">
+            A growing set of fast, no-signup utilities for working network and security engineers —
+            calculators, decoders, hashers, generators. Everything on this page runs in your browser.
+            Nothing you type leaves your device.
+          </p>
+          <div class="hero-actions">
+            <a href="#command-centre" class="btn btn-primary">Open command centre →</a>
+            <a href="#tool-grid" class="btn btn-ghost">Browse tools</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Command Centre map ============ -->
+    <section id="command-centre">
+      <div class="container">
+        <div class="section-head reveal" style="max-width:880px;">
+          <p class="eyebrow">Global view</p>
+          <h2>Internet status, at a glance.</h2>
+          <p>
+            A live picture of internet health — submarine cable status, BGP route-leak hot zones,
+            and major Internet Exchange Points. The data feeds light up as we bring our Phase 2
+            backend online; the map below is a preview of what's landing.
+          </p>
+        </div>
+
+        <div class="cc-panel reveal">
+          <div class="cc-toolbar">
+            <div class="cc-status">
+              <span class="cc-dot cc-dot--ok"></span>
+              <span class="cc-status-label">Demo data &middot; live feeds coming online</span>
+            </div>
+            <div class="cc-legend" aria-label="Map legend">
+              <span><i class="cc-key cc-key--ixp"></i> Internet Exchange</span>
+              <span><i class="cc-key cc-key--cable"></i> Submarine cable</span>
+              <span><i class="cc-key cc-key--alert"></i> BGP advisory</span>
+            </div>
+          </div>
+
+          <div class="cc-map-wrap" aria-hidden="true">
+            <svg class="cc-map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Schematic world map showing Internet Exchange Points and submarine cables">
+              <defs>
+                <radialGradient id="ccGlow" cx="50%" cy="50%" r="60%">
+                  <stop offset="0%" stop-color="#6a2dc7" stop-opacity="0.18"/>
+                  <stop offset="100%" stop-color="#6a2dc7" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="ccCable" x1="0" x2="1" y1="0" y2="0">
+                  <stop offset="0%"   stop-color="#cc9900" stop-opacity="0.0"/>
+                  <stop offset="50%"  stop-color="#ffb833" stop-opacity="0.6"/>
+                  <stop offset="100%" stop-color="#cc9900" stop-opacity="0.0"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Backdrop glow -->
+              <rect x="0" y="0" width="1000" height="500" fill="url(#ccGlow)"/>
+
+              <!-- Lat/lon grid -->
+              <g class="cc-grid" stroke="rgba(106,45,199,0.18)" stroke-width="0.5" fill="none">
+                <!-- Meridians every 30° -->
+                <line x1="83"  y1="0" x2="83"  y2="500"/>
+                <line x1="167" y1="0" x2="167" y2="500"/>
+                <line x1="250" y1="0" x2="250" y2="500"/>
+                <line x1="333" y1="0" x2="333" y2="500"/>
+                <line x1="417" y1="0" x2="417" y2="500"/>
+                <line x1="500" y1="0" x2="500" y2="500"/>
+                <line x1="583" y1="0" x2="583" y2="500"/>
+                <line x1="667" y1="0" x2="667" y2="500"/>
+                <line x1="750" y1="0" x2="750" y2="500"/>
+                <line x1="833" y1="0" x2="833" y2="500"/>
+                <line x1="917" y1="0" x2="917" y2="500"/>
+                <!-- Parallels every 30° -->
+                <line x1="0" y1="83"  x2="1000" y2="83"/>
+                <line x1="0" y1="167" x2="1000" y2="167"/>
+                <line x1="0" y1="250" x2="1000" y2="250" stroke="rgba(204,153,0,0.35)" stroke-dasharray="2 4"/>
+                <line x1="0" y1="333" x2="1000" y2="333"/>
+                <line x1="0" y1="417" x2="1000" y2="417"/>
+              </g>
+
+              <!-- Continents (schematic silhouettes) -->
+              <g class="cc-land" fill="rgba(106,45,199,0.16)" stroke="rgba(204,153,0,0.40)" stroke-width="1" stroke-linejoin="round">
+                <!-- North America -->
+                <path d="M120 90 L 200 75 L 280 80 L 340 105 L 360 145 L 350 195 L 295 225 L 240 235 L 195 215 L 165 175 L 130 145 Z"/>
+                <!-- Greenland -->
+                <path d="M380 70 L 425 65 L 440 95 L 415 115 L 385 105 Z"/>
+                <!-- Central + South America -->
+                <path d="M270 235 L 305 240 L 315 270 L 340 285 L 360 320 L 345 380 L 320 425 L 295 425 L 280 380 L 270 320 Z"/>
+                <!-- Europe -->
+                <path d="M470 95 L 540 90 L 575 110 L 580 140 L 545 158 L 500 155 L 475 130 Z"/>
+                <!-- Africa -->
+                <path d="M490 165 L 575 165 L 600 215 L 605 285 L 575 360 L 535 385 L 510 360 L 495 290 L 480 220 Z"/>
+                <!-- Asia (incl. Middle East + India + SE Asia) -->
+                <path d="M580 90 L 730 75 L 830 85 L 905 115 L 920 175 L 880 230 L 815 250 L 745 240 L 700 250 L 680 280 L 645 270 L 615 230 L 590 175 Z"/>
+                <!-- Indonesia/PNG fragments -->
+                <path d="M780 270 L 830 268 L 855 285 L 825 295 L 790 290 Z"/>
+                <!-- Australia -->
+                <path d="M820 330 L 905 328 L 935 355 L 920 388 L 870 395 L 830 380 L 815 355 Z"/>
+                <!-- New Zealand -->
+                <path d="M945 395 L 965 393 L 970 412 L 950 415 Z"/>
+              </g>
+
+              <!-- Submarine cables (schematic arcs) -->
+              <g class="cc-cables" fill="none" stroke="url(#ccCable)" stroke-width="1.4" stroke-linecap="round">
+                <!-- Trans-Atlantic -->
+                <path d="M300 145 Q 410 90 510 110"/>
+                <!-- Trans-Pacific (NA -> Asia) -->
+                <path d="M180 175 Q 500 60 880 175"/>
+                <!-- AU -> Asia (Sydney -> Singapore) -->
+                <path d="M920 360 Q 850 320 788 246"/>
+                <!-- AU -> US (Sydney -> LA) — Southern Cross-style -->
+                <path d="M920 360 Q 600 460 172 195"/>
+                <!-- Europe -> Asia (London -> Mumbai) -->
+                <path d="M499 110 Q 600 200 702 197"/>
+                <!-- Africa -> South America (SACS) -->
+                <path d="M551 344 Q 420 380 371 315"/>
+                <!-- Asia coast (Tokyo -> HK -> Singapore) -->
+                <path d="M888 151 Q 850 200 817 187"/>
+                <path d="M817 187 Q 800 220 788 246"/>
+              </g>
+
+              <!-- IXP / city pulse dots -->
+              <g class="cc-points">
+                <g class="cc-point cc-point--ixp" transform="translate(920 360)" data-label="Sydney IX"><circle r="4"/><circle class="ring" r="4"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(902 372)" data-label="MEL-IX"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(788 246)" data-label="SGIX Singapore"><circle r="4"/><circle class="ring" r="4"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(888 151)" data-label="JPIX Tokyo"><circle r="4"/><circle class="ring" r="4"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(817 187)" data-label="HKIX Hong Kong"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(702 197)" data-label="NIXI Mumbai"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(524 111)" data-label="DE-CIX Frankfurt"><circle r="4"/><circle class="ring" r="4"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(499 107)" data-label="LINX London"><circle r="4"/><circle class="ring" r="4"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(513 104)" data-label="AMS-IX Amsterdam"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(294 137)" data-label="NYIIX New York"><circle r="4"/><circle class="ring" r="4"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(172 195)" data-label="Equinix LA"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(371 315)" data-label="IX.br São Paulo"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(551 344)" data-label="NAPAfrica Cape Town"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--alert" transform="translate(640 180)" data-label="Demo BGP advisory"><circle r="5"/><circle class="ring" r="5"/></g>
+                <g class="cc-point cc-point--alert" transform="translate(225 360)" data-label="Demo cable degradation"><circle r="5"/><circle class="ring" r="5"/></g>
+              </g>
+            </svg>
+          </div>
+
+          <div class="cc-stats">
+            <div class="cc-stat">
+              <strong>13</strong>
+              <span>IXPs tracked</span>
+            </div>
+            <div class="cc-stat">
+              <strong>8</strong>
+              <span>Submarine routes</span>
+            </div>
+            <div class="cc-stat">
+              <strong>2</strong>
+              <span>Demo advisories</span>
+            </div>
+            <div class="cc-stat">
+              <strong>Phase 2</strong>
+              <span>Live BGP &amp; cable feeds</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Tool grid ============ -->
+    <section id="tool-grid">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">The toolkit</p>
+          <h2>Everything you need, one tab away.</h2>
+          <p>Eleven tools running entirely in your browser. Cryptographic operations use the Web Crypto API; nothing is sent to a server. Pick a tool to jump straight to it.</p>
+        </div>
+
+        <div class="services-grid">
+          <a class="service tool-card reveal" href="#subnet-calculator">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            </div>
+            <h3>IPv4 Subnet / CIDR</h3>
+            <p>Network, broadcast, usable range, mask, wildcard, host count.</p>
+          </a>
+          <a class="service tool-card reveal" href="#vlsm-planner">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+            </div>
+            <h3>VLSM Planner</h3>
+            <p>Allocate variable-length subnets from a parent prefix.</p>
+          </a>
+          <a class="service tool-card reveal" href="#jwt-decoder">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3>JWT Decoder</h3>
+            <p>Parse JWT header and payload locally. No data leaves your browser.</p>
+          </a>
+          <a class="service tool-card reveal" href="#hash-generator">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg>
+            </div>
+            <h3>Hash Generator</h3>
+            <p>SHA-1, SHA-256, SHA-384, SHA-512 via the Web Crypto API.</p>
+          </a>
+          <a class="service tool-card reveal" href="#hmac-generator">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h3>HMAC-SHA256</h3>
+            <p>Keyed-hash message authentication codes, computed locally.</p>
+          </a>
+          <a class="service tool-card reveal" href="#base64">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <h3>Base64</h3>
+            <p>Encode and decode text to/from Base64.</p>
+          </a>
+          <a class="service tool-card reveal" href="#url-encode">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <h3>URL Encoder</h3>
+            <p>Percent-encode and decode URL components.</p>
+          </a>
+          <a class="service tool-card reveal" href="#password-generator">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1"/><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3>Password Generator</h3>
+            <p>Cryptographically-secure random passwords. Configurable length and charset.</p>
+          </a>
+          <a class="service tool-card reveal" href="#uuid-generator">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>
+            </div>
+            <h3>UUID v4</h3>
+            <p>Generate cryptographically-random RFC 4122 UUID v4 values.</p>
+          </a>
+          <a class="service tool-card reveal" href="#ip-converter">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><polyline points="14 7 21 7 21 14"/></svg>
+            </div>
+            <h3>IP Converter</h3>
+            <p>IPv4 between dotted-quad, decimal, hex, and binary.</p>
+          </a>
+          <a class="service tool-card reveal" href="#text-converter">
+            <div class="icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            </div>
+            <h3>Text Converter</h3>
+            <p>Convert between ASCII, hex, and binary.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOOLS ============ -->
+
+    <!-- Subnet Calculator -->
+    <section id="subnet-calculator" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">IPv4</p>
+          <h2>Subnet / CIDR Calculator</h2>
+          <p>Enter any IPv4 prefix in CIDR notation — get the network address, broadcast, usable host range, mask, wildcard mask, and host count instantly.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>CIDR (e.g. 10.0.5.0/24)</span>
+              <input id="sn-input" type="text" autocomplete="off" spellcheck="false" placeholder="192.168.10.0/26" value="10.0.5.0/24">
+            </label>
+            <button id="sn-go" class="btn btn-secondary" type="button">Calculate</button>
+          </div>
+          <div class="tool-out" id="sn-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VLSM Planner -->
+    <section id="vlsm-planner" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">IPv4</p>
+          <h2>VLSM Subnet Planner</h2>
+          <p>Allocate variable-length subnets from a parent prefix in optimal address order. Provide a list of required host counts; the planner picks prefixes that fit and assigns them sequentially.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Parent prefix</span>
+              <input id="vl-base" type="text" autocomplete="off" spellcheck="false" value="10.0.0.0/16">
+            </label>
+            <label class="tool-field">
+              <span>Required hosts (comma or newline separated)</span>
+              <input id="vl-needs" type="text" autocomplete="off" spellcheck="false" value="500, 100, 50, 25, 2">
+            </label>
+            <button id="vl-go" class="btn btn-secondary" type="button">Plan</button>
+          </div>
+          <div class="tool-out" id="vl-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- JWT Decoder -->
+    <section id="jwt-decoder" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Identity</p>
+          <h2>JWT Decoder</h2>
+          <p>Paste a JSON Web Token to inspect its header and payload. Decoding happens entirely client-side — your token never leaves the browser. Signature verification requires the issuer's key and isn't performed here.</p>
+        </div>
+        <div class="tool reveal">
+          <label class="tool-field tool-field--full">
+            <span>JWT</span>
+            <textarea id="jw-input" rows="3" spellcheck="false" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkphbmUgRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.signature_here">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkphbmUgRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</textarea>
+          </label>
+          <div class="tool-row">
+            <button id="jw-go" class="btn btn-secondary" type="button">Decode</button>
+          </div>
+          <div class="tool-out" id="jw-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hash Generator -->
+    <section id="hash-generator" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Cryptography</p>
+          <h2>Hash Generator</h2>
+          <p>Compute SHA-1, SHA-256, SHA-384, or SHA-512 over any text. Uses the browser's Web Crypto API — your input never leaves the page.</p>
+        </div>
+        <div class="tool reveal">
+          <label class="tool-field tool-field--full">
+            <span>Input</span>
+            <textarea id="ha-input" rows="3" spellcheck="false" placeholder="Type or paste text to hash"></textarea>
+          </label>
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Algorithm</span>
+              <select id="ha-algo">
+                <option value="SHA-256" selected>SHA-256</option>
+                <option value="SHA-1">SHA-1 (legacy)</option>
+                <option value="SHA-384">SHA-384</option>
+                <option value="SHA-512">SHA-512</option>
+              </select>
+            </label>
+            <button id="ha-go" class="btn btn-secondary" type="button">Hash</button>
+          </div>
+          <div class="tool-out" id="ha-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HMAC Generator -->
+    <section id="hmac-generator" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Cryptography</p>
+          <h2>HMAC-SHA256 Generator</h2>
+          <p>Compute a keyed-hash message authentication code (HMAC) using SHA-256. Useful for signing webhook payloads, validating signed cookies, or testing an API integration locally.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Secret key</span>
+              <input id="hm-key" type="text" autocomplete="off" spellcheck="false" placeholder="shared-secret">
+            </label>
+          </div>
+          <label class="tool-field tool-field--full">
+            <span>Message</span>
+            <textarea id="hm-msg" rows="3" spellcheck="false" placeholder="payload to sign"></textarea>
+          </label>
+          <div class="tool-row">
+            <button id="hm-go" class="btn btn-secondary" type="button">Sign</button>
+          </div>
+          <div class="tool-out" id="hm-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Base64 -->
+    <section id="base64" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Encoding</p>
+          <h2>Base64 Encode / Decode</h2>
+          <p>Quick conversion to and from Base64 for credentials, embedded images, API tokens, and anything else that needs round-trip-safe transport.</p>
+        </div>
+        <div class="tool reveal">
+          <label class="tool-field tool-field--full">
+            <span>Input</span>
+            <textarea id="b64-input" rows="3" spellcheck="false" placeholder="Type text to encode, or paste Base64 to decode"></textarea>
+          </label>
+          <div class="tool-row">
+            <button id="b64-encode" class="btn btn-secondary" type="button">Encode</button>
+            <button id="b64-decode" class="btn btn-ghost" type="button">Decode</button>
+          </div>
+          <div class="tool-out" id="b64-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- URL Encode -->
+    <section id="url-encode" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Encoding</p>
+          <h2>URL Encode / Decode</h2>
+          <p>Percent-encode and decode strings — the right operation for URL query parameters, path components, and form values.</p>
+        </div>
+        <div class="tool reveal">
+          <label class="tool-field tool-field--full">
+            <span>Input</span>
+            <textarea id="ue-input" rows="3" spellcheck="false" placeholder="hello world &amp; friends?"></textarea>
+          </label>
+          <div class="tool-row">
+            <button id="ue-encode" class="btn btn-secondary" type="button">Encode</button>
+            <button id="ue-decode" class="btn btn-ghost" type="button">Decode</button>
+          </div>
+          <div class="tool-out" id="ue-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Password Generator -->
+    <section id="password-generator" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Security</p>
+          <h2>Password Generator</h2>
+          <p>Cryptographically-secure passwords drawn from <code>crypto.getRandomValues</code>. Choose your length and which character classes to include.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Length</span>
+              <input id="pw-len" type="number" min="6" max="128" value="20">
+            </label>
+            <label class="tool-check"><input type="checkbox" id="pw-lower" checked> a–z</label>
+            <label class="tool-check"><input type="checkbox" id="pw-upper" checked> A–Z</label>
+            <label class="tool-check"><input type="checkbox" id="pw-digit" checked> 0–9</label>
+            <label class="tool-check"><input type="checkbox" id="pw-symb" checked> Symbols</label>
+            <label class="tool-check"><input type="checkbox" id="pw-ambig"> Avoid ambiguous (Il1O0)</label>
+            <button id="pw-go" class="btn btn-secondary" type="button">Generate</button>
+          </div>
+          <div class="tool-out" id="pw-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UUID Generator -->
+    <section id="uuid-generator" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Identifiers</p>
+          <h2>UUID v4 Generator</h2>
+          <p>Generate cryptographically-random version-4 UUIDs (RFC 4122). Handy for primary keys, idempotency tokens, and correlation IDs.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Count</span>
+              <input id="uu-count" type="number" min="1" max="100" value="5">
+            </label>
+            <button id="uu-go" class="btn btn-secondary" type="button">Generate</button>
+          </div>
+          <div class="tool-out" id="uu-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IP Converter -->
+    <section id="ip-converter" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">IPv4</p>
+          <h2>IP Address Converter</h2>
+          <p>Convert any IPv4 address between dotted-quad, decimal (32-bit integer), hexadecimal, and binary representations.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>IPv4 (any format)</span>
+              <input id="ip-input" type="text" autocomplete="off" spellcheck="false" placeholder="192.168.1.1, 3232235777, 0xC0A80101, or binary" value="192.168.1.1">
+            </label>
+            <button id="ip-go" class="btn btn-secondary" type="button">Convert</button>
+          </div>
+          <div class="tool-out" id="ip-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Text Converter -->
+    <section id="text-converter" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Encoding</p>
+          <h2>Text ↔ Hex ↔ Binary</h2>
+          <p>Convert strings between ASCII, hexadecimal, and binary. Useful for embedded debugging, byte-pattern analysis, and CTF-style puzzles.</p>
+        </div>
+        <div class="tool reveal">
+          <label class="tool-field tool-field--full">
+            <span>Input</span>
+            <textarea id="tx-input" rows="3" spellcheck="false" placeholder="Type ASCII, hex (e.g. 48 65 6c), or binary (01001000 ...)" >Hello</textarea>
+          </label>
+          <div class="tool-row">
+            <button class="btn btn-secondary" type="button" data-tx="text2hex">Text → Hex</button>
+            <button class="btn btn-secondary" type="button" data-tx="text2bin">Text → Binary</button>
+            <button class="btn btn-ghost" type="button" data-tx="hex2text">Hex → Text</button>
+            <button class="btn btn-ghost" type="button" data-tx="bin2text">Binary → Text</button>
+          </div>
+          <div class="tool-out" id="tx-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Coming soon ============ -->
+    <section id="coming-soon">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Phase 2 — landing soon</p>
+          <h2>Backed by our own network.</h2>
+          <p>Tools that need a server vantage point — BGP visibility, traceroute, port reachability, WHOIS — are being built on an ionet-operated, Australian-hosted endpoint. Rate-limited, captcha-gated, and fair-use friendly.</p>
+        </div>
+        <div class="services-grid">
+          <article class="service soon reveal">
+            <span class="soon-badge">Phase 2</span>
+            <h3>BGP Looking Glass</h3>
+            <p><code>show ip bgp</code>, route-server views, AS-path inspection, and prefix lookups from our network. Powered by hyperglass at <code>lg.ionet.com.au</code>.</p>
+          </article>
+          <article class="service soon reveal">
+            <span class="soon-badge">Phase 2</span>
+            <h3>Traceroute / MTR</h3>
+            <p>Layer-3 path tracing with hop-by-hop loss and latency, run from our PoP and rendered as a clean visualisation.</p>
+          </article>
+          <article class="service soon reveal">
+            <span class="soon-badge">Phase 2</span>
+            <h3>TCP Port Reachability</h3>
+            <p>Check whether a single well-known port on a target is reachable. Captcha-gated, authorisation-gated, rate-limited — not a port scanner.</p>
+          </article>
+          <article class="service soon reveal">
+            <span class="soon-badge">Phase 2</span>
+            <h3>DNS / DNSSEC Lookup</h3>
+            <p>Authoritative DNS queries with DNSSEC validation, plus reverse DNS, NS-walk, and zone consistency checks.</p>
+          </article>
+          <article class="service soon reveal">
+            <span class="soon-badge">Phase 2</span>
+            <h3>WHOIS / RDAP</h3>
+            <p>Domain and IP registration data via the modern RDAP protocol, with WHOIS fallback for legacy records.</p>
+          </article>
+          <article class="service soon reveal">
+            <span class="soon-badge">Phase 2</span>
+            <h3>ASN / Prefix Lookup</h3>
+            <p>Autonomous System lookup, prefix announcements, peer relationships, and hijack alerts.</p>
+          </article>
+          <article class="service soon reveal">
+            <span class="soon-badge">Phase 2</span>
+            <h3>SSL / TLS Inspector</h3>
+            <p>Certificate chain, expiry, key strength, supported ciphers, and HSTS / CAA / OCSP checks.</p>
+          </article>
+          <article class="service soon reveal">
+            <span class="soon-badge">Phase 2</span>
+            <h3>HTTP Security Headers</h3>
+            <p>CSP, HSTS, X-Frame-Options, Referrer-Policy and friends — graded the way Mozilla Observatory does it, for any URL.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section id="cta" class="bg-purple-strong">
+      <div class="container">
+        <div class="philosophy reveal">
+          <div>
+            <p class="eyebrow">Open call</p>
+            <h2>Have a tool you wish existed? Tell us.</h2>
+            <p>This page is a living toolkit, written by working engineers. If there's a calculation, decode, or lookup you reach for every week and the rest of the internet has buried in a popup-laden mess — let us build a clean, fast version of it here.</p>
+            <a href="contact.html" class="btn btn-primary">Suggest a tool →</a>
+          </div>
+          <div>
+            <blockquote>
+              The tools you use every day shape how you think. We'd rather you reached for ours than a tab full of ads.
+              <footer style="margin-top:18px;font-size:0.9rem;font-weight:400;color:var(--text-muted);font-style:normal;">
+                — The ionet team
+              </footer>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="assets/logo/logo.png" alt="ionet">
+          <p>Australia's specialist ICT &amp; cybersecurity partner. We build it better.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Tools</h4>
+          <ul>
+            <li><a href="tools.html#subnet-calculator">Subnet calculator</a></li>
+            <li><a href="tools.html#jwt-decoder">JWT decoder</a></li>
+            <li><a href="tools.html#hash-generator">Hash generator</a></li>
+            <li><a href="tools.html#password-generator">Password generator</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="index.html#services">Services</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="mailto:info@ionet.com.au">info@ionet.com.au</a></li>
+            <li><a href="contact.html">Enquiry form</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> ionet — All rights reserved.</span>
+        <span>Crafted in Australia</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/tools.js"></script>
+</body>
+</html>
