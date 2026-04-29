@@ -227,7 +227,7 @@
           <div class="cc-toolbar">
             <div class="cc-status">
               <span class="cc-dot cc-dot--ok"></span>
-              <span class="cc-status-label">Demo data &middot; live feeds coming online</span>
+              <span class="cc-status-label">Synthetic feed &middot; live telemetry lands in Phase 2</span>
             </div>
             <div class="cc-legend" aria-label="Map legend">
               <span><i class="cc-key cc-key--ixp"></i> Internet Exchange</span>
@@ -237,102 +237,115 @@
           </div>
 
           <div class="cc-map-wrap" aria-hidden="true">
-            <svg class="cc-map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Schematic world map showing Internet Exchange Points and submarine cables">
+            <span class="cc-corner cc-corner--tl"></span>
+            <span class="cc-corner cc-corner--tr"></span>
+            <span class="cc-corner cc-corner--bl"></span>
+            <span class="cc-corner cc-corner--br"></span>
+
+            <svg class="cc-map" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="World map showing major Internet Exchange Points and submarine cable routes">
               <defs>
-                <radialGradient id="ccGlow" cx="50%" cy="50%" r="60%">
-                  <stop offset="0%" stop-color="#6a2dc7" stop-opacity="0.18"/>
-                  <stop offset="100%" stop-color="#6a2dc7" stop-opacity="0"/>
+                <radialGradient id="ccBg" cx="50%" cy="50%" r="65%">
+                  <stop offset="0%"  stop-color="#1a1450" stop-opacity="0.85"/>
+                  <stop offset="100%" stop-color="#0a0820" stop-opacity="1"/>
                 </radialGradient>
-                <linearGradient id="ccCable" x1="0" x2="1" y1="0" y2="0">
-                  <stop offset="0%"   stop-color="#cc9900" stop-opacity="0.0"/>
-                  <stop offset="50%"  stop-color="#ffb833" stop-opacity="0.6"/>
-                  <stop offset="100%" stop-color="#cc9900" stop-opacity="0.0"/>
+                <linearGradient id="ccLandFill" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%"   stop-color="#8a3dd8" stop-opacity="0.55"/>
+                  <stop offset="100%" stop-color="#3a1882" stop-opacity="0.55"/>
                 </linearGradient>
+                <linearGradient id="ccLandStroke" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0%"   stop-color="#cc00ff" stop-opacity="0.85"/>
+                  <stop offset="100%" stop-color="#ffb833" stop-opacity="0.85"/>
+                </linearGradient>
+                <radialGradient id="ccVignette" cx="50%" cy="50%" r="75%">
+                  <stop offset="0%"   stop-color="#000" stop-opacity="0"/>
+                  <stop offset="100%" stop-color="#000" stop-opacity="0.55"/>
+                </radialGradient>
+                <filter id="ccLandGlow" x="-2%" y="-2%" width="104%" height="104%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="0.6"/>
+                </filter>
+                <filter id="ccDotGlow" x="-200%" y="-200%" width="500%" height="500%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="2.2"/>
+                </filter>
               </defs>
 
-              <!-- Backdrop glow -->
-              <rect x="0" y="0" width="1000" height="500" fill="url(#ccGlow)"/>
+              <!-- Backdrop -->
+              <rect x="0" y="0" width="1000" height="500" fill="url(#ccBg)"/>
 
-              <!-- Lat/lon grid -->
-              <g class="cc-grid" stroke="rgba(106,45,199,0.18)" stroke-width="0.5" fill="none">
-                <!-- Meridians every 30° -->
-                <line x1="83"  y1="0" x2="83"  y2="500"/>
-                <line x1="167" y1="0" x2="167" y2="500"/>
-                <line x1="250" y1="0" x2="250" y2="500"/>
-                <line x1="333" y1="0" x2="333" y2="500"/>
-                <line x1="417" y1="0" x2="417" y2="500"/>
-                <line x1="500" y1="0" x2="500" y2="500"/>
-                <line x1="583" y1="0" x2="583" y2="500"/>
-                <line x1="667" y1="0" x2="667" y2="500"/>
-                <line x1="750" y1="0" x2="750" y2="500"/>
-                <line x1="833" y1="0" x2="833" y2="500"/>
-                <line x1="917" y1="0" x2="917" y2="500"/>
-                <!-- Parallels every 30° -->
-                <line x1="0" y1="83"  x2="1000" y2="83"/>
-                <line x1="0" y1="167" x2="1000" y2="167"/>
-                <line x1="0" y1="250" x2="1000" y2="250" stroke="rgba(204,153,0,0.35)" stroke-dasharray="2 4"/>
-                <line x1="0" y1="333" x2="1000" y2="333"/>
-                <line x1="0" y1="417" x2="1000" y2="417"/>
+              <!-- Graticule (lat/lon every 20°) -->
+              <g class="cc-grid" stroke="rgba(106,45,199,0.18)" stroke-width="0.4" fill="none">
+                <!-- Meridians every 20° (1000 / 18 = ~55.5px) -->
+                <line x1="55.5"  y1="0" x2="55.5"  y2="500"/>
+                <line x1="111"   y1="0" x2="111"   y2="500"/>
+                <line x1="166.5" y1="0" x2="166.5" y2="500"/>
+                <line x1="222"   y1="0" x2="222"   y2="500"/>
+                <line x1="277.5" y1="0" x2="277.5" y2="500"/>
+                <line x1="333"   y1="0" x2="333"   y2="500"/>
+                <line x1="388.5" y1="0" x2="388.5" y2="500"/>
+                <line x1="444"   y1="0" x2="444"   y2="500"/>
+                <line x1="555.5" y1="0" x2="555.5" y2="500"/>
+                <line x1="611"   y1="0" x2="611"   y2="500"/>
+                <line x1="666.5" y1="0" x2="666.5" y2="500"/>
+                <line x1="722"   y1="0" x2="722"   y2="500"/>
+                <line x1="777.5" y1="0" x2="777.5" y2="500"/>
+                <line x1="833"   y1="0" x2="833"   y2="500"/>
+                <line x1="888.5" y1="0" x2="888.5" y2="500"/>
+                <line x1="944"   y1="0" x2="944"   y2="500"/>
+                <!-- Prime meridian -->
+                <line x1="500" y1="0" x2="500" y2="500" stroke="rgba(204,0,255,0.20)" stroke-dasharray="3 5"/>
+                <!-- Parallels every 20° (500 / 9 = ~55.5px) -->
+                <line x1="0" y1="55.5"  x2="1000" y2="55.5"/>
+                <line x1="0" y1="111"   x2="1000" y2="111"/>
+                <line x1="0" y1="166.5" x2="1000" y2="166.5"/>
+                <line x1="0" y1="222"   x2="1000" y2="222"/>
+                <!-- Equator -->
+                <line x1="0" y1="250" x2="1000" y2="250" stroke="rgba(204,153,0,0.45)" stroke-dasharray="3 5"/>
+                <line x1="0" y1="277.5" x2="1000" y2="277.5"/>
+                <line x1="0" y1="333"   x2="1000" y2="333"/>
+                <line x1="0" y1="388.5" x2="1000" y2="388.5"/>
+                <line x1="0" y1="444"   x2="1000" y2="444"/>
               </g>
 
-              <!-- Continents (schematic silhouettes) -->
-              <g class="cc-land" fill="rgba(106,45,199,0.16)" stroke="rgba(204,153,0,0.40)" stroke-width="1" stroke-linejoin="round">
-                <!-- North America -->
-                <path d="M120 90 L 200 75 L 280 80 L 340 105 L 360 145 L 350 195 L 295 225 L 240 235 L 195 215 L 165 175 L 130 145 Z"/>
-                <!-- Greenland -->
-                <path d="M380 70 L 425 65 L 440 95 L 415 115 L 385 105 Z"/>
-                <!-- Central + South America -->
-                <path d="M270 235 L 305 240 L 315 270 L 340 285 L 360 320 L 345 380 L 320 425 L 295 425 L 280 380 L 270 320 Z"/>
-                <!-- Europe -->
-                <path d="M470 95 L 540 90 L 575 110 L 580 140 L 545 158 L 500 155 L 475 130 Z"/>
-                <!-- Africa -->
-                <path d="M490 165 L 575 165 L 600 215 L 605 285 L 575 360 L 535 385 L 510 360 L 495 290 L 480 220 Z"/>
-                <!-- Asia (incl. Middle East + India + SE Asia) -->
-                <path d="M580 90 L 730 75 L 830 85 L 905 115 L 920 175 L 880 230 L 815 250 L 745 240 L 700 250 L 680 280 L 645 270 L 615 230 L 590 175 Z"/>
-                <!-- Indonesia/PNG fragments -->
-                <path d="M780 270 L 830 268 L 855 285 L 825 295 L 790 290 Z"/>
-                <!-- Australia -->
-                <path d="M820 330 L 905 328 L 935 355 L 920 388 L 870 395 L 830 380 L 815 355 Z"/>
-                <!-- New Zealand -->
-                <path d="M945 395 L 965 393 L 970 412 L 950 415 Z"/>
+              <!-- Real continent silhouettes (Natural Earth 110m, equirectangular). Path injected at runtime. -->
+              <g class="cc-land">
+                <path id="cc-land-glow" d="" fill="rgba(204,0,255,0.15)" filter="url(#ccLandGlow)" stroke="none"/>
+                <path id="cc-land-fill" d="" fill="url(#ccLandFill)" stroke="url(#ccLandStroke)" stroke-width="0.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
               </g>
 
-              <!-- Submarine cables (schematic arcs) -->
-              <g class="cc-cables" fill="none" stroke="url(#ccCable)" stroke-width="1.4" stroke-linecap="round">
-                <!-- Trans-Atlantic -->
-                <path d="M300 145 Q 410 90 510 110"/>
-                <!-- Trans-Pacific (NA -> Asia) -->
-                <path d="M180 175 Q 500 60 880 175"/>
-                <!-- AU -> Asia (Sydney -> Singapore) -->
-                <path d="M920 360 Q 850 320 788 246"/>
-                <!-- AU -> US (Sydney -> LA) — Southern Cross-style -->
-                <path d="M920 360 Q 600 460 172 195"/>
-                <!-- Europe -> Asia (London -> Mumbai) -->
-                <path d="M499 110 Q 600 200 702 197"/>
-                <!-- Africa -> South America (SACS) -->
-                <path d="M551 344 Q 420 380 371 315"/>
-                <!-- Asia coast (Tokyo -> HK -> Singapore) -->
-                <path d="M888 151 Q 850 200 817 187"/>
-                <path d="M817 187 Q 800 220 788 246"/>
+              <!-- Real submarine cables — TeleGeography, 710 cables. Path injected at runtime. -->
+              <g class="cc-cables" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path id="cc-cables-real" d=""/>
               </g>
 
-              <!-- IXP / city pulse dots -->
+              <!-- IXP pulse dots -->
               <g class="cc-points">
-                <g class="cc-point cc-point--ixp" transform="translate(920 360)" data-label="Sydney IX"><circle r="4"/><circle class="ring" r="4"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(902 372)" data-label="MEL-IX"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(788 246)" data-label="SGIX Singapore"><circle r="4"/><circle class="ring" r="4"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(888 151)" data-label="JPIX Tokyo"><circle r="4"/><circle class="ring" r="4"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(817 187)" data-label="HKIX Hong Kong"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(702 197)" data-label="NIXI Mumbai"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(524 111)" data-label="DE-CIX Frankfurt"><circle r="4"/><circle class="ring" r="4"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(499 107)" data-label="LINX London"><circle r="4"/><circle class="ring" r="4"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(513 104)" data-label="AMS-IX Amsterdam"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(294 137)" data-label="NYIIX New York"><circle r="4"/><circle class="ring" r="4"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(172 195)" data-label="Equinix LA"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(371 315)" data-label="IX.br São Paulo"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(551 344)" data-label="NAPAfrica Cape Town"><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--alert" transform="translate(640 180)" data-label="Demo BGP advisory"><circle r="5"/><circle class="ring" r="5"/></g>
-                <g class="cc-point cc-point--alert" transform="translate(225 360)" data-label="Demo cable degradation"><circle r="5"/><circle class="ring" r="5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(920 360)" data-label="Sydney IX"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(902 372)" data-label="MEL-IX"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(788 246)" data-label="SGIX Singapore"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(888 151)" data-label="JPIX Tokyo"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(817 187)" data-label="HKIX Hong Kong"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(702 197)" data-label="NIXI Mumbai"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(524 111)" data-label="DE-CIX Frankfurt"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(499 107)" data-label="LINX London"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(513 104)" data-label="AMS-IX Amsterdam"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(294 137)" data-label="NYIIX New York"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(172 195)" data-label="Equinix LA"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(371 315)" data-label="IX.br São Paulo"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
+                <g class="cc-point cc-point--ixp" transform="translate(551 344)" data-label="NAPAfrica Cape Town"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
+                <g class="cc-point cc-point--alert" transform="translate(640 180)" data-label="Demo BGP advisory"><circle class="halo" r="11"/><circle r="4.5"/><circle class="ring" r="4.5"/></g>
+                <g class="cc-point cc-point--alert" transform="translate(225 360)" data-label="Demo cable degradation"><circle class="halo" r="11"/><circle r="4.5"/><circle class="ring" r="4.5"/></g>
+              </g>
+
+              <!-- Vignette on top -->
+              <rect x="0" y="0" width="1000" height="500" fill="url(#ccVignette)" pointer-events="none"/>
+
+              <!-- HUD: ticker readout -->
+              <g class="cc-hud" font-family="JetBrains Mono, monospace" fill="rgba(245,240,255,0.55)" font-size="10">
+                <text x="14" y="20">SYS / IONET-NOC / GLOBAL</text>
+                <text x="14" y="34">PROJ EQUIRECT &middot; 110m</text>
+                <text x="986" y="20" text-anchor="end">CABLES: TELEGEOGRAPHY</text>
+                <text x="986" y="34" text-anchor="end">CC BY-SA 4.0</text>
+                <text x="14" y="486">LAT/LON 20°</text>
+                <text x="986" y="486" text-anchor="end" id="cc-clock">— UTC</text>
               </g>
             </svg>
           </div>
@@ -343,8 +356,8 @@
               <span>IXPs tracked</span>
             </div>
             <div class="cc-stat">
-              <strong>8</strong>
-              <span>Submarine routes</span>
+              <strong>710</strong>
+              <span>Submarine cables (TeleGeography)</span>
             </div>
             <div class="cc-stat">
               <strong>2</strong>
@@ -352,9 +365,13 @@
             </div>
             <div class="cc-stat">
               <strong>Phase 2</strong>
-              <span>Live BGP &amp; cable feeds</span>
+              <span>Live BGP feed &amp; cable status</span>
             </div>
           </div>
+          <p class="cc-attrib">
+            World map: <a href="https://github.com/topojson/world-atlas" rel="noopener">world-atlas</a> (Natural Earth, public domain).
+            Submarine cables: <a href="https://www.submarinecablemap.com/" rel="noopener">TeleGeography submarinecablemap.com</a>, licensed CC BY-SA 4.0.
+          </p>
         </div>
       </div>
     </section>
@@ -829,6 +846,35 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script src="js/world-map.js"></script>
+  <script src="js/world-cables.js"></script>
   <script src="js/tools.js"></script>
+  <script>
+    (function () {
+      var land = window.IONET_WORLD_PATH;
+      if (land) {
+        var fill = document.getElementById("cc-land-fill");
+        var glow = document.getElementById("cc-land-glow");
+        if (fill) fill.setAttribute("d", land);
+        if (glow) glow.setAttribute("d", land);
+      }
+      var cables = window.IONET_CABLE_PATHS;
+      if (cables) {
+        var c = document.getElementById("cc-cables-real");
+        if (c) c.setAttribute("d", cables);
+      }
+      var clock = document.getElementById("cc-clock");
+      function tick() {
+        if (!clock) return;
+        var d = new Date();
+        var hh = String(d.getUTCHours()).padStart(2, "0");
+        var mm = String(d.getUTCMinutes()).padStart(2, "0");
+        var ss = String(d.getUTCSeconds()).padStart(2, "0");
+        clock.textContent = hh + ":" + mm + ":" + ss + " UTC";
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
 </body>
 </html>
