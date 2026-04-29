@@ -232,7 +232,7 @@
             <div class="cc-legend" aria-label="Map legend">
               <span><i class="cc-key cc-key--ixp"></i> Internet Exchange</span>
               <span><i class="cc-key cc-key--cable"></i> Submarine cable</span>
-              <span><i class="cc-key cc-key--alert"></i> BGP advisory</span>
+              <span class="cc-legend-mute"><i class="cc-key cc-key--alert"></i> BGP advisory <em>· Phase 2</em></span>
             </div>
           </div>
 
@@ -316,24 +316,9 @@
                 <path id="cc-cables-real" d=""/>
               </g>
 
-              <!-- IXP pulse dots -->
-              <g class="cc-points">
-                <g class="cc-point cc-point--ixp" transform="translate(920 360)" data-label="Sydney IX"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(902 372)" data-label="MEL-IX"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(788 246)" data-label="SGIX Singapore"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(888 151)" data-label="JPIX Tokyo"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(817 187)" data-label="HKIX Hong Kong"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(702 197)" data-label="NIXI Mumbai"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(524 111)" data-label="DE-CIX Frankfurt"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(499 107)" data-label="LINX London"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(513 104)" data-label="AMS-IX Amsterdam"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(294 137)" data-label="NYIIX New York"><circle class="halo" r="9"/><circle r="3.5"/><circle class="ring" r="3.5"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(172 195)" data-label="Equinix LA"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(371 315)" data-label="IX.br São Paulo"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
-                <g class="cc-point cc-point--ixp" transform="translate(551 344)" data-label="NAPAfrica Cape Town"><circle class="halo" r="8"/><circle r="3"/><circle class="ring" r="3"/></g>
-                <g class="cc-point cc-point--alert" transform="translate(640 180)" data-label="Demo BGP advisory"><circle class="halo" r="11"/><circle r="4.5"/><circle class="ring" r="4.5"/></g>
-                <g class="cc-point cc-point--alert" transform="translate(225 360)" data-label="Demo cable degradation"><circle class="halo" r="11"/><circle r="4.5"/><circle class="ring" r="4.5"/></g>
-              </g>
+              <!-- IXP markers — generated from js/ixps.js at runtime -->
+              <g class="cc-points" id="cc-points"></g>
+              <g class="cc-labels" id="cc-labels"></g>
 
               <!-- Vignette on top -->
               <rect x="0" y="0" width="1000" height="500" fill="url(#ccVignette)" pointer-events="none"/>
@@ -352,16 +337,16 @@
 
           <div class="cc-stats">
             <div class="cc-stat">
-              <strong>13</strong>
-              <span>IXPs tracked</span>
+              <strong id="cc-stat-ixps">38</strong>
+              <span>Internet Exchanges</span>
             </div>
             <div class="cc-stat">
               <strong>710</strong>
               <span>Submarine cables (TeleGeography)</span>
             </div>
             <div class="cc-stat">
-              <strong>2</strong>
-              <span>Demo advisories</span>
+              <strong id="cc-stat-au">7</strong>
+              <span>Australian IXPs</span>
             </div>
             <div class="cc-stat">
               <strong>Phase 2</strong>
@@ -848,9 +833,11 @@
   <script src="js/main.js"></script>
   <script src="js/world-map.js"></script>
   <script src="js/world-cables.js"></script>
+  <script src="js/ixps.js"></script>
   <script src="js/tools.js"></script>
   <script>
     (function () {
+      // Inject pre-projected world land path
       var land = window.IONET_WORLD_PATH;
       if (land) {
         var fill = document.getElementById("cc-land-fill");
@@ -858,11 +845,57 @@
         if (fill) fill.setAttribute("d", land);
         if (glow) glow.setAttribute("d", land);
       }
+      // Inject pre-projected submarine cable paths
       var cables = window.IONET_CABLE_PATHS;
       if (cables) {
         var c = document.getElementById("cc-cables-real");
         if (c) c.setAttribute("d", cables);
       }
+
+      // ---- Render IXP dots + labels onto the global map -------------
+      // Equirectangular projection: lon -> [0, 1000], lat -> [0, 500]
+      function project(lat, lon) {
+        return [(lon + 180) / 360 * 1000, (90 - lat) / 180 * 500];
+      }
+      var SVGNS = "http://www.w3.org/2000/svg";
+      var ixpHost   = document.getElementById("cc-points");
+      var labelHost = document.getElementById("cc-labels");
+      var ixps = window.IONET_IXPS || [];
+      if (ixpHost && ixps.length) {
+        ixps.forEach(function (p) {
+          var coords = project(p.lat, p.lon);
+          var x = coords[0], y = coords[1];
+          var tier = p.tier === 1 ? "t1" : (p.tier === "au" ? "au" : "t2");
+          var g = document.createElementNS(SVGNS, "g");
+          g.setAttribute("class", "cc-point cc-point--ixp cc-point--" + tier);
+          g.setAttribute("transform", "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ")");
+          // Native tooltip
+          var ttl = document.createElementNS(SVGNS, "title");
+          ttl.textContent = p.name;
+          g.appendChild(ttl);
+          // Halo + dot + ring
+          var radius = (tier === "t1") ? 4 : (tier === "au") ? 3.5 : 2.5;
+          var halo = document.createElementNS(SVGNS, "circle"); halo.setAttribute("class", "halo"); halo.setAttribute("r", radius * 2.4); g.appendChild(halo);
+          var dot  = document.createElementNS(SVGNS, "circle"); dot.setAttribute("r",  radius); g.appendChild(dot);
+          var ring = document.createElementNS(SVGNS, "circle"); ring.setAttribute("class", "ring"); ring.setAttribute("r", radius); g.appendChild(ring);
+          ixpHost.appendChild(g);
+          // Always-on label for tier 1 + AU
+          if (tier === "t1" || tier === "au") {
+            var t = document.createElementNS(SVGNS, "text");
+            t.setAttribute("class", "cc-label cc-label--" + tier);
+            // Smart label offset: nudge left if near right edge, up if near bottom
+            var dx = (x > 920) ? -7 : 7;
+            var anchor = (x > 920) ? "end" : "start";
+            t.setAttribute("x", (x + dx).toFixed(1));
+            t.setAttribute("y", (y + 3.2).toFixed(1));
+            t.setAttribute("text-anchor", anchor);
+            t.textContent = p.name;
+            labelHost.appendChild(t);
+          }
+        });
+      }
+
+      // ---- HUD clock ----
       var clock = document.getElementById("cc-clock");
       function tick() {
         if (!clock) return;

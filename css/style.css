@@ -843,13 +843,15 @@ form.contact-form {
   filter: drop-shadow(0 0 1.5px rgba(255, 184, 51, 0.55));
 }
 
-/* IXP markers */
+/* IXP markers
+   Each <g class="cc-point"> contains a <title> tooltip + 3 circles in order:
+   .halo (soft glow), the dot (no class — second circle), .ring (animated pulse). */
 .cc-point .halo {
   fill: var(--logo-pink);
-  opacity: 0.18;
+  opacity: 0.16;
   filter: blur(3px);
 }
-.cc-point > circle:nth-child(2) {
+.cc-point > circle:not(.halo):not(.ring) {
   fill: #ffe1ff;
   filter: drop-shadow(0 0 4px var(--logo-pink)) drop-shadow(0 0 8px var(--logo-pink));
 }
@@ -859,10 +861,38 @@ form.contact-form {
   stroke-width: 1.2;
   transform-box: fill-box;
   transform-origin: center;
-  animation: ccRing 2.6s ease-out infinite;
+  animation: ccRing 2.8s ease-out infinite;
 }
+/* Tier 2 (secondary IXPs) — quieter, no ring animation */
+.cc-point--t2 .halo { opacity: 0.10; }
+.cc-point--t2 .ring { display: none; }
+/* AU IXPs — gold accent so they pop on the global map */
+.cc-point--au .halo { fill: var(--accent-2); opacity: 0.22; }
+.cc-point--au > circle:not(.halo):not(.ring) {
+  fill: #fff3d6;
+  filter: drop-shadow(0 0 4px var(--accent-2)) drop-shadow(0 0 8px var(--accent-2));
+}
+.cc-point--au .ring { stroke: var(--accent-2); }
+
+/* Labels */
+.cc-label {
+  font-family: "JetBrains Mono", "Menlo", monospace;
+  font-size: 10px;
+  fill: rgba(245, 240, 255, 0.92);
+  paint-order: stroke;
+  stroke: rgba(7, 6, 26, 0.85);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.cc-label--au { fill: #ffe6a8; }
+
+.cc-legend-mute { opacity: 0.55; }
+.cc-legend-mute em { font-style: normal; color: var(--text-dim); margin-left: 4px; }
+
+/* Alert markers — kept in stylesheet for Phase 2 use, no DOM nodes for now */
 .cc-point--alert .halo { fill: #ff4d6d; opacity: 0.25; }
-.cc-point--alert > circle:nth-child(2) { fill: #ffd5dc; filter: drop-shadow(0 0 5px #ff4d6d) drop-shadow(0 0 10px #ff4d6d); }
+.cc-point--alert > circle:not(.halo):not(.ring) { fill: #ffd5dc; filter: drop-shadow(0 0 5px #ff4d6d) drop-shadow(0 0 10px #ff4d6d); }
 .cc-point--alert .ring { stroke: #ff4d6d; animation-duration: 1.4s; stroke-width: 1.4; }
 
 @keyframes ccPulseSoft {
