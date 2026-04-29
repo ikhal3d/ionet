@@ -1,5 +1,38 @@
 # ionet backend — production deployment runbook
 
+## Credentials register
+
+Every secret/key generated for the ionet stack lives here as a row.
+Real values are **never** committed — only placeholders. Add a row the
+day a credential is generated; update the **last rotated** column when
+you replace one.
+
+| Credential | Type | Generated | Stored at | Rotation cadence | Last rotated | Revoke if |
+|------------|------|-----------|-----------|------------------|--------------|-----------|
+| Turnstile **Site Key** | Public | 2026-04-29 | Cloudflare Turnstile dashboard · embedded in `tools.html` | never required (public by design) | n/a | widget compromised — replace via "Roll site key" |
+| Turnstile **Secret Key** | Private | 2026-04-29 | `backend/.env` on VM (gitignored) · `wrangler secret put TURNSTILE_SECRET` for the Worker | quarterly recommended | 2026-04-29 | VM compromise · Worker compromise · accidental commit |
+| Cloudflare **API Token** (zone DNS edit) | Private | 2026-04-29 | `backend/.env` on VM only — used by Caddy for Let's Encrypt DNS-01 | quarterly recommended | 2026-04-29 | VM compromise — revoke at https://dash.cloudflare.com/profile/api-tokens |
+| Let's Encrypt **TLS cert** (origin.ionet.com.au) | Auto-managed | first issue: pending | Caddy data volume `caddy_data` (Docker named volume on VM) | auto-renew every ~60 days by Caddy | n/a | private key leak — `docker volume rm ionet-tools_caddy_data && docker compose up -d caddy` to force re-issue |
+
+### Where placeholder values go in `backend/.env.example`
+
+```
+TURNSTILE_SITE_KEY=          # Cloudflare → Turnstile → your widget
+TURNSTILE_SECRET=            # same widget — keep private
+CF_API_TOKEN=                # Cloudflare → Profile → API Tokens
+```
+
+### Rotation procedure
+
+| Credential | Rotation steps |
+|------------|----------------|
+| Turnstile Secret | Cloudflare → Turnstile → widget → **Roll secret** → copy new secret → update `backend/.env` on VM (`docker compose up -d tools-api`) and re-run `wrangler secret put TURNSTILE_SECRET` for the Worker |
+| CF API Token | Cloudflare → Profile → API Tokens → **Create token** with same scope → revoke old token → update `backend/.env` on VM (`docker compose up -d caddy`) — Caddy will use the new token next renewal |
+| TLS cert | Automatic (Caddy renews ~30 days before expiry). Manual force: `docker compose down caddy && docker volume rm ionet-tools_caddy_data && docker compose up -d caddy` |
+
+---
+
+
 Step-by-step for taking the backend stack from "running locally on the Oracle VM" (Phase 2.1 / 2.2) to "live on `ionet.com.au/api/*`" (Phase 2.3).
 
 What you do in dashboards is on the **left**; what I (or anyone with shell on the VM) do is on the **right**.

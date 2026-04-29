@@ -12,35 +12,52 @@ parts fit together.
                 ┌──────────────────────────────────────────────┐
                 │  Public internet — visitors, search engines  │
                 └────────────┬─────────────────────────────────┘
-                             │
-              ┌──────────────┴──────────────┐
-              │                             │
-              ▼                             ▼
-   ┌────────────────────┐        ┌──────────────────────┐
-   │  ionet.com.au      │        │  tools.ionet.com.au  │
-   │  Static frontend   │        │  Backend API (Phase 2)│
-   │  (GitHub Pages)    │        │  (Oracle VM, Docker) │
-   └─────────┬──────────┘        └──────────┬───────────┘
-             │                              │
-   serves    │ tools.html                   │  /api/port
-   HTML/CSS  │ js/world-map.js              │  /api/dns
-   JS, SVG   │ js/world-cables.js           │  /api/whois
-             │ js/tools.js                  │  /api/asn
-             │                              │  /api/tls
-             ▼                              │  /api/headers
-        Browser executes          ┌─────────┴─────────┐
-        all 11 client-side        │  lg.ionet.com.au   │
-        tools locally —           │  Hyperglass        │
-        nothing leaves            │  (BGP looking glass)│
-        the device.               └────────────────────┘
+                             │ HTTPS (TLS at edge)
+                             ▼
+   ┌──────────────────────────────────────────────────────────────┐
+   │  Cloudflare proxy in front of ionet.com.au                   │
+   │  (orange-cloud DNS · TLS termination · DDoS · WAF)           │
+   │                                                              │
+   │  Path-based routing:                                         │
+   │   /api/*  ─→ Cloudflare Worker (ionet-tools-proxy)           │
+   │              forwards to https://origin.ionet.com.au:8443    │
+   │                                                              │
+   │   /        ─→ GitHub Pages (static frontend)                 │
+   │              tools.html, /tools/<cat>.html, css, js, assets  │
+   └────────────┬─────────────────────────────────────────────────┘
+                │
+                │ Worker → origin (DNS-only A record)
+                ▼
+   ┌──────────────────────────────────────────────────────────────┐
+   │  Oracle VM 168.138.30.115:8443                               │
+   │  (origin.ionet.com.au resolves here)                         │
+   │                                                              │
+   │  Docker containers:                                          │
+   │   ionet_caddy           — Caddy reverse proxy                │
+   │                            • TLS via Let's Encrypt DNS-01    │
+   │                              (Cloudflare provider plugin)    │
+   │                            • CORS pinned to ionet.com.au     │
+   │                            • Routes /api/* → tools-api       │
+   │                                                              │
+   │   ionet_tools_api       — FastAPI                            │
+   │                            • /api/port  /api/dns  /api/whois │
+   │                            • /api/asn   /api/tls  /api/headers│
+   │                            • /api/outages                    │
+   │                                                              │
+   │   ionet_outage_aggregator — feed scraper (NBN/Telstra/...)   │
+   │                                                              │
+   │   ionet_hyperglass       — BGP looking glass (Phase 2.5)     │
+   │                              [staged — needs router target]  │
+   └──────────────────────────────────────────────────────────────┘
 ```
 
-| Surface | Hostname | Hosting | Phase |
-|---------|----------|---------|-------|
-| Marketing site | `ionet.com.au` | GitHub Pages | shipped |
-| Tools UI | `ionet.com.au/tools.html` | GitHub Pages | shipped (Phase 1) |
-| Backend API | `tools.ionet.com.au` | Oracle VM · Docker | Phase 2 |
-| Looking glass | `lg.ionet.com.au` | Oracle VM · Docker | Phase 2 |
+| Surface | Hostname | Hosting | Status |
+|---------|----------|---------|--------|
+| Marketing site | `ionet.com.au` (root + paths) | GitHub Pages, Cloudflare-proxied | ✅ live |
+| Tools UI | `ionet.com.au/tools.html` + `/tools/*.html` | GitHub Pages, Cloudflare-proxied | ✅ live |
+| Backend API | `ionet.com.au/api/*` | Cloudflare Worker → Oracle VM Caddy → FastAPI | 🚧 Phase 2.3 cutover in progress |
+| Worker origin | `origin.ionet.com.au` (DNS-only A → 168.138.30.115) | Oracle VM | ✅ DNS live |
+| Looking glass | `lg.ionet.com.au` | Oracle VM (hyperglass) | ⏳ Phase 2.5 |
 
 ---
 

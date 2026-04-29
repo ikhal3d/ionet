@@ -22,10 +22,10 @@
  *   - Optional: Turnstile token verification before forwarding.
  */
 
-const ORIGIN          = "https://api.ionet.com.au";       // ← set to your origin
+const ORIGIN          = "https://origin.ionet.com.au:8443";   // Oracle VM behind DNS-only A record
 const ALLOWED_ORIGIN  = "https://ionet.com.au";
-const REQUIRE_TURNSTILE = false;                          // ← flip to true when keys are wired
-const TURNSTILE_SECRET  = "";                             // ← set via Worker secret, not here
+const REQUIRE_TURNSTILE = false;                          // flip to true once tools.html embeds the site key
+const TURNSTILE_SECRET  = "";                             // set via `wrangler secret put TURNSTILE_SECRET`
 
 export default {
   async fetch(request, env, ctx) {

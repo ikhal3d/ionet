@@ -15,7 +15,7 @@ name: ionet-tools
 
 services:
   caddy:
-    image: caddy:2-alpine
+    build: ./caddy
     container_name: ionet_caddy
     restart: unless-stopped
     ports:
@@ -89,22 +89,21 @@ services:
     networks:
       - ionet
 
-  # ── Cloudflare quick-tunnel (no account / DNS required) ─────────────
-  # Generates a random *.trycloudflare.com URL that proxies in to caddy.
-  # Used in Phase 2.2 to get a public URL for end-to-end testing before
-  # production DNS + Worker are in place. URL changes on every restart.
+  # ── Cloudflare quick-tunnel (escape hatch for testing) ──────────────
+  # Was used in Phase 2.2 to expose the stack publicly before the proper
+  # Worker + origin.ionet.com.au DNS were in place. Now that the Worker
+  # fronts ionet.com.au/api/* directly, this service is disabled.
+  # Uncomment if you ever need a temporary *.trycloudflare.com URL again.
   #
-  # Disable / remove this service in Phase 2.3 once the production
-  # Cloudflare Worker is in front of the VM.
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: ionet_cloudflared
-    restart: unless-stopped
-    command: tunnel --no-autoupdate --url http://caddy:443
-    networks:
-      - ionet
-    depends_on:
-      - caddy
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   container_name: ionet_cloudflared
+  #   restart: unless-stopped
+  #   command: tunnel --no-autoupdate --url http://caddy:443
+  #   networks:
+  #     - ionet
+  #   depends_on:
+  #     - caddy
 
   # ── Hyperglass (BGP looking glass) — enable when you have a router
   #    target available (real router or FRR/BIRD container on the VM).

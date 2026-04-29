@@ -1,23 +1,18 @@
-# ionet backend — Caddy reverse proxy.
+# ionet backend — production Caddy.
 #
-# Two virtual hosts:
-#   tools.ionet.com.au  → tools-api container (the tool API)
-#   lg.ionet.com.au     → hyperglass container (BGP looking glass)
+# Listens on the host name {$DOMAIN} (default origin.ionet.com.au), which
+# the Cloudflare Worker forwards /api/* requests to over HTTPS:8443.
 #
-# TLS: Let's Encrypt via Cloudflare DNS-01 challenge (HTTP-01 won't work
-# on this VM because port 80 is owned by the genesis container).
+# TLS: Let's Encrypt via Cloudflare DNS-01 (port 80 is busy on this VM —
+# genesis_nginx owns it). Requires the cloudflare DNS provider plugin
+# baked into the Caddy image — see ./Dockerfile.
 
 {
 	email {$ACME_EMAIL}
-	# Use Cloudflare DNS-01 by default. If CF_API_TOKEN is empty, swap to
-	# tls internal for local testing.
 	acme_dns cloudflare {$CF_API_TOKEN}
-	# Bind only the inside listener — host port mapping handles 8443
-	auto_https disable_redirects
 }
 
-# ── Tools API ─────────────────────────────────────────────────────────
-{$DOMAIN}:443 {
+{$DOMAIN} {
 	encode gzip zstd
 
 	header {
@@ -30,7 +25,8 @@
 		-X-Powered-By
 	}
 
-	# CORS: only allow the live frontend origin
+	# CORS — only the live frontend origin gets answered, even though
+	# Cloudflare Worker should be the only thing reaching us anyway.
 	@cors_preflight method OPTIONS
 	header @cors_preflight {
 		Access-Control-Allow-Origin       "{$FRONTEND_ORIGIN}"
@@ -45,32 +41,25 @@
 		Vary                        "Origin"
 	}
 
-	# Rate-limit at the proxy layer (caddy-ratelimit module if present;
-	# otherwise rely on Cloudflare WAF which sits in front of this).
-	# rate_limit {
-	# 	zone tools_api {
-	# 		key {remote_host}
-	# 		events 30
-	# 		window 60s
-	# 	}
-	# }
-
-	@health path /healthz
-	respond @health 200 {
-		body "ok"
+	# Explicit routing — handle blocks eliminate directive-ordering
+	# ambiguity between reverse_proxy and the catch-all 404.
+	handle /healthz {
+		respond 200 {
+			body "ok"
+		}
 	}
 
-	reverse_proxy /api/* tools-api:8000 {
-		header_up X-Real-IP {remote_host}
-		header_up X-Forwarded-For {remote_host}
+	handle /api/* {
+		reverse_proxy tools-api:8000
 	}
 
-	# Block everything else
-	respond 404
+	handle {
+		respond 404
+	}
 }
 
-# ── Looking Glass (Phase 2 — uncomment hyperglass service first) ──────
-# {$LG_DOMAIN}:443 {
+# ── Looking Glass (Phase 2.5 — uncomment hyperglass service first) ────
+# {$LG_DOMAIN} {
 # 	encode gzip zstd
 # 	header {
 # 		Strict-Transport-Security "max-age=31536000; includeSubDomains"

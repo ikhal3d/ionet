@@ -12,12 +12,12 @@ name = "ionet-tools-proxy"
 main = "worker.js"
 compatibility_date = "2026-04-01"
 
-# Uncomment to bind the Worker to the route via wrangler.toml. You
-# can also do this in the dashboard under Workers Routes for the
-# ionet.com.au zone.
-# routes = [
-#   { pattern = "ionet.com.au/api/*", zone_name = "ionet.com.au" }
-# ]
+# Worker route binding — `wrangler deploy` will install this route
+# automatically. Equivalent to setting it in the dashboard under
+# Workers Routes for the ionet.com.au zone.
+routes = [
+  { pattern = "ionet.com.au/api/*", zone_name = "ionet.com.au" }
+]
 
 # Secrets — set with: npx wrangler@latest secret put TURNSTILE_SECRET
 # Do NOT commit secret values here.
