@@ -49,6 +49,12 @@ async def whois_lookup(req: WhoisReq):
 
     url = RDAP_BOOTSTRAP_IP.format(q=q) if kind.startswith("ipv") else RDAP_BOOTSTRAP_DOMAIN.format(q=q)
 
+    def fmt_exc(e: Exception) -> str:
+        # httpx timeout / network errors sometimes produce empty str(e) — always
+        # include the type name so the user sees something useful.
+        msg = str(e).strip()
+        return f"{type(e).__name__}: {msg}" if msg else type(e).__name__
+
     rdap_data = None
     rdap_err = None
     try:
@@ -57,9 +63,9 @@ async def whois_lookup(req: WhoisReq):
             if r.status_code == 200:
                 rdap_data = r.json()
             else:
-                rdap_err = f"RDAP HTTP {r.status_code}"
+                rdap_err = f"RDAP HTTP {r.status_code} from {r.url}"
     except Exception as e:
-        rdap_err = f"RDAP fetch failed: {e}"
+        rdap_err = f"RDAP fetch failed — {fmt_exc(e)}"
 
     # WHOIS fallback for domains only (RDAP usually has IP answers)
     whois_text = None
@@ -69,9 +75,9 @@ async def whois_lookup(req: WhoisReq):
             w = whois.whois(q)
             whois_text = str(w) if w else None
         except Exception as e:
-            return WhoisRes(query=q, kind=kind, error=f"both RDAP and WHOIS failed: {rdap_err}; {e}")
+            return WhoisRes(query=q, kind=kind, error=f"RDAP failed ({rdap_err}); WHOIS fallback failed ({fmt_exc(e)})")
 
     if rdap_data is None and whois_text is None:
-        return WhoisRes(query=q, kind=kind, error=rdap_err or "no data")
+        return WhoisRes(query=q, kind=kind, error=rdap_err or "no data returned by upstream")
 
     return WhoisRes(query=q, kind=kind, rdap=rdap_data, whois=whois_text)

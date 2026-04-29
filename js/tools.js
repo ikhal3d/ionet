@@ -834,13 +834,30 @@
         const d = r.data;
         let html = `<div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:12px;">Refreshed: <code>${escapeHTML(d.refreshed_at || "")}</code> · Active incidents: <strong>${d.totals && d.totals.active_incidents || 0}</strong> · Feeds responding: <strong>${d.totals && d.totals.feeds_responding || 0}</strong> / ${d.totals && d.totals.feeds_implemented || 0}</div>`;
         const feeds = d.feeds || {};
-        for (const name of Object.keys(feeds)) {
+        // Render order: AU first, global second, then "no feed" stubs at the bottom.
+        const order = Object.keys(feeds).sort((a, b) => {
+          const w = (k) => feeds[k].responding ? (k.includes("au") ? 0 : 1) : (feeds[k].implemented ? 2 : 3);
+          return w(a) - w(b);
+        });
+        for (const name of order) {
           const f = feeds[name];
-          const status = !f.implemented ? `<span style="color:var(--text-dim);">not yet implemented</span>` : f.responding ? `<span style="color:#4ade80;">responding · ${f.events.length} events</span>` : `<span style="color:#ff4d6d;">no response · ${escapeHTML(f.error || "")}</span>`;
+          const status = !f.implemented
+            ? `<span style="color:var(--text-dim);">${escapeHTML(f.error || "no machine-readable feed")}</span>`
+            : f.responding
+              ? (f.events.length ? `<span style="color:#ffb833;">${f.events.length} event${f.events.length > 1 ? "s" : ""}</span>`
+                                 : `<span style="color:#4ade80;">no outages</span>`)
+              : `<span style="color:#ff4d6d;">no response · ${escapeHTML(f.error || "")}</span>`;
           html += `<div style="border-top:1px solid var(--border);padding:10px 0;"><strong style="text-transform:uppercase;font-family:var(--font-heading);font-size:0.92rem;">${escapeHTML(name)}</strong> · ${status}</div>`;
           if (f.events && f.events.length) {
-            html += `<ul style="margin:6px 0 6px 18px;padding:0;font-size:0.9rem;color:var(--text-muted);">`;
-            for (const ev of f.events.slice(0, 5)) html += `<li><strong>${escapeHTML(ev.title || "")}</strong>${ev.published ? ` <span style="color:var(--text-dim);">· ${escapeHTML(ev.published)}</span>` : ""}</li>`;
+            html += `<ul style="margin:6px 0 6px 18px;padding:0;font-size:0.9rem;color:var(--text-muted);list-style:none;">`;
+            for (const ev of f.events.slice(0, 8)) {
+              const where = [ev.location, ev.asn].filter(Boolean).map(escapeHTML).join(" · ");
+              const when  = (ev.started || ev.published || "").slice(0, 10);
+              html += `<li style="margin-bottom:6px;"><strong>${escapeHTML(ev.title || "Outage")}</strong>` +
+                      (where ? ` <span style="color:var(--text-dim);">— ${where}</span>` : "") +
+                      (when  ? ` <span style="color:var(--text-dim);font-size:0.85rem;">· ${escapeHTML(when)}</span>` : "") +
+                      `</li>`;
+            }
             html += `</ul>`;
           }
         }

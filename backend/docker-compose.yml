@@ -79,6 +79,11 @@ services:
     environment:
       - REFRESH_INTERVAL=${REFRESH_INTERVAL:-300}
       - OUTPUT_PATH=/var/data/outages.json
+      # Radar API needs an auth token. Reuses CF_API_TOKEN if set; otherwise
+      # CF_RADAR_TOKEN. Either should be a Cloudflare API token with
+      # "Account Analytics: Read" (Workers tokens already include this).
+      - CF_RADAR_TOKEN=${CF_RADAR_TOKEN:-}
+      - CF_API_TOKEN=${CF_API_TOKEN:-}
     volumes:
       - outage_data:/var/data
     cap_drop:
