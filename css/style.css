@@ -1042,7 +1042,9 @@ form.contact-form {
   line-height: 1.55;
   color: var(--text);
   white-space: pre-wrap;
-  word-break: break-all;
+  /* Wrap only when content would otherwise overflow — never mid-character. */
+  overflow-wrap: anywhere;
+  word-break: normal;
   overflow-x: auto;
 }
 .tool-out.error {
@@ -1050,21 +1052,30 @@ form.contact-form {
   background: rgba(255, 77, 109, 0.08);
   color: #ffb1bf;
 }
-.tool-out table { width: 100%; border-collapse: collapse; }
+.tool-out table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
 .tool-out th, .tool-out td {
   padding: 11px 14px;
   border-bottom: 1px solid var(--border);
   text-align: left;
   vertical-align: top;
   font-size: 1.05rem;
+  /* Keep IPs / hashes / prefixes on a single line; container has overflow-x: auto. */
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 .tool-out th {
   color: var(--text-muted);
   font-weight: 500;
-  width: 32%;
   font-family: var(--font-heading);
   letter-spacing: 0.01em;
 }
+/* Long single-string outputs (hashes, base64, JWTs) — those live as text nodes in .tool-out
+   directly, where overflow-wrap: anywhere already handles wrapping cleanly. */
 .tool-out .copy-btn {
   float: right;
   font-family: var(--font-heading);
