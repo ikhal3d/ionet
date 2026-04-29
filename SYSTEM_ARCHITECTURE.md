@@ -55,9 +55,9 @@ parts fit together.
 |---------|----------|---------|--------|
 | Marketing site | `ionet.com.au` (root + paths) | GitHub Pages, Cloudflare-proxied | ✅ live |
 | Tools UI | `ionet.com.au/tools.html` + `/tools/*.html` | GitHub Pages, Cloudflare-proxied | ✅ live |
-| Backend API | `ionet.com.au/api/*` | Cloudflare Worker → Oracle VM Caddy → FastAPI | 🚧 Phase 2.3 cutover in progress |
-| Worker origin | `origin.ionet.com.au` (DNS-only A → 168.138.30.115) | Oracle VM | ✅ DNS live |
-| Looking glass | `lg.ionet.com.au` | Oracle VM (hyperglass) | ⏳ Phase 2.5 |
+| Backend API | `ionet.com.au/api/*` | Cloudflare Worker `ionet-tools-proxy` → Oracle VM Caddy → FastAPI | ✅ live (Phase 2.3 shipped 2026-04-29) |
+| Worker origin | `origin.ionet.com.au` (DNS-only A → 168.138.30.115) | Oracle VM | ✅ live · cert: Let's Encrypt CN=E7 |
+| Looking glass | `lg.ionet.com.au` | Oracle VM (hyperglass) | ⏳ Phase 2.5 — needs router target |
 
 ---
 
