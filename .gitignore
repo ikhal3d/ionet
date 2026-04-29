@@ -1,6 +1,15 @@
-.DS_Store
-Thumbs.db
-node_modules/
-.vscode/
-.idea/
-*.log
+# Local secrets
+backend/.env
+backend/**/secrets/
+backend/**/credentials/
+
+# Local data volumes (when bound rather than docker-named)
+backend/data/
+backend/**/*.log
+
+# Python build artefacts
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.env

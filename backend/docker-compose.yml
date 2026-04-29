@@ -1,0 +1,116 @@
+# ionet backend — Phase 2 stack.
+#
+# Brings up: caddy (TLS + reverse proxy + CORS + rate-limit) → tools-api
+# (FastAPI) and outage-aggregator (background job). Hyperglass is staged
+# but commented out until a real router or local FRR/BIRD is provisioned.
+#
+# Quickstart:
+#   cp .env.example .env  &&  edit .env
+#   docker compose up -d --build
+#
+# Conflict-aware: binds to host port 8443. Genesis already owns 80/443
+# and Suzie owns 3000 on this VM.
+
+name: ionet-tools
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: ionet_caddy
+    restart: unless-stopped
+    ports:
+      - "8443:443"
+    environment:
+      - DOMAIN=${DOMAIN:-tools.ionet.com.au}
+      - LG_DOMAIN=${LG_DOMAIN:-lg.ionet.com.au}
+      - ACME_EMAIL=${ACME_EMAIL:-admin@ionet.com.au}
+      - CF_API_TOKEN=${CF_API_TOKEN}
+      - FRONTEND_ORIGIN=${FRONTEND_ORIGIN:-https://ionet.com.au}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - ionet
+    depends_on:
+      - tools-api
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:2019/config/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  tools-api:
+    build: ./tools-api
+    container_name: ionet_tools_api
+    restart: unless-stopped
+    expose:
+      - "8000"
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - TURNSTILE_SECRET=${TURNSTILE_SECRET}
+      - REQUIRE_TURNSTILE=${REQUIRE_TURNSTILE:-false}
+      - ALLOWED_ORIGIN=${FRONTEND_ORIGIN:-https://ionet.com.au}
+      - OUTAGE_DATA_PATH=/var/data/outages.json
+    volumes:
+      - outage_data:/var/data:ro
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_RAW       # for traceroute / ICMP — never root
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m
+    user: "1000:1000"
+    networks:
+      - ionet
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  outage-aggregator:
+    build: ./outage-aggregator
+    container_name: ionet_outage_aggregator
+    restart: unless-stopped
+    environment:
+      - REFRESH_INTERVAL=${REFRESH_INTERVAL:-300}
+      - OUTPUT_PATH=/var/data/outages.json
+    volumes:
+      - outage_data:/var/data
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    networks:
+      - ionet
+
+  # ── Hyperglass (BGP looking glass) — enable when you have a router
+  #    target available (real router or FRR/BIRD container on the VM).
+  # hyperglass:
+  #   image: ghcr.io/thatmattlove/hyperglass:latest
+  #   container_name: ionet_hyperglass
+  #   restart: unless-stopped
+  #   expose:
+  #     - "8001"
+  #   environment:
+  #     - HYPERGLASS_HOST=0.0.0.0
+  #     - HYPERGLASS_PORT=8001
+  #   volumes:
+  #     - ./hyperglass:/etc/hyperglass:ro
+  #   networks:
+  #     - ionet
+
+volumes:
+  caddy_data:
+  caddy_config:
+  outage_data:
+
+networks:
+  ionet:
+    name: ionet_tools
+    driver: bridge

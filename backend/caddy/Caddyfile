@@ -1,0 +1,81 @@
+# ionet backend — Caddy reverse proxy.
+#
+# Two virtual hosts:
+#   tools.ionet.com.au  → tools-api container (the tool API)
+#   lg.ionet.com.au     → hyperglass container (BGP looking glass)
+#
+# TLS: Let's Encrypt via Cloudflare DNS-01 challenge (HTTP-01 won't work
+# on this VM because port 80 is owned by the genesis container).
+
+{
+	email {$ACME_EMAIL}
+	# Use Cloudflare DNS-01 by default. If CF_API_TOKEN is empty, swap to
+	# tls internal for local testing.
+	acme_dns cloudflare {$CF_API_TOKEN}
+	# Bind only the inside listener — host port mapping handles 8443
+	auto_https disable_redirects
+}
+
+# ── Tools API ─────────────────────────────────────────────────────────
+{$DOMAIN}:443 {
+	encode gzip zstd
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options    "nosniff"
+		X-Frame-Options           "DENY"
+		Referrer-Policy           "strict-origin-when-cross-origin"
+		Permissions-Policy        "geolocation=(), camera=(), microphone=()"
+		Server                    "ionet"
+		-X-Powered-By
+	}
+
+	# CORS: only allow the live frontend origin
+	@cors_preflight method OPTIONS
+	header @cors_preflight {
+		Access-Control-Allow-Origin       "{$FRONTEND_ORIGIN}"
+		Access-Control-Allow-Methods      "GET, POST, OPTIONS"
+		Access-Control-Allow-Headers      "Content-Type, X-Turnstile-Token"
+		Access-Control-Max-Age            "86400"
+	}
+	respond @cors_preflight 204
+
+	header {
+		Access-Control-Allow-Origin "{$FRONTEND_ORIGIN}"
+		Vary                        "Origin"
+	}
+
+	# Rate-limit at the proxy layer (caddy-ratelimit module if present;
+	# otherwise rely on Cloudflare WAF which sits in front of this).
+	# rate_limit {
+	# 	zone tools_api {
+	# 		key {remote_host}
+	# 		events 30
+	# 		window 60s
+	# 	}
+	# }
+
+	@health path /healthz
+	respond @health 200 {
+		body "ok"
+	}
+
+	reverse_proxy /api/* tools-api:8000 {
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+	}
+
+	# Block everything else
+	respond 404
+}
+
+# ── Looking Glass (Phase 2 — uncomment hyperglass service first) ──────
+# {$LG_DOMAIN}:443 {
+# 	encode gzip zstd
+# 	header {
+# 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+# 		X-Content-Type-Options    "nosniff"
+# 		X-Frame-Options           "DENY"
+# 	}
+# 	reverse_proxy hyperglass:8001
+# }
