@@ -992,8 +992,28 @@
       return `<span style="color:${color};font-weight:600;text-transform:uppercase;letter-spacing:0.04em;font-size:0.85rem;">${escapeHTML(status)}</span>${roas}<div style="color:var(--text-muted);font-size:0.85rem;margin-top:3px;">${escapeHTML(explainer)}</div>`;
     }
 
-    function renderAsPath(asPath, originAsn) {
+    function shortenHolder(name) {
+      if (!name) return "";
+      // Strip common ASN-name boilerplate so the visible label is the
+      // organisation's short name, not the AS handle.
+      // Examples:
+      //   "OPTICOMMCOPTYLTD-AS-AP Opticomm Co Pty Ltd"  → "Opticomm Co Pty Ltd"
+      //   "GOOGLE - Google LLC"                         → "Google LLC"
+      //   "CLOUDFLARENET - Cloudflare, Inc."            → "Cloudflare, Inc."
+      //   "AAPT-AS Aapt Pty Ltd"                        → "Aapt Pty Ltd"
+      let s = name.trim();
+      const m = s.match(/^[A-Z0-9_\-]{2,}\s*[-–—]\s*(.+)$/);
+      if (m) s = m[1].trim();
+      else {
+        const m2 = s.match(/^[A-Z0-9_\-]{4,}\s+(.+)$/);
+        if (m2 && /[a-z]/.test(m2[1])) s = m2[1].trim();
+      }
+      return s;
+    }
+
+    function renderAsPath(asPath, originAsn, asHolders) {
       if (!asPath) return "";
+      const holders = asHolders || {};
       const asns = asPath.trim().split(/\s+/).filter(Boolean);
       // Collapse consecutive duplicates ("45763 45763" → "45763") for readability
       const collapsed = [];
@@ -1001,31 +1021,42 @@
       // Reverse so position 1 = origin AS (per user request — most natural reading)
       const ordered = [...collapsed].reverse();
 
-      // Build pill+arrow pairs. The whole list lives inside a flex-wrap
-      // container so long paths (6+ hops) wrap to multiple lines instead
-      // of forcing horizontal scroll. Each pill is itself nowrap so an
-      // AS code never breaks across lines.
+      // Each pill is a vertical stack: [position-badge AS-code role] / holder name.
+      // The whole list lives in a flex-wrap container so long paths (6+ hops)
+      // wrap to multiple lines instead of forcing horizontal scroll.
       const pieces = [];
       ordered.forEach((a, i) => {
         const isOrigin = i === 0;
         const isPeer   = i === ordered.length - 1 && ordered.length > 1;
         const num      = i + 1;
+        const holderFull  = holders[a] || "";
+        const holderShort = shortenHolder(holderFull);
+        const titleAttr   = holderFull ? ` title="${escapeHTML(holderFull)}"` : "";
         const badgeBg  = isOrigin ? "var(--logo-pink)" : "rgba(204,153,0,0.55)";
         const codeColor = isOrigin ? "color:var(--logo-pink);font-weight:700;" : "color:var(--accent-2);";
-        const role     = isOrigin ? '<span style="color:var(--text-muted);font-size:0.78rem;margin-left:4px;">origin</span>' :
-                         isPeer   ? '<span style="color:var(--text-muted);font-size:0.78rem;margin-left:4px;">at peer</span>' : "";
+        const pillBg    = isOrigin ? "rgba(204,0,255,0.10)" : "rgba(106,45,199,0.12)";
+        const pillBorder = isOrigin ? "rgba(204,0,255,0.45)" : "rgba(106,45,199,0.30)";
+        const role      = isOrigin ? '<span style="color:var(--text-muted);font-size:0.72rem;margin-left:4px;">origin</span>' :
+                          isPeer   ? '<span style="color:var(--text-muted);font-size:0.72rem;margin-left:4px;">at peer</span>' : "";
+
         pieces.push(
-          `<span style="display:inline-flex;align-items:center;white-space:nowrap;">` +
-            `<span style="display:inline-block;min-width:18px;height:18px;border-radius:50%;background:${badgeBg};color:#0c0a24;font-size:11px;font-weight:700;text-align:center;line-height:18px;padding:0 4px;margin-right:5px;">${num}</span>` +
-            `<code style="${codeColor}">AS${escapeHTML(a)}</code>${role}` +
+          `<span class="bgp-pill"${titleAttr} style="display:inline-flex;flex-direction:column;align-items:flex-start;` +
+                 `padding:4px 9px;border-radius:6px;background:${pillBg};border:1px solid ${pillBorder};max-width:240px;">` +
+            `<span style="display:inline-flex;align-items:center;white-space:nowrap;">` +
+              `<span style="display:inline-block;min-width:18px;height:18px;border-radius:50%;background:${badgeBg};color:#0c0a24;font-size:11px;font-weight:700;text-align:center;line-height:18px;padding:0 4px;margin-right:5px;">${num}</span>` +
+              `<code style="${codeColor}">AS${escapeHTML(a)}</code>${role}` +
+            `</span>` +
+            (holderShort
+              ? `<span style="font-size:0.72rem;color:var(--text-muted);margin-top:1px;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHTML(holderShort)}</span>`
+              : `<span style="font-size:0.72rem;color:var(--text-dim);font-style:italic;margin-top:1px;line-height:1.2;">unknown</span>`) +
           `</span>`
         );
         if (i < ordered.length - 1) {
-          pieces.push(`<span style="color:var(--text-dim);">→</span>`);
+          pieces.push(`<span style="color:var(--text-dim);font-size:1.2rem;">→</span>`);
         }
       });
 
-      return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;white-space:normal;line-height:1.7;">` +
+      return `<div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;white-space:normal;line-height:1.7;">` +
              pieces.join("") +
              `</div>`;
     }
@@ -1082,7 +1113,7 @@
             const p = distinctPaths[i];
             const rrcList = Array.from(p.rrcs.keys()).slice(0, 3).map(escapeHTML).join("<br>");
             const more = p.rrcs.size > 3 ? `<span style="color:var(--text-muted);font-size:0.85rem;">+${p.rrcs.size - 3} more</span>` : "";
-            html += `<tr><td><code>${i + 1}</code></td><td>${renderAsPath(p.path, d.asn)}</td><td><code>${p.length}</code></td><td>${rrcList}${more ? "<br>" + more : ""}</td></tr>`;
+            html += `<tr><td><code>${i + 1}</code></td><td>${renderAsPath(p.path, d.asn, d.as_holders)}</td><td><code>${p.length}</code></td><td>${rrcList}${more ? "<br>" + more : ""}</td></tr>`;
           }
           html += "</table>";
 
