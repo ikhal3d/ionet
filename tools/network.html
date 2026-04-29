@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0c0a24">
+
+  <title>Network Calculation Tools — IPv4 Subnet, VLSM, MAC OUI · ionet</title>
+  <meta name="description" content="Free, browser-based network engineering tools — IPv4 subnet/CIDR calculator, VLSM planner, IP address converter, MAC OUI lookup against the full IEEE registry, and What is my IP. No signup, no tracking.">
+  <meta name="keywords" content="subnet calculator, CIDR calculator, VLSM planner, IPv4 calculator, IP converter, MAC OUI lookup, IEEE OUI registry, what is my IP, network engineer tools, online subnet tool">
+  <link rel="canonical" href="https://ionet.com.au/tools/network.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ionet.com.au/tools/network.html">
+  <meta property="og:title" content="Network Calculation Tools — ionet">
+  <meta property="og:description" content="Subnet/CIDR · VLSM planner · IP converter · MAC OUI lookup · What is my IP. Free, instant, browser-based.">
+  <meta property="og:image" content="https://ionet.com.au/assets/og/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Network Calculation Tools — ionet">
+  <meta name="twitter:description" content="Subnet, VLSM, IP convert, MAC OUI, What is my IP. Free, instant, no signup.">
+  <meta name="twitter:image" content="https://ionet.com.au/assets/og/og-image.png">
+
+  <link rel="icon" type="image/png" href="/assets/logo/logo-mark.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/logo/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home",  "item": "https://ionet.com.au/" },
+      { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://ionet.com.au/tools.html" },
+      { "@type": "ListItem", "position": 3, "name": "Network calculation", "item": "https://ionet.com.au/tools/network.html" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "ionet network-calculation tools",
+    "itemListElement": [
+      { "@type": "SoftwareApplication", "position": 1, "name": "IPv4 Subnet / CIDR Calculator",
+        "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/network.html#subnet-calculator" },
+      { "@type": "SoftwareApplication", "position": 2, "name": "VLSM Subnet Planner",
+        "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/network.html#vlsm-planner" },
+      { "@type": "SoftwareApplication", "position": 3, "name": "IPv4 Address Converter",
+        "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/network.html#ip-converter" },
+      { "@type": "SoftwareApplication", "position": 4, "name": "What is my IP",
+        "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/network.html#what-is-my-ip" },
+      { "@type": "SoftwareApplication", "position": 5, "name": "MAC OUI Lookup",
+        "applicationCategory": "NetworkApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/network.html#mac-oui" }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container nav">
+      <a class="nav-brand" href="/" aria-label="ionet home"><img src="/assets/logo/logo.png" alt="ionet"></a>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/tools.html" class="active">Tools</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/contact.html" class="btn btn-primary" style="padding:10px 18px">Get in touch</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="cat-hero">
+      <div class="container">
+        <nav class="breadcrumbs reveal" aria-label="Breadcrumb">
+          <a href="/">Home</a><span class="bc-sep">›</span>
+          <a href="/tools.html">Tools</a><span class="bc-sep">›</span>
+          <span aria-current="page">Network calculation</span>
+        </nav>
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">🔒 Browser tools</p>
+          <h1>Network calculation</h1>
+          <p class="hero-lead">Subnetting, addressing, and identity tools that engineers reach for daily. Everything runs locally in your browser — no inputs sent to a server.</p>
+        </div>
+        <div class="reveal" style="margin-top:24px;max-width:560px;">
+          <input class="tool-search" type="search" placeholder="Filter tools — type to search..." aria-label="Filter tools">
+        </div>
+      </div>
+    </section>
+
+    <section id="tool-grid">
+      <div class="container">
+        <div class="services-grid">
+          <a class="service tool-card reveal" href="#subnet-calculator">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+            <h3>IPv4 Subnet / CIDR</h3>
+            <p>Network, broadcast, usable range, mask, wildcard, host count.</p>
+          </a>
+          <a class="service tool-card reveal" href="#vlsm-planner">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+            <h3>VLSM Planner</h3>
+            <p>Allocate variable-length subnets from a parent prefix.</p>
+          </a>
+          <a class="service tool-card reveal" href="#ip-converter">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><polyline points="14 7 21 7 21 14"/></svg></div>
+            <h3>IP Converter</h3>
+            <p>IPv4 between dotted-quad, decimal, hex, and binary.</p>
+          </a>
+          <a class="service tool-card reveal" href="#what-is-my-ip">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2c2.5 3 4 6.6 4 10s-1.5 7-4 10c-2.5-3-4-6.6-4-10s1.5-7 4-10z"/></svg></div>
+            <h3>What is my IP?</h3>
+            <p>Public IP, reverse DNS, geolocation, ASN. Calls a CORS-friendly public echo service.</p>
+          </a>
+          <a class="service tool-card reveal" href="#mac-oui">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M7 14h6"/></svg></div>
+            <h3>MAC OUI Lookup</h3>
+            <p>Identify the vendor of any MAC address against the full IEEE OUI registry.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="subnet-calculator" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">IPv4</p>
+          <h2>Subnet / CIDR Calculator</h2>
+          <p>Enter any IPv4 prefix in CIDR notation — get the network address, broadcast, usable host range, mask, wildcard mask, and host count instantly.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>CIDR (e.g. 10.0.5.0/24)</span>
+              <input id="sn-input" type="text" autocomplete="off" spellcheck="false" placeholder="192.168.10.0/26" value="10.0.5.0/24">
+            </label>
+            <button id="sn-go" class="btn btn-secondary" type="button">Calculate</button>
+          </div>
+          <div class="tool-out" id="sn-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="vlsm-planner" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">IPv4</p>
+          <h2>VLSM Subnet Planner</h2>
+          <p>Allocate variable-length subnets from a parent prefix in optimal address order. Provide a list of required host counts; the planner picks prefixes that fit and assigns them sequentially.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Parent prefix</span>
+              <input id="vl-base" type="text" autocomplete="off" spellcheck="false" value="10.0.0.0/16">
+            </label>
+            <label class="tool-field">
+              <span>Required hosts (comma or newline separated)</span>
+              <input id="vl-needs" type="text" autocomplete="off" spellcheck="false" value="500, 100, 50, 25, 2">
+            </label>
+            <button id="vl-go" class="btn btn-secondary" type="button">Plan</button>
+          </div>
+          <div class="tool-out" id="vl-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ip-converter" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">IPv4</p>
+          <h2>IP Address Converter</h2>
+          <p>Convert any IPv4 address between dotted-quad, decimal (32-bit integer), hexadecimal, and binary representations.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>IPv4 (any format)</span>
+              <input id="ip-input" type="text" autocomplete="off" spellcheck="false" placeholder="192.168.1.1, 3232235777, 0xC0A80101, or binary" value="192.168.1.1">
+            </label>
+            <button id="ip-go" class="btn btn-secondary" type="button">Convert</button>
+          </div>
+          <div class="tool-out" id="ip-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="what-is-my-ip" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Diagnostics</p>
+          <h2>What is my IP?</h2>
+          <p>
+            Shows your apparent public IP address, reverse DNS, geolocation, timezone, and the ASN
+            announcing your network. Calls a CORS-friendly public echo service —
+            <a href="https://ipapi.co/" rel="noopener">ipapi.co</a> — and falls back to ipify if that fails.
+            Results render in your browser; ionet doesn't see the request.
+          </p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <button id="wmi-go" class="btn btn-secondary" type="button">Look me up</button>
+          </div>
+          <div class="tool-out" id="wmi-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="mac-oui" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Hardware identity</p>
+          <h2>MAC OUI Lookup</h2>
+          <p>
+            Identify the manufacturer behind any MAC address. Backed by the full IEEE OUI registry
+            (39,000+ MA-L assignments). The first lookup pulls the database (~400 KB gzipped, one-time);
+            after that, lookups are instant. Accepts any format — <code>AA:BB:CC:DD:EE:FF</code>,
+            <code>aa-bb-cc-dd-ee-ff</code>, <code>AABBCCDDEEFF</code>, or just the OUI prefix.
+          </p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>MAC address or OUI prefix</span>
+              <input id="oui-input" type="text" autocomplete="off" spellcheck="false" placeholder="00:1A:2B:3C:4D:5E or 001A2B" value="3C:5A:B4:00:00:01">
+            </label>
+            <button id="oui-go" class="btn btn-secondary" type="button">Identify</button>
+          </div>
+          <div class="tool-out" id="oui-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cta" class="bg-purple-strong">
+      <div class="container">
+        <div class="philosophy reveal">
+          <div>
+            <p class="eyebrow">Open call</p>
+            <h2>Need a network tool we don't have?</h2>
+            <p>If there's a calculation or lookup you reach for every week, tell us — we'll add it.</p>
+            <a href="/contact.html" class="btn btn-primary">Suggest a tool →</a>
+          </div>
+          <div>
+            <a href="/tools.html" class="btn btn-ghost">← Back to all tools</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="/assets/logo/logo.png" alt="ionet">
+          <p>Australia's specialist ICT &amp; cybersecurity partner. We build it better.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Tools</h4>
+          <ul>
+            <li><a href="/tools/network.html">Network calculation</a></li>
+            <li><a href="/tools/crypto.html">Cryptography &amp; encoding</a></li>
+            <li><a href="/tools/identity.html">Identity &amp; tokens</a></li>
+            <li><a href="/tools/live.html">Live network</a></li>
+            <li><a href="/tools/security.html">Security scoring</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/tools.html">Tools</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="mailto:info@ionet.com.au">info@ionet.com.au</a></li>
+            <li><a href="/contact.html">Enquiry form</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> ionet — All rights reserved.</span>
+        <span>Crafted in Australia</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/tools.js"></script>
+  <script>
+    (function(){
+      var input=document.querySelector('.tool-search');
+      if(!input)return;
+      var cards=document.querySelectorAll('.tool-card');
+      input.addEventListener('input',function(){
+        var q=input.value.toLowerCase().trim();
+        cards.forEach(function(c){
+          var t=c.querySelector('h3').textContent.toLowerCase();
+          var d=c.querySelector('p').textContent.toLowerCase();
+          c.style.display=(!q||t.indexOf(q)!==-1||d.indexOf(q)!==-1)?'':'none';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

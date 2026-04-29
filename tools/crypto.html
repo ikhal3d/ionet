@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0c0a24">
+
+  <title>Cryptography &amp; Encoding Tools — Hash, HMAC, Base64 · ionet</title>
+  <meta name="description" content="Free, browser-based cryptography & encoding tools — SHA-1/256/384/512 hash generator, MD5/SHA hash reverse lookup, HMAC-SHA256, Base64 and URL encoder/decoder, text↔hex↔binary converter. All operations run locally via the Web Crypto API.">
+  <meta name="keywords" content="online sha256, sha512 generator, md5 hash, hash cracker, rainbow table lookup, hmac generator, base64 encode, url encoder, text to hex, hex to binary">
+  <link rel="canonical" href="https://ionet.com.au/tools/crypto.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ionet.com.au/tools/crypto.html">
+  <meta property="og:title" content="Cryptography &amp; Encoding Tools — ionet">
+  <meta property="og:description" content="SHA hashes · HMAC · hash reverse lookup · Base64 · URL encoder · text/hex/binary. Local, instant, no signup.">
+  <meta property="og:image" content="https://ionet.com.au/assets/og/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cryptography &amp; Encoding Tools — ionet">
+  <meta name="twitter:description" content="SHA · HMAC · hash reverse · Base64 · URL · text/hex/binary. Local, instant, no signup.">
+  <meta name="twitter:image" content="https://ionet.com.au/assets/og/og-image.png">
+
+  <link rel="icon" type="image/png" href="/assets/logo/logo-mark.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/logo/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home",  "item": "https://ionet.com.au/" },
+      { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://ionet.com.au/tools.html" },
+      { "@type": "ListItem", "position": 3, "name": "Cryptography & encoding", "item": "https://ionet.com.au/tools/crypto.html" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "ionet cryptography & encoding tools",
+    "itemListElement": [
+      { "@type": "SoftwareApplication", "position": 1, "name": "Hash Generator (SHA-1/256/384/512)",
+        "applicationCategory": "SecurityApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/crypto.html#hash-generator" },
+      { "@type": "SoftwareApplication", "position": 2, "name": "Hash Reverse Lookup",
+        "applicationCategory": "SecurityApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/crypto.html#hash-cracker" },
+      { "@type": "SoftwareApplication", "position": 3, "name": "HMAC-SHA256 Generator",
+        "applicationCategory": "SecurityApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/crypto.html#hmac-generator" },
+      { "@type": "SoftwareApplication", "position": 4, "name": "Base64 Encode / Decode",
+        "applicationCategory": "DeveloperApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/crypto.html#base64" },
+      { "@type": "SoftwareApplication", "position": 5, "name": "URL Encode / Decode",
+        "applicationCategory": "DeveloperApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/crypto.html#url-encode" },
+      { "@type": "SoftwareApplication", "position": 6, "name": "Text ↔ Hex ↔ Binary",
+        "applicationCategory": "DeveloperApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/crypto.html#text-converter" }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container nav">
+      <a class="nav-brand" href="/" aria-label="ionet home"><img src="/assets/logo/logo.png" alt="ionet"></a>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/tools.html" class="active">Tools</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/contact.html" class="btn btn-primary" style="padding:10px 18px">Get in touch</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="cat-hero">
+      <div class="container">
+        <nav class="breadcrumbs reveal" aria-label="Breadcrumb">
+          <a href="/">Home</a><span class="bc-sep">›</span>
+          <a href="/tools.html">Tools</a><span class="bc-sep">›</span>
+          <span aria-current="page">Cryptography &amp; encoding</span>
+        </nav>
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">🔒 Browser tools</p>
+          <h1>Cryptography &amp; encoding</h1>
+          <p class="hero-lead">Hashes, HMACs, encoders, decoders — all running locally via the Web Crypto API. Your input never leaves the device.</p>
+        </div>
+        <div class="reveal" style="margin-top:24px;max-width:560px;">
+          <input class="tool-search" type="search" placeholder="Filter tools — type to search..." aria-label="Filter tools">
+        </div>
+      </div>
+    </section>
+
+    <section id="tool-grid">
+      <div class="container">
+        <div class="services-grid">
+          <a class="service tool-card reveal" href="#hash-generator">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg></div>
+            <h3>Hash Generator</h3>
+            <p>SHA-1, SHA-256, SHA-384, SHA-512 via the Web Crypto API.</p>
+          </a>
+          <a class="service tool-card reveal" href="#hash-cracker">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v3l2 2"/></svg></div>
+            <h3>Hash Reverse Lookup</h3>
+            <p>Rainbow-table check vs the top 10,000 common passwords. MD5/SHA-1/256/384/512.</p>
+          </a>
+          <a class="service tool-card reveal" href="#hmac-generator">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+            <h3>HMAC-SHA256</h3>
+            <p>Keyed-hash message authentication codes, computed locally.</p>
+          </a>
+          <a class="service tool-card reveal" href="#base64">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+            <h3>Base64</h3>
+            <p>Encode and decode text to/from Base64.</p>
+          </a>
+          <a class="service tool-card reveal" href="#url-encode">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+            <h3>URL Encoder</h3>
+            <p>Percent-encode and decode URL components.</p>
+          </a>
+          <a class="service tool-card reveal" href="#text-converter">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></div>
+            <h3>Text Converter</h3>
+            <p>Convert between ASCII, hex, and binary.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="hash-generator" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Cryptography</p>
+          <h2>Hash Generator</h2>
+          <p>Compute SHA-1, SHA-256, SHA-384, or SHA-512 over any text. Uses the browser's Web Crypto API — your input never leaves the page.</p>
+        </div>
+        <div class="tool reveal">
+          <label class="tool-field tool-field--full">
+            <span>Input</span>
+            <textarea id="ha-input" rows="3" spellcheck="false" placeholder="Type or paste text to hash"></textarea>
+          </label>
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Algorithm</span>
+              <select id="ha-algo">
+                <option value="SHA-256" selected>SHA-256</option>
+                <option value="SHA-1">SHA-1 (legacy)</option>
+                <option value="SHA-384">SHA-384</option>
+                <option value="SHA-512">SHA-512</option>
+              </select>
+            </label>
+            <button id="ha-go" class="btn btn-secondary" type="button">Hash</button>
+          </div>
+          <div class="tool-out" id="ha-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="hash-cracker" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Cryptography</p>
+          <h2>Hash Reverse Lookup</h2>
+          <p>
+            Cryptographic hashes are <strong>one-way functions</strong> — there's no mathematical "unhash."
+            What public sites actually do is a <em>rainbow-table lookup</em>: pre-compute hashes of common passwords
+            and look up your input. We do the same thing, locally, against the SecLists top-10,000 common-password list.
+            If your hash matches a weak password we'll find it. If it doesn't, the plaintext is either uncommon or
+            recovery requires <code>hashcat</code>/<code>john</code> with a GPU. The hash you paste never leaves your browser.
+          </p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Hash (MD5 / SHA-1 / SHA-256 / SHA-384 / SHA-512 — algorithm auto-detected from length)</span>
+              <input id="hc-input" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. 5f4dcc3b5aa765d61d8327deb882cf99">
+            </label>
+            <button id="hc-go" class="btn btn-secondary" type="button">Look up</button>
+          </div>
+          <div class="tool-out" id="hc-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="hmac-generator" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Cryptography</p>
+          <h2>HMAC-SHA256 Generator</h2>
+          <p>Compute a keyed-hash message authentication code (HMAC) using SHA-256. Useful for signing webhook payloads, validating signed cookies, or testing an API integration locally.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Secret key</span>
+              <input id="hm-key" type="text" autocomplete="off" spellcheck="false" placeholder="shared-secret">
+            </label>
+          </div>
+          <label class="tool-field tool-field--full">
+            <span>Message</span>
+            <textarea id="hm-msg" rows="3" spellcheck="false" placeholder="payload to sign"></textarea>
+          </label>
+          <div class="tool-row">
+            <button id="hm-go" class="btn btn-secondary" type="button">Sign</button>
+          </div>
+          <div class="tool-out" id="hm-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="base64" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Encoding</p>
+          <h2>Base64 Encode / Decode</h2>
+          <p>Quick conversion to and from Base64 for credentials, embedded images, API tokens, and anything else that needs round-trip-safe transport.</p>
+        </div>
+        <div class="tool reveal">
+          <label class="tool-field tool-field--full">
+            <span>Input</span>
+            <textarea id="b64-input" rows="3" spellcheck="false" placeholder="Type text to encode, or paste Base64 to decode"></textarea>
+          </label>
+          <div class="tool-row">
+            <button id="b64-encode" class="btn btn-secondary" type="button">Encode</button>
+            <button id="b64-decode" class="btn btn-ghost" type="button">Decode</button>
+          </div>
+          <div class="tool-out" id="b64-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="url-encode" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Encoding</p>
+          <h2>URL Encode / Decode</h2>
+          <p>Percent-encode and decode strings — the right operation for URL query parameters, path components, and form values.</p>
+        </div>
+        <div class="tool reveal">
+          <label class="tool-field tool-field--full">
+            <span>Input</span>
+            <textarea id="ue-input" rows="3" spellcheck="false" placeholder="hello world &amp; friends?"></textarea>
+          </label>
+          <div class="tool-row">
+            <button id="ue-encode" class="btn btn-secondary" type="button">Encode</button>
+            <button id="ue-decode" class="btn btn-ghost" type="button">Decode</button>
+          </div>
+          <div class="tool-out" id="ue-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="text-converter" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Encoding</p>
+          <h2>Text ↔ Hex ↔ Binary</h2>
+          <p>Convert strings between ASCII, hexadecimal, and binary. Useful for embedded debugging, byte-pattern analysis, and CTF-style puzzles.</p>
+        </div>
+        <div class="tool reveal">
+          <label class="tool-field tool-field--full">
+            <span>Input</span>
+            <textarea id="tx-input" rows="3" spellcheck="false" placeholder="Type ASCII, hex (e.g. 48 65 6c), or binary (01001000 ...)" >Hello</textarea>
+          </label>
+          <div class="tool-row">
+            <button class="btn btn-secondary" type="button" data-tx="text2hex">Text → Hex</button>
+            <button class="btn btn-secondary" type="button" data-tx="text2bin">Text → Binary</button>
+            <button class="btn btn-ghost" type="button" data-tx="hex2text">Hex → Text</button>
+            <button class="btn btn-ghost" type="button" data-tx="bin2text">Binary → Text</button>
+          </div>
+          <div class="tool-out" id="tx-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cta" class="bg-purple-strong">
+      <div class="container">
+        <div class="philosophy reveal">
+          <div>
+            <p class="eyebrow">Open call</p>
+            <h2>Need a crypto / encoding tool we don't have?</h2>
+            <p>JWT verify with key? bcrypt comparator? PEM parser? Tell us what you reach for and we'll add it.</p>
+            <a href="/contact.html" class="btn btn-primary">Suggest a tool →</a>
+          </div>
+          <div>
+            <a href="/tools.html" class="btn btn-ghost">← Back to all tools</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="/assets/logo/logo.png" alt="ionet">
+          <p>Australia's specialist ICT &amp; cybersecurity partner. We build it better.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Tools</h4>
+          <ul>
+            <li><a href="/tools/network.html">Network calculation</a></li>
+            <li><a href="/tools/crypto.html">Cryptography &amp; encoding</a></li>
+            <li><a href="/tools/identity.html">Identity &amp; tokens</a></li>
+            <li><a href="/tools/live.html">Live network</a></li>
+            <li><a href="/tools/security.html">Security scoring</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/tools.html">Tools</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="mailto:info@ionet.com.au">info@ionet.com.au</a></li>
+            <li><a href="/contact.html">Enquiry form</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> ionet — All rights reserved.</span>
+        <span>Crafted in Australia</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/md5.js"></script>
+  <script src="/js/wordlist-top10k.js"></script>
+  <script src="/js/tools.js"></script>
+  <script>
+    (function(){
+      var input=document.querySelector('.tool-search');
+      if(!input)return;
+      var cards=document.querySelectorAll('.tool-card');
+      input.addEventListener('input',function(){
+        var q=input.value.toLowerCase().trim();
+        cards.forEach(function(c){
+          var t=c.querySelector('h3').textContent.toLowerCase();
+          var d=c.querySelector('p').textContent.toLowerCase();
+          c.style.display=(!q||t.indexOf(q)!==-1||d.indexOf(q)!==-1)?'':'none';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0c0a24">
+
+  <title>Live Network Tools — BGP Looking Glass, Traceroute, DNS · ionet</title>
+  <meta name="description" content="Server-side network diagnostics from the ionet network — BGP looking glass, live traceroute & ping, TCP port reachability, DNS / DNSSEC, WHOIS / RDAP, ASN lookup, TLS inspector, HTTP security headers, AU outage feed. Phase 2 deployment.">
+  <meta name="keywords" content="bgp looking glass, online traceroute, mtr online, port checker, dns lookup online, dnssec validator, whois rdap, asn lookup, online tls checker, http security headers grader, nbn outage, telstra outage, australia outage feed">
+  <link rel="canonical" href="https://ionet.com.au/tools/live.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ionet.com.au/tools/live.html">
+  <meta property="og:title" content="Live Network Tools — ionet">
+  <meta property="og:description" content="BGP · traceroute · port · DNS · WHOIS · ASN · TLS · headers · AU outages. Run from the ionet Oracle backend.">
+  <meta property="og:image" content="https://ionet.com.au/assets/og/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Live Network Tools — ionet">
+  <meta name="twitter:description" content="BGP · traceroute · port · DNS · WHOIS · ASN · TLS · headers · AU outages.">
+  <meta name="twitter:image" content="https://ionet.com.au/assets/og/og-image.png">
+
+  <link rel="icon" type="image/png" href="/assets/logo/logo-mark.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/logo/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home",  "item": "https://ionet.com.au/" },
+      { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://ionet.com.au/tools.html" },
+      { "@type": "ListItem", "position": 3, "name": "Live network", "item": "https://ionet.com.au/tools/live.html" }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container nav">
+      <a class="nav-brand" href="/" aria-label="ionet home"><img src="/assets/logo/logo.png" alt="ionet"></a>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/tools.html" class="active">Tools</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/contact.html" class="btn btn-primary" style="padding:10px 18px">Get in touch</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="cat-hero">
+      <div class="container">
+        <nav class="breadcrumbs reveal" aria-label="Breadcrumb">
+          <a href="/">Home</a><span class="bc-sep">›</span>
+          <a href="/tools.html">Tools</a><span class="bc-sep">›</span>
+          <span aria-current="page">Live network</span>
+        </nav>
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">⚡ ionet network · Phase 2</p>
+          <h1>Live network tools</h1>
+          <p class="hero-lead">Diagnostics that need a server vantage point — BGP, traceroute, DNS, WHOIS, ASN, TLS, security headers, and the live AU outage feed. They run on the ionet Oracle VM, Cloudflare-fronted, behind <code>/api/*</code> on this same domain.</p>
+        </div>
+        <div class="reveal" style="margin-top:24px;max-width:560px;">
+          <input class="tool-search" type="search" placeholder="Filter tools — type to search..." aria-label="Filter tools">
+        </div>
+      </div>
+    </section>
+
+    <section id="tool-grid">
+      <div class="container">
+        <div class="services-grid">
+          <a class="service tool-card reveal" href="#tool-bgp">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div>
+            <h3>BGP Looking Glass</h3>
+            <p><code>show ip bgp</code>, AS-path, peer summary, ping &amp; traceroute from our network.</p>
+          </a>
+          <a class="service tool-card reveal" href="#tool-traceroute">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M7.5 7.5 16 16M7 12h5M14 12h3"/></svg></div>
+            <h3>Traceroute &amp; Ping (Live)</h3>
+            <p>Real-time hop-by-hop ICMP path tracing from our PoP, with rolling RTT &amp; loss per hop.</p>
+          </a>
+          <a class="service tool-card reveal" href="#tool-port">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg></div>
+            <h3>Port Reachability</h3>
+            <p>One target, one port from a small allowlist. Captcha-gated, not a scanner.</p>
+          </a>
+          <a class="service tool-card reveal" href="#tool-dns">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 2c2.5 3 4 6.6 4 10s-1.5 7-4 10c-2.5-3-4-6.6-4-10s1.5-7 4-10z"/></svg></div>
+            <h3>DNS / DNSSEC</h3>
+            <p>Authoritative queries with optional DNSSEC validation, configurable resolver.</p>
+          </a>
+          <a class="service tool-card reveal" href="#tool-whois">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 7v4l3 2"/></svg></div>
+            <h3>WHOIS / RDAP</h3>
+            <p>Modern RDAP-first lookups for domains and IPs. Falls back to legacy WHOIS.</p>
+          </a>
+          <a class="service tool-card reveal" href="#tool-asn">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6"  cy="6"  r="2"/><circle cx="18" cy="6"  r="2"/><circle cx="6"  cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 6h8M6 8v8M18 8v8M8 18h8"/></svg></div>
+            <h3>ASN / Prefix Lookup</h3>
+            <p>AS holder, country, announced prefixes. Backed by RIPEstat.</p>
+          </a>
+          <a class="service tool-card reveal" href="#tool-tls">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="12" r="2"/></svg></div>
+            <h3>TLS Inspector</h3>
+            <p>Live cert chain, expiry, key strength, ciphers, HSTS / CAA / OCSP.</p>
+          </a>
+          <a class="service tool-card reveal" href="#tool-headers">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12 6 12M21 6 6 6M21 18 6 18"/><circle cx="3" cy="6"  r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></svg></div>
+            <h3>HTTP Security Headers</h3>
+            <p>Grades CSP, HSTS, X-Frame-Options, Referrer-Policy. A+ to F like Mozilla Observatory.</p>
+          </a>
+          <a class="service tool-card reveal" href="#tool-outages">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v3M12 15h.01"/><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.41 0z"/></svg></div>
+            <h3>AU Outage Status</h3>
+            <p>Aggregated NBN, Telstra, Optus, TPG, Aussie Outages feeds, refreshed every 5 minutes.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="phase-2" class="bg-purple">
+      <div class="container">
+        <article id="tool-bgp" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>BGP Looking Glass</h3>
+          <p><code>show ip bgp &lt;prefix&gt;</code>, peer summary, AS-path views, plus ping &amp; traceroute from our routers. Powered by <a href="https://hyperglass.dev" rel="noopener">hyperglass</a> at <code>lg.ionet.com.au</code>.</p>
+        </article>
+
+        <article id="tool-traceroute" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>Traceroute &amp; Ping (Live)</h3>
+          <p>Real-time hop-by-hop ICMP path tracing from our PoP, with rolling RTT &amp; loss per hop. Output rendered as a hop table plus an inline sparkline per hop.</p>
+        </article>
+
+        <article id="tool-port" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>Port Reachability Check</h3>
+          <p>Single host, single port from a small allowlist (22 / 25 / 53 / 80 / 443 / …). Cloudflare Turnstile captcha required, rate-limited per IP, RFC1918/loopback rejected. Deliberately narrow — this is not a scanner.</p>
+        </article>
+
+        <article id="tool-dns" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>DNS / DNSSEC Lookup</h3>
+          <p>A, AAAA, CNAME, MX, TXT, NS, SOA, CAA, SRV, PTR, DS, DNSKEY queries via dnspython. Optional DNSSEC chain validation. Configurable resolver (default 1.1.1.1, 8.8.8.8, 9.9.9.9).</p>
+        </article>
+
+        <article id="tool-whois" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>WHOIS / RDAP</h3>
+          <p>Modern <a href="https://about.rdap.org/" rel="noopener">RDAP</a>-first lookups for domains and IPs (proper structured JSON), with <code>python-whois</code> fallback for legacy gTLDs &amp; ccTLDs that haven't migrated.</p>
+        </article>
+
+        <article id="tool-asn" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>ASN / Prefix Lookup</h3>
+          <p>AS holder, country, announced prefixes; or IP/prefix → origin ASN. Backed by <a href="https://stat.ripe.net/" rel="noopener">RIPEstat</a> (free, fair-use).</p>
+        </article>
+
+        <article id="tool-tls" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>TLS / SSL Inspector</h3>
+          <p>Live handshake against host:port; reports the certificate chain, expiry countdown, key type / size, signature algorithm, and supported ciphers. Reports what the server actually presents — doesn't enforce trust.</p>
+        </article>
+
+        <article id="tool-headers" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>HTTP Security Headers</h3>
+          <p>Grades CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy. Returns A+ to F with a per-check score and rationale, like Mozilla Observatory.</p>
+        </article>
+
+        <article id="tool-outages" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>AU Outage Status</h3>
+          <p>Aggregated NBN Co · Telstra · Optus · TPG · Aussie Outages feeds, refreshed every 5 minutes. Surfaces incidents on the AU command-centre map as red dots with tooltip detail.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="cta" class="bg-purple-strong">
+      <div class="container">
+        <div class="philosophy reveal">
+          <div>
+            <p class="eyebrow">Phase 2</p>
+            <h2>Live tools deploy together.</h2>
+            <p>The backend stack is built (see <code>backend/</code> in the repo). When the Oracle VM goes live behind a Cloudflare Worker on <code>/api/*</code>, all the tools above light up at once.</p>
+            <a href="https://github.com/ikhal3d/ionet/blob/main/SYSTEM_ARCHITECTURE.md" rel="noopener" class="btn btn-primary">Architecture →</a>
+          </div>
+          <div>
+            <a href="/tools.html" class="btn btn-ghost">← Back to all tools</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="/assets/logo/logo.png" alt="ionet">
+          <p>Australia's specialist ICT &amp; cybersecurity partner. We build it better.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Tools</h4>
+          <ul>
+            <li><a href="/tools/network.html">Network calculation</a></li>
+            <li><a href="/tools/crypto.html">Cryptography &amp; encoding</a></li>
+            <li><a href="/tools/identity.html">Identity &amp; tokens</a></li>
+            <li><a href="/tools/live.html">Live network</a></li>
+            <li><a href="/tools/security.html">Security scoring</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/tools.html">Tools</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="mailto:info@ionet.com.au">info@ionet.com.au</a></li>
+            <li><a href="/contact.html">Enquiry form</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> ionet — All rights reserved.</span>
+        <span>Crafted in Australia</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    (function(){
+      var input=document.querySelector('.tool-search');
+      if(!input)return;
+      var cards=document.querySelectorAll('.tool-card');
+      input.addEventListener('input',function(){
+        var q=input.value.toLowerCase().trim();
+        cards.forEach(function(c){
+          var t=c.querySelector('h3').textContent.toLowerCase();
+          var d=c.querySelector('p').textContent.toLowerCase();
+          c.style.display=(!q||t.indexOf(q)!==-1||d.indexOf(q)!==-1)?'':'none';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

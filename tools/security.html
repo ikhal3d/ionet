@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0c0a24">
+
+  <title>Security &amp; Vulnerability Scoring — IP Recon, Website Score, CVE · ionet</title>
+  <meta name="description" content="Security intelligence and vulnerability scoring tools — aggregated IP reputation lookup (AbuseIPDB, GreyNoise, VirusTotal, Shodan), composite website security grade A+ to F (Mozilla Observatory + SSL Labs), and CVE / NIST NVD search.">
+  <meta name="keywords" content="ip reputation lookup, abuseipdb, greynoise, shodan api, virustotal ip, website security score, mozilla observatory online, ssl labs grade, cve search, nvd search, cvss score, vulnerability scanning api">
+  <link rel="canonical" href="https://ionet.com.au/tools/security.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ionet.com.au/tools/security.html">
+  <meta property="og:title" content="Security &amp; Vulnerability Scoring — ionet">
+  <meta property="og:description" content="IP reputation aggregator · website security score (A+ to F) · CVE/NVD search. Phase 2 server-side tools.">
+  <meta property="og:image" content="https://ionet.com.au/assets/og/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Security &amp; Vulnerability Scoring — ionet">
+  <meta name="twitter:description" content="IP reputation · website security score · CVE/NVD search.">
+  <meta name="twitter:image" content="https://ionet.com.au/assets/og/og-image.png">
+
+  <link rel="icon" type="image/png" href="/assets/logo/logo-mark.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/logo/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home",  "item": "https://ionet.com.au/" },
+      { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://ionet.com.au/tools.html" },
+      { "@type": "ListItem", "position": 3, "name": "Security & vulnerability scoring", "item": "https://ionet.com.au/tools/security.html" }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container nav">
+      <a class="nav-brand" href="/" aria-label="ionet home"><img src="/assets/logo/logo.png" alt="ionet"></a>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/tools.html" class="active">Tools</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/contact.html" class="btn btn-primary" style="padding:10px 18px">Get in touch</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="cat-hero">
+      <div class="container">
+        <nav class="breadcrumbs reveal" aria-label="Breadcrumb">
+          <a href="/">Home</a><span class="bc-sep">›</span>
+          <a href="/tools.html">Tools</a><span class="bc-sep">›</span>
+          <span aria-current="page">Security &amp; vulnerability scoring</span>
+        </nav>
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">⚡ ionet network · Phase 2</p>
+          <h1>Security &amp; vulnerability scoring</h1>
+          <p class="hero-lead">Aggregated security intelligence — IP reputation, composite website grade, and CVE search. Run server-side because the API keys for the upstream sources (Shodan, AbuseIPDB, etc.) belong on the backend, not in browser JS.</p>
+        </div>
+        <div class="reveal" style="margin-top:24px;max-width:560px;">
+          <input class="tool-search" type="search" placeholder="Filter tools — type to search..." aria-label="Filter tools">
+        </div>
+      </div>
+    </section>
+
+    <section id="tool-grid">
+      <div class="container">
+        <div class="services-grid">
+          <a class="service tool-card reveal" href="#tool-ip-recon">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12h6M12 9v6"/></svg></div>
+            <h3>IP Reputation &amp; CVE Recon</h3>
+            <p>Aggregated lookup across AbuseIPDB, GreyNoise, VirusTotal, Shodan. Returns a 0–100 risk score plus exposed-service CVEs.</p>
+          </a>
+          <a class="service tool-card reveal" href="#tool-web-score">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <h3>Website Security Score</h3>
+            <p>Combined grade A+ to F. Mozilla Observatory + SSL Labs + our own header / cookie / mixed-content checks. Fancy gauge included.</p>
+          </a>
+          <a class="service tool-card reveal" href="#tool-cve">
+            <span class="prov-badge prov-badge--ionet">⚡ ionet network</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 7v8M7 11h8"/></svg></div>
+            <h3>CVE / NVD Search</h3>
+            <p>Search the NIST National Vulnerability Database by product, version, or CVE ID. CVSS scores, exploit links, affected versions.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="phase-2" class="bg-purple">
+      <div class="container">
+        <article id="tool-ip-recon" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>IP Reputation &amp; CVE Recon</h3>
+          <p>
+            Aggregated <strong>passive</strong> intelligence — no scanning of the target.
+            Combines:
+          </p>
+          <ul class="phase2-bullets">
+            <li><strong>AbuseIPDB</strong> · abuse confidence score 0–100, recent reports</li>
+            <li><strong>GreyNoise</strong> · is this IP a known scanner / benign noise / unknown?</li>
+            <li><strong>VirusTotal</strong> · 90+ vendor verdicts on the IP</li>
+            <li><strong>Shodan</strong> · open ports, banners, service versions, exposed devices</li>
+            <li><strong>NVD</strong> · CVE matching for any service banners returned</li>
+          </ul>
+          <p>Returns a synthesized 0–100 risk score with a per-source breakdown and a list of CVEs ranked by CVSS.</p>
+        </article>
+
+        <article id="tool-web-score" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>Website Security Score</h3>
+          <p>Composite grade — Mozilla Observatory + SSL Labs + our own checks. Below is a preview of the result UI:</p>
+
+          <div class="score-mock" role="img" aria-label="Mock-up of the website security score gauge — example grade A-, score 87 of 100">
+            <div class="score-gauge">
+              <svg viewBox="0 0 200 200" width="180" height="180">
+                <circle cx="100" cy="100" r="84" fill="none" stroke="rgba(106,45,199,0.25)" stroke-width="14"/>
+                <circle cx="100" cy="100" r="84" fill="none" stroke="url(#scoreGrad)" stroke-width="14"
+                        stroke-linecap="round" stroke-dasharray="528"
+                        stroke-dashoffset="69"
+                        transform="rotate(-90 100 100)"/>
+                <defs>
+                  <linearGradient id="scoreGrad" x1="0" x2="1" y1="0" y2="1">
+                    <stop offset="0%"  stop-color="#4ade80"/>
+                    <stop offset="100%" stop-color="#ffb833"/>
+                  </linearGradient>
+                </defs>
+                <text x="100" y="92" text-anchor="middle" font-family="Outfit, sans-serif" font-size="58" font-weight="800" fill="#f5f0ff">A-</text>
+                <text x="100" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" fill="#b8a8d6">87 / 100</text>
+              </svg>
+              <div class="score-label">example.com<br><span>scanned 14&nbsp;hops · 7 checks · 1 finding</span></div>
+            </div>
+            <ul class="score-checks">
+              <li class="ok"><span>HSTS</span><span>max-age 31536000 + includeSubDomains</span><span class="pts">+25</span></li>
+              <li class="ok"><span>X-Content-Type-Options</span><span>nosniff</span><span class="pts">+10</span></li>
+              <li class="ok"><span>Referrer-Policy</span><span>strict-origin-when-cross-origin</span><span class="pts">+10</span></li>
+              <li class="ok"><span>TLS</span><span>1.3 · ECDHE-RSA-CHACHA20 · A grade chain</span><span class="pts">+25</span></li>
+              <li class="warn"><span>Content-Security-Policy</span><span>contains 'unsafe-inline'</span><span class="pts">−12</span></li>
+              <li class="ok"><span>Cookies</span><span>all Secure · HttpOnly · SameSite=Lax</span><span class="pts">+8</span></li>
+              <li class="warn"><span>Mixed content</span><span>1 http:// resource on /assets/old-logo.png</span><span class="pts">−4</span></li>
+            </ul>
+          </div>
+
+          <p style="margin-top:18px;color:var(--text-dim);font-size:0.92rem;">Mock-up — values are illustrative. Live scoring goes through the Phase 2 backend so API keys (Mozilla Observatory, SSL Labs, etc.) stay secret and rate limits apply per IP.</p>
+        </article>
+
+        <article id="tool-cve" class="phase2-tool reveal">
+          <span class="phase2-status">⚡ Awaiting deployment</span>
+          <h3>CVE / NVD Search</h3>
+          <p>Direct search of the <a href="https://nvd.nist.gov/" rel="noopener">NIST National Vulnerability Database</a> via its public API. Search by product (e.g. <code>nginx 1.18.0</code>), CVE ID (<code>CVE-2024-3094</code>), or vendor. Results show CVSS v3.1 score, vector, affected versions, and exploit links where known.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="cta" class="bg-purple-strong">
+      <div class="container">
+        <div class="philosophy reveal">
+          <div>
+            <p class="eyebrow">Open call</p>
+            <h2>Need a different scanner integrated?</h2>
+            <p>OpenVAS, Nuclei, OWASP ZAP, custom Nmap profiles? We're building open-ended in <code>backend/tools-api/</code> — tell us what you need.</p>
+            <a href="/contact.html" class="btn btn-primary">Suggest an integration →</a>
+          </div>
+          <div>
+            <a href="/tools.html" class="btn btn-ghost">← Back to all tools</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="/assets/logo/logo.png" alt="ionet">
+          <p>Australia's specialist ICT &amp; cybersecurity partner. We build it better.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Tools</h4>
+          <ul>
+            <li><a href="/tools/network.html">Network calculation</a></li>
+            <li><a href="/tools/crypto.html">Cryptography &amp; encoding</a></li>
+            <li><a href="/tools/identity.html">Identity &amp; tokens</a></li>
+            <li><a href="/tools/live.html">Live network</a></li>
+            <li><a href="/tools/security.html">Security scoring</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/tools.html">Tools</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="mailto:info@ionet.com.au">info@ionet.com.au</a></li>
+            <li><a href="/contact.html">Enquiry form</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> ionet — All rights reserved.</span>
+        <span>Crafted in Australia</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    (function(){
+      var input=document.querySelector('.tool-search');
+      if(!input)return;
+      var cards=document.querySelectorAll('.tool-card');
+      input.addEventListener('input',function(){
+        var q=input.value.toLowerCase().trim();
+        cards.forEach(function(c){
+          var t=c.querySelector('h3').textContent.toLowerCase();
+          var d=c.querySelector('p').textContent.toLowerCase();
+          c.style.display=(!q||t.indexOf(q)!==-1||d.indexOf(q)!==-1)?'':'none';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

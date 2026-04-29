@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0c0a24">
+
+  <title>Identity &amp; Token Tools — JWT Decoder, Password &amp; UUID Generator · ionet</title>
+  <meta name="description" content="Free, browser-based identity & token tools — JWT decoder, cryptographically-secure password generator, RFC 4122 UUID v4 generator. All operations run locally — your tokens, passwords, and IDs never leave the device.">
+  <meta name="keywords" content="jwt decoder, password generator, uuid v4 generator, online jwt parser, secure password, rfc 4122, jose, json web token">
+  <link rel="canonical" href="https://ionet.com.au/tools/identity.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ionet.com.au/tools/identity.html">
+  <meta property="og:title" content="Identity &amp; Token Tools — ionet">
+  <meta property="og:description" content="JWT decoder · Password generator · UUID v4. Local, instant, no signup.">
+  <meta property="og:image" content="https://ionet.com.au/assets/og/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Identity &amp; Token Tools — ionet">
+  <meta name="twitter:description" content="JWT · password gen · UUID v4. Local, instant, no signup.">
+  <meta name="twitter:image" content="https://ionet.com.au/assets/og/og-image.png">
+
+  <link rel="icon" type="image/png" href="/assets/logo/logo-mark.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/logo/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home",  "item": "https://ionet.com.au/" },
+      { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://ionet.com.au/tools.html" },
+      { "@type": "ListItem", "position": 3, "name": "Identity & tokens", "item": "https://ionet.com.au/tools/identity.html" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "ionet identity & token tools",
+    "itemListElement": [
+      { "@type": "SoftwareApplication", "position": 1, "name": "JWT Decoder",
+        "applicationCategory": "SecurityApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/identity.html#jwt-decoder" },
+      { "@type": "SoftwareApplication", "position": 2, "name": "Password Generator",
+        "applicationCategory": "SecurityApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/identity.html#password-generator" },
+      { "@type": "SoftwareApplication", "position": 3, "name": "UUID v4 Generator",
+        "applicationCategory": "DeveloperApplication", "operatingSystem": "Web Browser",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+        "url": "https://ionet.com.au/tools/identity.html#uuid-generator" }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container nav">
+      <a class="nav-brand" href="/" aria-label="ionet home"><img src="/assets/logo/logo.png" alt="ionet"></a>
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/tools.html" class="active">Tools</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/contact.html" class="btn btn-primary" style="padding:10px 18px">Get in touch</a></li>
+        </ul>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="cat-hero">
+      <div class="container">
+        <nav class="breadcrumbs reveal" aria-label="Breadcrumb">
+          <a href="/">Home</a><span class="bc-sep">›</span>
+          <a href="/tools.html">Tools</a><span class="bc-sep">›</span>
+          <span aria-current="page">Identity &amp; tokens</span>
+        </nav>
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">🔒 Browser tools</p>
+          <h1>Identity &amp; tokens</h1>
+          <p class="hero-lead">JWT inspection, secure password generation, and UUID v4 — entirely in your browser. Tokens, secrets, and IDs never leave the device.</p>
+        </div>
+        <div class="reveal" style="margin-top:24px;max-width:560px;">
+          <input class="tool-search" type="search" placeholder="Filter tools — type to search..." aria-label="Filter tools">
+        </div>
+      </div>
+    </section>
+
+    <section id="tool-grid">
+      <div class="container">
+        <div class="services-grid">
+          <a class="service tool-card reveal" href="#jwt-decoder">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <h3>JWT Decoder</h3>
+            <p>Parse JWT header and payload locally. No data leaves your browser.</p>
+          </a>
+          <a class="service tool-card reveal" href="#password-generator">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1"/><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <h3>Password Generator</h3>
+            <p>Cryptographically-secure random passwords. Configurable length and charset.</p>
+          </a>
+          <a class="service tool-card reveal" href="#uuid-generator">
+            <span class="prov-badge prov-badge--browser">🔒 Browser</span>
+            <div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg></div>
+            <h3>UUID v4</h3>
+            <p>Generate cryptographically-random RFC 4122 UUID v4 values.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="jwt-decoder" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Identity</p>
+          <h2>JWT Decoder</h2>
+          <p>Paste a JSON Web Token to inspect its header and payload. Decoding happens entirely client-side — your token never leaves the browser. Signature verification requires the issuer's key and isn't performed here.</p>
+        </div>
+        <div class="tool reveal">
+          <label class="tool-field tool-field--full">
+            <span>JWT</span>
+            <textarea id="jw-input" rows="3" spellcheck="false" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkphbmUgRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</textarea>
+          </label>
+          <div class="tool-row">
+            <button id="jw-go" class="btn btn-secondary" type="button">Decode</button>
+          </div>
+          <div class="tool-out" id="jw-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="password-generator" class="tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Security</p>
+          <h2>Password Generator</h2>
+          <p>Cryptographically-secure passwords drawn from <code>crypto.getRandomValues</code>. Choose your length and which character classes to include.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Length</span>
+              <input id="pw-len" type="number" min="6" max="128" value="20">
+            </label>
+            <label class="tool-check"><input type="checkbox" id="pw-lower" checked> a–z</label>
+            <label class="tool-check"><input type="checkbox" id="pw-upper" checked> A–Z</label>
+            <label class="tool-check"><input type="checkbox" id="pw-digit" checked> 0–9</label>
+            <label class="tool-check"><input type="checkbox" id="pw-symb" checked> Symbols</label>
+            <label class="tool-check"><input type="checkbox" id="pw-ambig"> Avoid ambiguous (Il1O0)</label>
+            <button id="pw-go" class="btn btn-secondary" type="button">Generate</button>
+          </div>
+          <div class="tool-out" id="pw-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="uuid-generator" class="bg-purple tool-section">
+      <div class="container">
+        <div class="reveal" style="max-width:880px;">
+          <p class="eyebrow">Identifiers</p>
+          <h2>UUID v4 Generator</h2>
+          <p>Generate cryptographically-random version-4 UUIDs (RFC 4122). Handy for primary keys, idempotency tokens, and correlation IDs.</p>
+        </div>
+        <div class="tool reveal">
+          <div class="tool-row">
+            <label class="tool-field">
+              <span>Count</span>
+              <input id="uu-count" type="number" min="1" max="100" value="5">
+            </label>
+            <button id="uu-go" class="btn btn-secondary" type="button">Generate</button>
+          </div>
+          <div class="tool-out" id="uu-out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cta" class="bg-purple-strong">
+      <div class="container">
+        <div class="philosophy reveal">
+          <div>
+            <p class="eyebrow">Open call</p>
+            <h2>Identity tooling we don't have?</h2>
+            <p>OAuth flow inspector? OpenID Connect debugger? Tell us.</p>
+            <a href="/contact.html" class="btn btn-primary">Suggest a tool →</a>
+          </div>
+          <div>
+            <a href="/tools.html" class="btn btn-ghost">← Back to all tools</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="/assets/logo/logo.png" alt="ionet">
+          <p>Australia's specialist ICT &amp; cybersecurity partner. We build it better.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Tools</h4>
+          <ul>
+            <li><a href="/tools/network.html">Network calculation</a></li>
+            <li><a href="/tools/crypto.html">Cryptography &amp; encoding</a></li>
+            <li><a href="/tools/identity.html">Identity &amp; tokens</a></li>
+            <li><a href="/tools/live.html">Live network</a></li>
+            <li><a href="/tools/security.html">Security scoring</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/tools.html">Tools</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="mailto:info@ionet.com.au">info@ionet.com.au</a></li>
+            <li><a href="/contact.html">Enquiry form</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> ionet — All rights reserved.</span>
+        <span>Crafted in Australia</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/tools.js"></script>
+  <script>
+    (function(){
+      var input=document.querySelector('.tool-search');
+      if(!input)return;
+      var cards=document.querySelectorAll('.tool-card');
+      input.addEventListener('input',function(){
+        var q=input.value.toLowerCase().trim();
+        cards.forEach(function(c){
+          var t=c.querySelector('h3').textContent.toLowerCase();
+          var d=c.querySelector('p').textContent.toLowerCase();
+          c.style.display=(!q||t.indexOf(q)!==-1||d.indexOf(q)!==-1)?'':'none';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
