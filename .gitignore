@@ -3,6 +3,9 @@ backend/.env
 backend/**/secrets/
 backend/**/credentials/
 
+# Wrangler local state (account ID cache, deploy artefacts)
+backend/cloudflare/.wrangler/
+
 # Local data volumes (when bound rather than docker-named)
 backend/data/
 backend/**/*.log
