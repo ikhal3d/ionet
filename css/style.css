@@ -707,6 +707,17 @@ form.contact-form {
   flex-wrap: wrap;
   gap: 12px;
 }
+.footer-legal {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(245, 240, 255, 0.04);
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.footer-legal a { color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(245, 240, 255, 0.2); }
+.footer-legal a:hover { color: var(--text); }
 
 /* Reveal animation */
 .reveal {
