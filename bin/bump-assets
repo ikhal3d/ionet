@@ -16,10 +16,14 @@ HASH=$(cat js/main.js js/tools.js css/style.css 2>/dev/null | sha256sum | cut -c
 HTML_FILES=$(git ls-files '*.html')
 
 for f in $HTML_FILES; do
-  # Only touch our own /js/ and /css/ paths (not external CDNs)
+  # Only touch our own js/ and css/ files (not external CDNs).
+  # Match href="...css/foo.css" and src="...js/foo.js" — works for relative
+  # ("css/style.css"), parent-relative ("../css/style.css"), and absolute
+  # ("/css/style.css") paths. External CDN URLs like
+  # https://fonts.googleapis.com/css2? do not match (they have no .css/.js).
   sed -i -E \
-    -e 's|(/js/[a-z0-9_.-]+\.js)(\?v=[a-f0-9]+)?|\1?v='"$HASH"'|g' \
-    -e 's|(/css/[a-z0-9_.-]+\.css)(\?v=[a-f0-9]+)?|\1?v='"$HASH"'|g' \
+    -e 's|(href="[^"]*css/[a-z0-9_.-]+\.css)(\?v=[a-f0-9]+)?(")|\1?v='"$HASH"'\3|g' \
+    -e 's|(src="[^"]*js/[a-z0-9_.-]+\.js)(\?v=[a-f0-9]+)?(")|\1?v='"$HASH"'\3|g' \
     "$f"
 done
 
