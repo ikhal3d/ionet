@@ -40,9 +40,4 @@
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
-  <url>
-    <loc>https://ionet.com.au/tools/security.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
 </urlset>

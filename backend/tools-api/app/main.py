@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import health, port, dns, whois, asn, tls, headers, outages
-from .routers import bgp, trace, ip_recon, web_score, cve
+from .routers import bgp, trace
 
 app = FastAPI(
     title="ionet tools API",
@@ -41,7 +41,6 @@ app.include_router(outages.router,   prefix="/api", tags=["outages"])
 # Phase 2.5
 app.include_router(bgp.router,       prefix="/api", tags=["bgp"])
 app.include_router(trace.router,     prefix="/api", tags=["trace"])
-# Phase 3
-app.include_router(ip_recon.router,  prefix="/api", tags=["ip-recon"])
-app.include_router(web_score.router, prefix="/api", tags=["web-score"])
-app.include_router(cve.router,       prefix="/api", tags=["cve"])
+# Phase 3 cybersecurity-rating routers (ip-recon, web-score, cve) were
+# retired when ionet's positioning shifted to network engineering /
+# automation focus. Files removed; restore from git history if needed.

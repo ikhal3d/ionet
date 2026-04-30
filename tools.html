@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="/css/style.css?v=711bfcc3">
+  <link rel="stylesheet" href="/css/style.css?v=0a3aadcd">
 
   <script type="application/ld+json">
   {
@@ -72,8 +72,7 @@
       { "@type": "ListItem", "position": 1, "name": "Network calculation",        "url": "https://ionet.com.au/tools/network.html" },
       { "@type": "ListItem", "position": 2, "name": "Cryptography & encoding",    "url": "https://ionet.com.au/tools/crypto.html" },
       { "@type": "ListItem", "position": 3, "name": "Identity & tokens",          "url": "https://ionet.com.au/tools/identity.html" },
-      { "@type": "ListItem", "position": 4, "name": "Live network",               "url": "https://ionet.com.au/tools/live.html" },
-      { "@type": "ListItem", "position": 5, "name": "Security & vuln scoring",    "url": "https://ionet.com.au/tools/security.html" }
+      { "@type": "ListItem", "position": 4, "name": "Live network",               "url": "https://ionet.com.au/tools/live.html" }
     ]
   }
   </script>
@@ -129,7 +128,7 @@
           <h1>Network &amp; security tools, <span class="accent">built for engineers.</span></h1>
           <p class="hero-lead">
             A focused toolkit. The command centre below shows global and Australian internet health
-            at a glance; below that, five categories of working tools — from subnet calculators to a
+            at a glance; below that, four categories of working tools — from subnet calculators to a
             BGP looking glass.
           </p>
           <div class="hero-actions">
@@ -394,7 +393,7 @@
         <div class="section-head reveal" style="max-width:880px;">
           <p class="eyebrow">Tool categories</p>
           <h2>Pick a category — each opens its own focused page.</h2>
-          <p>Tools split into five focused groups. Each category page has its own per-tool detail and a search box. Tools tagged <span class="prov-badge prov-badge--browser" style="position:static;display:inline-flex;margin:0 4px;">🔒 Browser</span> run locally; <span class="prov-badge prov-badge--ionet" style="position:static;display:inline-flex;margin:0 4px;">⚡ ionet network</span> tools run on our backend.</p>
+          <p>Tools split into four focused groups. Each category page has its own per-tool detail and a search box. Tools tagged <span class="prov-badge prov-badge--browser" style="position:static;display:inline-flex;margin:0 4px;">🔒 Browser</span> run locally; <span class="prov-badge prov-badge--ionet" style="position:static;display:inline-flex;margin:0 4px;">⚡ ionet network</span> tools run on our backend.</p>
         </div>
 
         <div class="cat-grid">
@@ -438,15 +437,6 @@
             <span class="cat-tile-foot"><strong>10 tools</strong> · live · Open →</span>
           </a>
 
-          <a class="cat-tile reveal" href="/tools/security.html">
-            <span class="cat-tile-badge prov-badge prov-badge--ionet">⚡ ionet network</span>
-            <div class="cat-tile-icon" aria-hidden="true">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            </div>
-            <h3>Security &amp; vuln scoring</h3>
-            <p>IP reputation &amp; CVE recon · Website security score (A+ to F) · CVE / NVD search.</p>
-            <span class="cat-tile-foot"><strong>3 tools</strong> · live · Open →</span>
-          </a>
         </div>
       </div>
     </section>
@@ -489,7 +479,6 @@
             <li><a href="/tools/crypto.html">Cryptography &amp; encoding</a></li>
             <li><a href="/tools/identity.html">Identity &amp; tokens</a></li>
             <li><a href="/tools/live.html">Live network</a></li>
-            <li><a href="/tools/security.html">Security scoring</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -515,11 +504,11 @@
     </div>
   </footer>
 
-  <script src="/js/main.js?v=711bfcc3"></script>
-  <script src="/js/world-map.js?v=711bfcc3"></script>
-  <script src="/js/world-cables.js?v=711bfcc3"></script>
-  <script src="/js/ixps.js?v=711bfcc3"></script>
-  <script src="/js/au-data.js?v=711bfcc3"></script>
+  <script src="/js/main.js?v=0a3aadcd"></script>
+  <script src="/js/world-map.js?v=0a3aadcd"></script>
+  <script src="/js/world-cables.js?v=0a3aadcd"></script>
+  <script src="/js/ixps.js?v=0a3aadcd"></script>
+  <script src="/js/au-data.js?v=0a3aadcd"></script>
   <script>
     // ============================================================
     // Legacy anchor redirect — old tools.html had every tool as an
@@ -555,9 +544,7 @@
         "tool-tls":           "live",
         "tool-headers":       "live",
         "tool-outages":       "live",
-        "tool-ip-recon":      "security",
-        "tool-web-score":     "security",
-        "tool-cve":           "security"
+        // ip-recon / web-score / cve removed when the security category was retired
       };
       var cat = ANCHOR[hash];
       if (cat) location.replace("/tools/" + cat + ".html#" + hash);
