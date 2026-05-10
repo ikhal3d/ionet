@@ -100,7 +100,7 @@
       { "@type": "Question",
         "name": "Does ionet have a BGP looking glass?",
         "acceptedAnswer": { "@type": "Answer",
-          "text": "A public BGP looking glass at lg.ionet.com.au is on our Phase 2 roadmap. It will run on hyperglass and expose ping, traceroute, and BGP route lookups from our Australian network vantage point. See the Live Network category for the full set of Phase 2 tools." } },
+          "text": "A public BGP looking glass at lg.ionet.com.au is on our roadmap, pending a router target. It will run on hyperglass and expose ping, traceroute, and BGP route lookups from an ionet-owned vantage point. In the meantime, the Live network category exposes the full set of server-side tools — BGP route inspection (via RIPEstat), traceroute, DNS, WHOIS, ASN, TLS, headers, and the AU outage feed — already running on the ionet Oracle backend." } },
       { "@type": "Question",
         "name": "Where do these tools run?",
         "acceptedAnswer": { "@type": "Answer",
@@ -158,8 +158,8 @@
           <h2>Internet status, at a glance.</h2>
           <p>
             Submarine cable routes, major Internet Exchange Points, and Australian peering hubs.
-            Live data feeds (BGP advisories, AU outages) light up as the Phase 2 backend goes live —
-            see the <a href="/tools/live.html">Live network</a> category for what's coming.
+            The active-outage counters below pull from the ionet Oracle backend — the
+            <a href="/tools/live.html">Live network</a> category exposes the full feed.
           </p>
         </div>
 
@@ -167,12 +167,12 @@
           <div class="cc-toolbar">
             <div class="cc-status">
               <span class="cc-dot cc-dot--ok"></span>
-              <span class="cc-status-label">Synthetic feed &middot; live telemetry lands in Phase 2</span>
+              <span class="cc-status-label">Live &middot; TeleGeography cables &middot; PeeringDB IXPs</span>
             </div>
             <div class="cc-legend" aria-label="Map legend">
               <span><i class="cc-key cc-key--ixp"></i> Internet Exchange</span>
               <span><i class="cc-key cc-key--cable"></i> Submarine cable</span>
-              <span class="cc-legend-mute"><i class="cc-key cc-key--alert"></i> BGP advisory <em><a href="/tools/live.html">· Phase 2</a></em></span>
+              <span class="cc-legend-mute"><i class="cc-key cc-key--alert"></i> BGP route lookup <em><a href="/tools/live.html#tool-bgp">· Inspector →</a></em></span>
             </div>
           </div>
 
@@ -274,8 +274,8 @@
               <span>Australian peering hubs</span>
             </div>
             <div class="cc-stat">
-              <strong>0</strong>
-              <span>Live BGP advisories <em><a href="/tools/live.html">· Phase 2</a></em></span>
+              <strong id="cc-stat-active-outages">—</strong>
+              <span>Active outages tracked <em><a href="/tools/live.html#tool-outages">· Live feed →</a></em></span>
             </div>
           </div>
           <p class="cc-attrib">
@@ -289,12 +289,12 @@
           <div class="cc-toolbar">
             <div class="cc-status">
               <span class="cc-dot cc-dot--ok"></span>
-              <span class="cc-status-label">Australia &middot; <span id="au-stat-cables">39</span> AU-landing cables &middot; outage feed lands in Phase 2</span>
+              <span class="cc-status-label">Australia &middot; <span id="au-stat-cables">39</span> AU-landing cables &middot; <span id="cc-stat-au-feeds">—</span> outage feeds responding</span>
             </div>
             <div class="cc-legend" aria-label="Australia panel legend">
               <span><i class="cc-key cc-key--au"></i> Australian IXP</span>
               <span><i class="cc-key cc-key--cable"></i> AU-landing cable</span>
-              <span class="cc-legend-mute"><i class="cc-key cc-key--alert"></i> Outage <em><a href="/tools/live.html">· Phase 2</a></em></span>
+              <span class="cc-legend-mute"><i class="cc-key cc-key--alert"></i> Active outage <em><a href="/tools/live.html#tool-outages">· Live feed →</a></em></span>
             </div>
           </div>
 
@@ -386,13 +386,13 @@
               <span>AU-landing submarine cables</span>
             </div>
             <div class="cc-stat">
-              <strong>0</strong>
-              <span>Live AU outages tracked <em><a href="/tools/live.html">· Phase 2</a></em></span>
+              <strong id="cc-stat-au-outages">—</strong>
+              <span>Active AU outages <em><a href="/tools/live.html#tool-outages">· Live feed →</a></em></span>
             </div>
           </div>
           <p class="cc-attrib">
-            Phase 2 outage feeds: NBN Co · Telstra · Optus · TPG · Aussie Outages.
-            Aggregator runs on the Oracle VM. See <a href="/tools/live.html">Live network</a> for the full Phase 2 list.
+            Outage feeds: NBN Co · Telstra · Optus · TPG · Aussie Outages.
+            Aggregator runs on the Oracle VM, refreshed every 5 minutes. See <a href="/tools/live.html">Live network</a> for the full set of server-side tools.
           </p>
         </div>
       </div>
@@ -668,6 +668,56 @@
       }
       tick();
       setInterval(tick, 1000);
+    })();
+
+    // ============================================================
+    // Live outage counters — pull /api/outages into the command
+    // centre stat tiles. Same-origin: hits the Cloudflare Worker on
+    // ionet.com.au and routes through to the Oracle VM aggregator.
+    // ============================================================
+    (function () {
+      var totalEl  = document.getElementById("cc-stat-active-outages");
+      var feedsEl  = document.getElementById("cc-stat-au-feeds");
+      var auEl     = document.getElementById("cc-stat-au-outages");
+      if (!totalEl && !feedsEl && !auEl) return;
+
+      function setAll(text) {
+        if (totalEl) totalEl.textContent = text;
+        if (feedsEl) feedsEl.textContent = text;
+        if (auEl)    auEl.textContent    = text;
+      }
+
+      // Known AU-targeted feeds. Match by exact key OR substring "au" / "australia"
+      // so future AU feeds with new names still classify correctly.
+      var AU_FEEDS = ["cloudflare-radar-au", "nbn", "telstra", "optus", "tpg", "aussie", "aussie-outages"];
+      function isAuFeed(name) {
+        if (!name) return false;
+        var k = String(name).toLowerCase();
+        if (AU_FEEDS.indexOf(k) !== -1) return true;
+        return k.indexOf("au") !== -1 || k.indexOf("australia") !== -1;
+      }
+
+      function paint(d) {
+        var totals = (d && d.totals) || {};
+        if (totalEl) totalEl.textContent = (totals.active_incidents != null ? totals.active_incidents : "—");
+
+        var feeds = (d && d.feeds) || {};
+        var auResponding = 0, auImplemented = 0, auActive = 0;
+        Object.keys(feeds).forEach(function (k) {
+          if (!isAuFeed(k)) return;
+          var f = feeds[k] || {};
+          if (f.implemented) auImplemented++;
+          if (f.responding) auResponding++;
+          if (f.responding && Array.isArray(f.events)) auActive += f.events.length;
+        });
+        if (feedsEl) feedsEl.textContent = auResponding + " / " + auImplemented;
+        if (auEl)    auEl.textContent    = auActive;
+      }
+
+      fetch("/api/outages", { credentials: "omit" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { if (d) paint(d); else setAll("n/a"); })
+        .catch(function () { setAll("n/a"); });
     })();
   </script>
 </body>

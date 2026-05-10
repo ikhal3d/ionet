@@ -37,7 +37,7 @@
   }
   function networkError(out, err) {
     setOut(out,
-      "Couldn't reach the ionet backend. The Phase 2 backend may not be deployed yet — see <a href=\"https://github.com/ikhal3d/ionet/blob/main/backend/DEPLOY.md\" rel=\"noopener\">backend/DEPLOY.md</a>." +
+      "Couldn't reach the ionet backend right now. This is usually transient — try again in a few seconds. If it persists the service may be cycling or rate-limiting." +
       (err && err.message ? `<div style=\"margin-top:8px;color:var(--text-dim);font-size:0.85rem;\">Detail: ${escapeHTML(err.message)}</div>` : ""),
       true
     );

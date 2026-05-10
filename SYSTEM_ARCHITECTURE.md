@@ -46,7 +46,7 @@ parts fit together.
    │                                                              │
    │   ionet_outage_aggregator — feed scraper (NBN/Telstra/...)   │
    │                                                              │
-   │   ionet_hyperglass       — BGP looking glass (Phase 2.5)     │
+   │   ionet_hyperglass       — BGP looking glass (Phase 4)       │
    │                              [staged — needs router target]  │
    └──────────────────────────────────────────────────────────────┘
 ```
@@ -57,7 +57,7 @@ parts fit together.
 | Tools UI | `ionet.com.au/tools.html` + `/tools/*.html` | GitHub Pages, Cloudflare-proxied | ✅ live |
 | Backend API | `ionet.com.au/api/*` | Cloudflare Worker `ionet-tools-proxy` → Oracle VM Caddy → FastAPI | ✅ live (Phase 2.3 shipped 2026-04-29) |
 | Worker origin | `origin.ionet.com.au` (DNS-only A → 168.138.30.115) | Oracle VM | ✅ live · cert: Let's Encrypt CN=E7 |
-| Looking glass | `lg.ionet.com.au` | Oracle VM (hyperglass) | ⏳ Phase 2.5 — needs router target |
+| Looking glass | `lg.ionet.com.au` | Oracle VM (hyperglass) | ⏳ Phase 4 — needs router target |
 
 ---
 
@@ -67,7 +67,7 @@ parts fit together.
 
 | Component | File(s) | Job |
 |-----------|---------|-----|
-| Tools page markup | [tools.html](tools.html) | Hero, command centre, 11 tool sections, Phase 2 teasers, CTA, full SEO head |
+| Tools page markup | [tools.html](tools.html) | Hero, command centre with live `/api/outages` counters, 11 tool sections, CTA, full SEO head |
 | Stylesheet | [css/style.css](css/style.css) | One palette, all pages — brand purple/pink/gold, command-centre styling, tool panels, responsive |
 | Page bootstrap | [js/main.js](js/main.js) | Header, mobile nav, reveal-on-scroll, contact form, copy-on-click for tool outputs |
 | Tool logic | [js/tools.js](js/tools.js) | All 11 tools: subnet/CIDR, VLSM, JWT, hash, HMAC, base64, URL, password, UUID, IP convert, text↔hex↔binary |

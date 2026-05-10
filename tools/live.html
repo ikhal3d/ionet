@@ -71,7 +71,7 @@
           <span aria-current="page">Live network</span>
         </nav>
         <div class="reveal" style="max-width:880px;">
-          <p class="eyebrow">⚡ ionet network · Phase 2</p>
+          <p class="eyebrow">⚡ ionet network · Live</p>
           <h1>Live network tools</h1>
           <p class="hero-lead">Diagnostics that need a server vantage point — BGP, traceroute, DNS, WHOIS, ASN, TLS, security headers, and the live AU outage feed. They run on the ionet Oracle VM, Cloudflare-fronted, behind <code>/api/*</code> on this same domain.</p>
         </div>
@@ -328,9 +328,9 @@
       <div class="container">
         <div class="philosophy reveal">
           <div>
-            <p class="eyebrow">Phase 2</p>
-            <h2>Live tools deploy together.</h2>
-            <p>The backend stack is built (see <code>backend/</code> in the repo). When the Oracle VM goes live behind a Cloudflare Worker on <code>/api/*</code>, all the tools above light up at once.</p>
+            <p class="eyebrow">ionet backend</p>
+            <h2>Live now.</h2>
+            <p>Caddy fronts FastAPI services on the ionet Oracle VM, behind a Cloudflare Worker on <code>/api/*</code>. The outage aggregator refreshes every 5 minutes; BGP route data comes from RIPEstat; traceroute runs from the VM itself. Open the architecture doc for the full request flow.</p>
             <a href="https://github.com/ikhal3d/ionet/blob/main/SYSTEM_ARCHITECTURE.md" rel="noopener" class="btn btn-primary">Architecture →</a>
           </div>
           <div>
