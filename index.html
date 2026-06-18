@@ -853,16 +853,17 @@
       }
 
       /* ── netplex hero card ── */
-      /* Card floats in the top-right of the hero, just below the nav */
+      /* Card floats in the right column of the hero, centred on earth's Y */
       .np-hero-card {
         position: absolute;
-        top: calc(var(--header-h) + 20px);
+        top: 50%;
+        transform: translateY(-50%);
         right: max(32px, calc((100% - 1120px) / 2 + 32px));
         z-index: 10;
 
         display: inline-flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
         padding: 12px 16px;
         background: #e8661a;
         border: none;
@@ -870,7 +871,8 @@
         border-radius: 12px;
         text-decoration: none;
         transition: opacity .15s;
-        max-width: 340px;
+        max-width: 400px;
+        width: 400px;
       }
       .np-hero-card:hover { opacity: 0.92; }
 
