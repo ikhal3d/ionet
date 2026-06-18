@@ -853,13 +853,11 @@
       }
 
       /* ── netplex hero card ── */
-      /* Card floats absolutely in the hero section, centred on the earth's Y */
+      /* Card floats in the top-right of the hero, just below the nav */
       .np-hero-card {
         position: absolute;
-        /* hero grid right column starts at ~52% of container; card sits there */
-        right: max(32px, calc(50% - 560px / 2));
-        top: 50%;
-        transform: translateY(-50%);
+        top: calc(var(--header-h) + 20px);
+        right: max(32px, calc((100% - 1120px) / 2 + 32px));
         z-index: 10;
 
         display: inline-flex;
@@ -886,7 +884,7 @@
       .np-hero-icon {
         display: inline-grid;
         place-items: center;
-        width: 22px; height: 22px;
+        width: 30px; height: 30px;
         color: #fff;
         flex-shrink: 0;
       }
@@ -894,7 +892,7 @@
 
       .np-hero-wm {
         font-family: 'Geist', system-ui, sans-serif;
-        font-size: 22px;
+        font-size: 28px;
         font-weight: 700;
         letter-spacing: -0.03em;
         color: #fff;
@@ -906,7 +904,7 @@
 
       .np-hero-dot {
         display: inline-block;
-        width: 5px; height: 5px;
+        width: 6px; height: 6px;
         border-radius: 50%;
         background: #fff;
         flex-shrink: 0;
