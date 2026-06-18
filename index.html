@@ -218,6 +218,26 @@
 
     <!-- ============ Hero ============ -->
     <section class="hero">
+      <a href="https://netplex.io" class="np-hero-card" target="_blank" rel="noopener noreferrer">
+        <span class="np-hero-logo">
+          <span class="np-hero-icon">
+            <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <g stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 19 L27 32 M14 32 L27 32 M14 45 L27 32"/>
+                <path d="M37 32 L52 32"/>
+                <circle cx="32" cy="32" r="5"/>
+              </g>
+              <circle cx="14" cy="19" r="3" fill="currentColor"/>
+              <circle cx="14" cy="32" r="3" fill="currentColor"/>
+              <circle cx="14" cy="45" r="3" fill="currentColor"/>
+              <circle cx="52" cy="32" r="3.4" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="np-hero-wm">netplex<span class="np-hero-dot"></span></span>
+        </span>
+        <span class="np-hero-tag">ionet's network lab platform — emulate, automate, ship.</span>
+        <span class="np-hero-link">netplex.io →</span>
+      </a>
       <div class="container hero-grid">
         <div class="hero-copy reveal">
           <p class="eyebrow">Build it better</p>
@@ -238,32 +258,10 @@
             <div class="stat"><strong>Operate</strong><span>24/7 NOC, MFA-gated alerts, SLA-backed response</span></div>
           </div>
         </div>
-        <div class="hero-right">
-          <a href="https://netplex.io" class="np-hero-card reveal" target="_blank" rel="noopener noreferrer">
-            <span class="np-hero-logo">
-              <span class="np-hero-icon">
-                <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-                  <g stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 19 L27 32 M14 32 L27 32 M14 45 L27 32"/>
-                    <path d="M37 32 L52 32"/>
-                    <circle cx="32" cy="32" r="5"/>
-                  </g>
-                  <circle cx="14" cy="19" r="3" fill="currentColor"/>
-                  <circle cx="14" cy="32" r="3" fill="currentColor"/>
-                  <circle cx="14" cy="45" r="3" fill="currentColor"/>
-                  <circle cx="52" cy="32" r="3.4" fill="currentColor"/>
-                </svg>
-              </span>
-              <span class="np-hero-wm">netplex<span class="np-hero-dot"></span></span>
-            </span>
-            <span class="np-hero-tag">ionet's network lab platform — emulate, automate, ship.</span>
-            <span class="np-hero-link">netplex.io →</span>
-          </a>
-          <div class="earth-stage reveal">
-            <div class="earth-orbit"></div>
-            <div class="earth-orbit inner"></div>
-            <div id="earth" style="position:absolute;inset:0;"></div>
-          </div>
+        <div class="earth-stage reveal">
+          <div class="earth-orbit"></div>
+          <div class="earth-orbit inner"></div>
+          <div id="earth" style="position:absolute;inset:0;"></div>
         </div>
       </div>
     </section>
@@ -855,26 +853,26 @@
       }
 
       /* ── netplex hero card ── */
-      .hero-right {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        align-items: center;
-        gap: 20px;
-      }
-
+      /* Card floats absolutely in the hero section, centred on the earth's Y */
       .np-hero-card {
+        position: absolute;
+        /* hero grid right column starts at ~52% of container; card sits there */
+        right: max(32px, calc(50% - 560px / 2));
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+
         display: inline-flex;
         align-items: center;
         gap: 14px;
         padding: 12px 16px;
         background: #e8661a;
         border: none;
-        box-shadow: 0 4px 24px rgba(232,102,26,0.35);
+        box-shadow: 0 6px 28px rgba(232,102,26,0.40);
         border-radius: 12px;
         text-decoration: none;
-        transition: border-color .2s, box-shadow .2s;
-        max-width: 360px;
-        align-self: flex-start;
+        transition: opacity .15s;
+        max-width: 340px;
       }
       .np-hero-card:hover { opacity: 0.92; }
 
@@ -889,7 +887,7 @@
         display: inline-grid;
         place-items: center;
         width: 22px; height: 22px;
-        color: #e8661a;
+        color: #fff;
         flex-shrink: 0;
       }
       .np-hero-icon svg { width: 100%; height: 100%; display: block; }
