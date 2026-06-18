@@ -703,33 +703,46 @@
         display: inline-grid;
         place-items: center;
         color: rgba(255,255,255,0.92);
-        width: 32px; height: 32px;
+        width: 40px; height: 40px;
         flex-shrink: 0;
       }
       .np-mark-icon svg { width: 100%; height: 100%; display: block; }
 
+      .np-wm-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
       .np-wm-text {
         font-family: var(--np-fd);
-        font-size: 30px;
+        font-size: 36px;
         font-weight: 700;
-        letter-spacing: -0.03em;
+        letter-spacing: -0.035em;
         color: #fff;
         line-height: 1;
+        display: flex;
+        align-items: center;
+        gap: 5px;
       }
-      .np-wm-dot { color: rgba(255,255,255,0.45); }
 
-      /* Pulsing green live dot */
-      .np-live-dot {
-        width: 8px; height: 8px;
+      /* Round solid white dot replaces the typographic period */
+      .np-wm-dot {
+        display: inline-block;
+        width: 7px; height: 7px;
         border-radius: 50%;
-        background: var(--np-ok);
-        box-shadow: 0 0 7px var(--np-ok);
+        background: #fff;
         flex-shrink: 0;
-        animation: np-pulse 2.4s ease-in-out infinite;
+        margin-bottom: 2px;
       }
-      @keyframes np-pulse {
-        0%,100% { box-shadow: 0 0 6px var(--np-ok); opacity: 1; }
-        50%      { box-shadow: 0 0 14px var(--np-ok), 0 0 0 3px rgba(65,193,120,0.25); opacity: 0.65; }
+
+      .np-wm-sub {
+        font-family: var(--np-fm);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255,220,190,0.68);
+        line-height: 1;
       }
 
       /* Centre: copy + pills */
@@ -838,8 +851,10 @@
                 <circle cx="52" cy="32" r="3.4" fill="currentColor"/>
               </svg>
             </span>
-            <span class="np-wm-text">netplex<span class="np-wm-dot">.</span></span>
-            <span class="np-live-dot" title="Live"></span>
+            <span class="np-wm-wrap">
+              <span class="np-wm-text">netplex<span class="np-wm-dot"></span></span>
+              <span class="np-wm-sub">Network lab platform</span>
+            </span>
           </a>
 
           <!-- Copy -->
