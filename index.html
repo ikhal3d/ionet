@@ -218,26 +218,6 @@
 
     <!-- ============ Hero ============ -->
     <section class="hero">
-      <a href="https://netplex.io" class="np-hero-card" target="_blank" rel="noopener noreferrer">
-        <span class="np-hero-logo">
-          <span class="np-hero-icon">
-            <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-              <g stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 19 L27 32 M14 32 L27 32 M14 45 L27 32"/>
-                <path d="M37 32 L52 32"/>
-                <circle cx="32" cy="32" r="5"/>
-              </g>
-              <circle cx="14" cy="19" r="3" fill="currentColor"/>
-              <circle cx="14" cy="32" r="3" fill="currentColor"/>
-              <circle cx="14" cy="45" r="3" fill="currentColor"/>
-              <circle cx="52" cy="32" r="3.4" fill="currentColor"/>
-            </svg>
-          </span>
-          <span class="np-hero-wm">netplex<span class="np-hero-dot"></span></span>
-        </span>
-        <span class="np-hero-tag">ionet's network lab platform — emulate, automate, ship.</span>
-        <span class="np-hero-link">netplex.io →</span>
-      </a>
       <div class="container hero-grid">
         <div class="hero-copy reveal">
           <p class="eyebrow">Build it better</p>
@@ -258,10 +238,32 @@
             <div class="stat"><strong>Operate</strong><span>24/7 NOC, MFA-gated alerts, SLA-backed response</span></div>
           </div>
         </div>
-        <div class="earth-stage reveal">
-          <div class="earth-orbit"></div>
-          <div class="earth-orbit inner"></div>
-          <div id="earth" style="position:absolute;inset:0;"></div>
+        <div class="hero-right">
+          <a href="https://netplex.io" class="np-hero-card reveal" target="_blank" rel="noopener noreferrer">
+            <span class="np-hero-logo">
+              <span class="np-hero-icon">
+                <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                  <g stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 19 L27 32 M14 32 L27 32 M14 45 L27 32"/>
+                    <path d="M37 32 L52 32"/>
+                    <circle cx="32" cy="32" r="5"/>
+                  </g>
+                  <circle cx="14" cy="19" r="3" fill="currentColor"/>
+                  <circle cx="14" cy="32" r="3" fill="currentColor"/>
+                  <circle cx="14" cy="45" r="3" fill="currentColor"/>
+                  <circle cx="52" cy="32" r="3.4" fill="currentColor"/>
+                </svg>
+              </span>
+              <span class="np-hero-wm">netplex<span class="np-hero-dot"></span></span>
+            </span>
+            <span class="np-hero-tag">ionet's network lab platform — emulate, automate, ship.</span>
+            <span class="np-hero-link">netplex.io →</span>
+          </a>
+          <div class="earth-stage reveal">
+            <div class="earth-orbit"></div>
+            <div class="earth-orbit inner"></div>
+            <div id="earth" style="position:absolute;inset:0;"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -853,14 +855,15 @@
       }
 
       /* ── netplex hero card ── */
-      /* Card floats in the right column of the hero, centred on earth's Y */
-      .np-hero-card {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        right: max(32px, calc((100% - 1120px) / 2 + 32px));
-        z-index: 10;
+      /* Right column: card above, earth below — share the same centre line */
+      .hero-right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
 
+      .np-hero-card {
         display: inline-flex;
         align-items: center;
         gap: 12px;
@@ -875,6 +878,9 @@
         width: 400px;
       }
       .np-hero-card:hover { opacity: 0.92; }
+
+      /* Earth fills the full column width (undo flex-child shrinking) */
+      .hero-right .earth-stage { width: 100%; margin-left: 0; }
 
       .np-hero-logo {
         display: flex;
