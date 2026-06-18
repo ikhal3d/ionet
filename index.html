@@ -855,15 +855,16 @@
       }
 
       /* ── netplex hero card ── */
-      /* Right column: card above, earth below — share the same centre line */
-      .hero-right {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 3cm;
-      }
+      /* Earth column — card floats above it without affecting its position */
+      .hero-right { position: relative; }
 
       .np-hero-card {
+        position: absolute;
+        bottom: calc(100% + 2cm);  /* 2cm above the earth's top edge */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+
         display: inline-flex;
         align-items: center;
         gap: 12px;
@@ -874,13 +875,9 @@
         border-radius: 12px;
         text-decoration: none;
         transition: opacity .15s;
-        max-width: 400px;
         width: 400px;
       }
       .np-hero-card:hover { opacity: 0.92; }
-
-      /* Earth fills the full column width (undo flex-child shrinking) */
-      .hero-right .earth-stage { width: 100%; margin-left: 0; }
 
       .np-hero-logo {
         display: flex;
