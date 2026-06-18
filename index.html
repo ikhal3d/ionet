@@ -797,16 +797,16 @@
         align-items: center;
         font-family: var(--np-fd);
         font-size: 12px;
-        font-weight: 500;
-        color: rgba(255,255,255,0.90);
-        background: rgba(255,255,255,0.12);
-        border: 1px solid rgba(255,255,255,0.30);
+        font-weight: 600;
+        color: #1a0b04;
+        background: #fff;
+        border: none;
         border-radius: 999px;
         padding: 4px 13px;
         white-space: nowrap;
-        transition: background .15s;
+        transition: opacity .15s;
       }
-      .np-pill:hover { background: rgba(255,255,255,0.20); }
+      .np-pill:hover { opacity: 0.88; }
 
       /* Right: CTA + attribution */
       .np-band-cta {
@@ -859,18 +859,21 @@
         display: flex;
         flex-direction: column;
         gap: 16px;
+        margin-top: -120px;
       }
 
       .np-hero-card {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 14px;
-        padding: 14px 18px;
+        padding: 12px 16px;
         background: rgba(232,102,26,0.07);
         border: 1px solid rgba(232,102,26,0.28);
         border-radius: 12px;
         text-decoration: none;
         transition: background .2s, border-color .2s;
+        max-width: 360px;
+        align-self: flex-start;
       }
       .np-hero-card:hover {
         background: rgba(232,102,26,0.14);
