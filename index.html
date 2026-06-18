@@ -856,11 +856,10 @@
 
       /* ── netplex hero card ── */
       .hero-right {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        align-self: flex-start;
-        padding-top: 20px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 20px;
       }
 
       .np-hero-card {
@@ -868,19 +867,16 @@
         align-items: center;
         gap: 14px;
         padding: 12px 16px;
-        background: #130a03;
-        border: 1px solid rgba(232,102,26,0.55);
-        box-shadow: 0 0 24px rgba(232,102,26,0.10);
+        background: #e8661a;
+        border: none;
+        box-shadow: 0 4px 24px rgba(232,102,26,0.35);
         border-radius: 12px;
         text-decoration: none;
         transition: border-color .2s, box-shadow .2s;
         max-width: 360px;
         align-self: flex-start;
       }
-      .np-hero-card:hover {
-        border-color: rgba(232,102,26,0.85);
-        box-shadow: 0 0 32px rgba(232,102,26,0.20);
-      }
+      .np-hero-card:hover { opacity: 0.92; }
 
       .np-hero-logo {
         display: flex;
@@ -923,7 +919,7 @@
         flex: 1;
         font-family: 'Geist', system-ui, sans-serif;
         font-size: 13px;
-        color: rgba(255,255,255,0.55);
+        color: rgba(255,235,215,0.85);
         line-height: 1.4;
       }
 
@@ -931,7 +927,7 @@
         font-family: 'Geist', system-ui, sans-serif;
         font-size: 12px;
         font-weight: 600;
-        color: #e8661a;
+        color: #fff;
         white-space: nowrap;
         flex-shrink: 0;
       }
