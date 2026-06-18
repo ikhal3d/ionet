@@ -238,8 +238,8 @@
             <div class="stat"><strong>Operate</strong><span>24/7 NOC, MFA-gated alerts, SLA-backed response</span></div>
           </div>
         </div>
-        <div class="hero-right">
-          <a href="https://netplex.io" class="np-hero-card reveal" target="_blank" rel="noopener noreferrer">
+        <div class="earth-stage reveal">
+          <a href="https://netplex.io" class="np-hero-card" target="_blank" rel="noopener noreferrer">
             <span class="np-hero-logo">
               <span class="np-hero-icon">
                 <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
@@ -259,11 +259,9 @@
             <span class="np-hero-tag">ionet's network lab platform. Emulate, automate, ship.</span>
             <span class="np-hero-link">netplex.io →</span>
           </a>
-          <div class="earth-stage reveal">
-            <div class="earth-orbit"></div>
-            <div class="earth-orbit inner"></div>
-            <div id="earth" style="position:absolute;inset:0;"></div>
-          </div>
+          <div class="earth-orbit"></div>
+          <div class="earth-orbit inner"></div>
+          <div id="earth" style="position:absolute;inset:0;"></div>
         </div>
       </div>
     </section>
@@ -855,17 +853,13 @@
       }
 
       /* ── netplex hero card ── */
-      /* Earth column — card floats above it without affecting its position */
-      .hero-right { position: relative; width: 100%; }
-
-      /* Earth fills full column; override margin-left:auto so it truly centres */
-      .hero-right .earth-stage { margin-left: 0; margin-right: 0; }
-
+      /* Card anchored to earth-stage so left:50% is literally the earth's centre */
       .np-hero-card {
         position: absolute;
-        bottom: calc(100% + 3.5cm);
         left: 50%;
-        transform: translateX(-50%);
+        top: 0;
+        transform: translate(-50%, calc(-100% - 2cm));
+        z-index: 10;
         z-index: 10;
 
         display: inline-flex;
