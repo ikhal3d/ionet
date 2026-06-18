@@ -640,6 +640,354 @@
         </div>
       </div>
     </section>
+    <!-- ============ netplex — built by ionet ============ -->
+    <style>
+      @font-face {
+        font-family: 'Geist';
+        font-style: normal;
+        font-weight: 300 800;
+        font-display: swap;
+        src: url('assets/fonts/np/geist-latin-ext.woff2') format('woff2');
+        unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+      @font-face {
+        font-family: 'Geist';
+        font-style: normal;
+        font-weight: 300 800;
+        font-display: swap;
+        src: url('assets/fonts/np/geist-latin.woff2') format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        font-style: normal;
+        font-weight: 400 600;
+        font-display: swap;
+        src: url('assets/fonts/np/jetbrains-mono-latin-ext.woff2') format('woff2');
+        unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        font-style: normal;
+        font-weight: 400 600;
+        font-display: swap;
+        src: url('assets/fonts/np/jetbrains-mono-latin.woff2') format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+
+      .np-section {
+        --np-bg:            #0a0b0e;
+        --np-surface:       #101116;
+        --np-surface-2:     #16181f;
+        --np-border:        #262932;
+        --np-border-bright: #464b59;
+        --np-text-1:        #f1f2f5;
+        --np-text-2:        #c4c7cf;
+        --np-text-3:        #868a93;
+        --np-text-4:        #595d66;
+        --np-accent:        #ff7a45;
+        --np-accent-ink:    #1a0b04;
+        --np-font-display:  'Geist', system-ui, sans-serif;
+        --np-font-mono:     'JetBrains Mono', monospace;
+
+        position: relative;
+        background: var(--np-bg);
+        padding: 90px 0;
+        overflow: hidden;
+      }
+
+      /* Subtle grid overlay */
+      .np-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+        background-size: 64px 64px;
+        mask-image: radial-gradient(ellipse 90% 70% at 50% 50%, #000 40%, transparent 80%);
+        pointer-events: none;
+      }
+
+      /* Orange glow */
+      .np-section::after {
+        content: '';
+        position: absolute;
+        width: 700px;
+        height: 700px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,122,69,0.07) 0%, transparent 65%);
+        left: -120px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+
+      .np-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+
+      .np-eyebrow-wrap {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 52px;
+      }
+
+      .np-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--np-font-mono);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--np-accent);
+        border: 1px solid rgba(255,122,69,0.35);
+        background: rgba(255,122,69,0.08);
+        border-radius: 999px;
+        padding: 6px 16px;
+      }
+
+      .np-badge svg { flex-shrink: 0; }
+
+      .np-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 72px;
+        align-items: start;
+      }
+
+      /* Left col */
+      .np-wordmark-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--np-font-display);
+        font-size: 38px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: var(--np-text-1);
+        text-decoration: none;
+        margin-bottom: 22px;
+        transition: opacity .15s;
+      }
+      .np-wordmark-link:hover { opacity: 0.85; color: var(--np-text-1); }
+
+      .np-mark-icon {
+        display: inline-grid;
+        place-items: center;
+        color: var(--np-accent);
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+      }
+      .np-mark-icon svg { width: 100%; height: 100%; display: block; }
+
+      .np-wordmark-dot { color: var(--np-accent); }
+
+      .np-headline {
+        font-family: var(--np-font-display);
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.35;
+        letter-spacing: -0.015em;
+        color: var(--np-text-1);
+        margin: 0 0 14px;
+      }
+
+      .np-desc {
+        font-family: var(--np-font-display);
+        font-size: 15px;
+        line-height: 1.65;
+        color: var(--np-text-2);
+        margin: 0 0 28px;
+      }
+
+      .np-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 36px;
+      }
+
+      .np-chip {
+        font-family: var(--np-font-mono);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        color: var(--np-text-3);
+        background: var(--np-surface-2);
+        border: 1px solid var(--np-border);
+        border-radius: 6px;
+        padding: 5px 12px;
+      }
+
+      .np-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--np-font-display);
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--np-accent-ink);
+        background: var(--np-accent);
+        border-radius: 8px;
+        padding: 11px 22px;
+        text-decoration: none;
+        transition: opacity .15s, transform .15s;
+        letter-spacing: -0.01em;
+      }
+      .np-cta-btn:hover { opacity: 0.9; transform: translateY(-1px); color: var(--np-accent-ink); }
+      .np-cta-btn svg { flex-shrink: 0; }
+
+      /* Right col: feature cards */
+      .np-cards { display: flex; flex-direction: column; gap: 14px; }
+
+      .np-card {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        background: var(--np-surface);
+        border: 1px solid var(--np-border);
+        border-radius: 10px;
+        padding: 20px 22px;
+        transition: border-color .15s;
+      }
+      .np-card:hover { border-color: var(--np-border-bright); }
+
+      .np-card-ic {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: rgba(255,122,69,0.1);
+        border: 1px solid rgba(255,122,69,0.22);
+        display: grid;
+        place-items: center;
+        color: var(--np-accent);
+        flex-shrink: 0;
+      }
+      .np-card-ic svg { width: 16px; height: 16px; }
+
+      .np-card-title {
+        font-family: var(--np-font-display);
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--np-text-1);
+        margin: 0 0 5px;
+        letter-spacing: -0.01em;
+      }
+
+      .np-card-body {
+        font-family: var(--np-font-display);
+        font-size: 13px;
+        line-height: 1.55;
+        color: var(--np-text-3);
+        margin: 0;
+      }
+
+      /* Divider line at top */
+      .np-top-rule {
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, var(--np-border) 20%, var(--np-accent) 50%, var(--np-border) 80%, transparent 100%);
+        margin-bottom: 0;
+      }
+
+      @media (max-width: 820px) {
+        .np-grid { grid-template-columns: 1fr; gap: 44px; }
+        .np-wordmark-link { font-size: 30px; }
+        .np-headline { font-size: 18px; }
+        .np-section { padding: 64px 0; }
+      }
+    </style>
+
+    <div class="np-top-rule"></div>
+    <section id="netplex" class="np-section">
+      <div class="np-inner">
+        <div class="np-eyebrow-wrap">
+          <span class="np-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Proudly developed by ionet
+          </span>
+        </div>
+
+        <div class="np-grid">
+          <!-- Left: brand + copy -->
+          <div>
+            <a href="https://netplex.io" class="np-wordmark-link" target="_blank" rel="noopener noreferrer">
+              <span class="np-mark-icon">
+                <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                  <g stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 19 L27 32 M14 32 L27 32 M14 45 L27 32"/>
+                    <path d="M37 32 L52 32"/>
+                    <circle cx="32" cy="32" r="5"/>
+                  </g>
+                  <circle cx="14" cy="19" r="3" fill="currentColor"/>
+                  <circle cx="14" cy="32" r="3" fill="currentColor"/>
+                  <circle cx="14" cy="45" r="3" fill="currentColor"/>
+                  <circle cx="52" cy="32" r="3.4" fill="currentColor"/>
+                </svg>
+              </span>
+              <span>netplex<span class="np-wordmark-dot">.</span></span>
+            </a>
+
+            <p class="np-headline">The modern network lab,<br>built by network engineers.</p>
+            <p class="np-desc">ionet develops netplex — a distributed digital twin, execution and automation platform that replaces EVE-NG and GNS3. Emulate any topology using real routing silicon, automate it with a full API, and ship it from a CI pipeline.</p>
+
+            <div class="np-chip-row">
+              <span class="np-chip">Emulate</span>
+              <span class="np-chip">Automate</span>
+              <span class="np-chip">Ship</span>
+              <span class="np-chip">Free tier</span>
+              <span class="np-chip">Built in Australia</span>
+            </div>
+
+            <a href="https://netplex.io" class="np-cta-btn" target="_blank" rel="noopener noreferrer">
+              Visit netplex.io
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+
+          <!-- Right: feature cards -->
+          <div class="np-cards">
+            <div class="np-card">
+              <div class="np-card-ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><path d="M10 6.5h4M6.5 10v4M17.5 10v4M10 17.5h4"/></svg>
+              </div>
+              <div>
+                <p class="np-card-title">Real network emulation</p>
+                <p class="np-card-body">QEMU / KVM, Docker, and Linux namespaces — 1,000 nodes per lab on a single host or distributed. Cisco, Juniper, Nokia, Arista, VyOS and more.</p>
+              </div>
+            </div>
+
+            <div class="np-card">
+              <div class="np-card-ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-5.6 5.6a2 2 0 1 0 2.8 2.8l5.6-5.6a4 4 0 0 0 5.4-5.4l-2.3 2.3-2.1-2.1z"/></svg>
+              </div>
+              <div>
+                <p class="np-card-title">API-first automation</p>
+                <p class="np-card-body">Full REST API, Terraform provider, Ansible integration, and CI/CD hooks. Topologies as code — build, run, and destroy from a pipeline.</p>
+              </div>
+            </div>
+
+            <div class="np-card">
+              <div class="np-card-ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10h14V10M9 20v-6h6v6"/></svg>
+              </div>
+              <div>
+                <p class="np-card-title">Free, forever</p>
+                <p class="np-card-body">Associate tier costs nothing — canvas, live terminal, packet capture, and tool nodes included. No credit card. Professional and Architect tiers add snapshots, fault injection, and the full automation toolbox.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer">
