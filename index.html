@@ -856,11 +856,14 @@
 
       /* ── netplex hero card ── */
       /* Earth column — card floats above it without affecting its position */
-      .hero-right { position: relative; }
+      .hero-right { position: relative; width: 100%; }
+
+      /* Earth fills full column; override margin-left:auto so it truly centres */
+      .hero-right .earth-stage { margin-left: 0; margin-right: 0; }
 
       .np-hero-card {
         position: absolute;
-        bottom: calc(100% + 2cm);  /* 2cm above the earth's top edge */
+        bottom: calc(100% + 3.5cm);
         left: 50%;
         transform: translateX(-50%);
         z-index: 10;
