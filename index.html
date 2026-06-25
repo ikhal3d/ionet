@@ -219,25 +219,6 @@
     <!-- ============ Hero ============ -->
     <section class="hero">
       <div class="container hero-grid">
-        <div class="hero-copy reveal">
-          <p class="eyebrow">Build it better</p>
-          <h1>Australia's <span class="accent">network engineering &amp; automation</span> consultancy.</h1>
-          <p class="hero-lead">
-            We design, automate, and operate the networks Australian businesses depend on —
-            across Cisco, Juniper, Nokia, Fortinet, Palo Alto, F5, Ruckus, Unifi, HP / Aruba,
-            DZS, and Microsoft Azure. Project-based engagements or long-term managed
-            operations.
-          </p>
-          <div class="hero-actions">
-            <a href="contact.html" class="btn btn-primary">Talk to an engineer →</a>
-            <a href="#services" class="btn btn-ghost">Our services</a>
-          </div>
-          <div class="hero-stats">
-            <div class="stat"><strong>Design</strong><span>Multi-vendor architectures, documented &amp; auditable</span></div>
-            <div class="stat"><strong>Automate</strong><span>Ansible, Python, Terraform, ZTP, CI/CD pipelines</span></div>
-            <div class="stat"><strong>Operate</strong><span>24/7 NOC, MFA-gated alerts, SLA-backed response</span></div>
-          </div>
-        </div>
         <a href="https://netplex.io" class="np-hero-card reveal" target="_blank" rel="noopener noreferrer">
           <span class="np-hero-logo">
             <span class="np-hero-icon">
@@ -258,6 +239,25 @@
           <span class="np-hero-tag">ionet's network lab platform. Emulate, automate, ship.</span>
           <span class="np-hero-link">netplex.io →</span>
         </a>
+        <div class="hero-copy reveal">
+          <p class="eyebrow">Build it better</p>
+          <h1>Australia's <span class="accent">network engineering &amp; automation</span> consultancy.</h1>
+          <p class="hero-lead">
+            We design, automate, and operate the networks Australian businesses depend on —
+            across Cisco, Juniper, Nokia, Fortinet, Palo Alto, F5, Ruckus, Unifi, HP / Aruba,
+            DZS, and Microsoft Azure. Project-based engagements or long-term managed
+            operations.
+          </p>
+          <div class="hero-actions">
+            <a href="contact.html" class="btn btn-primary">Talk to an engineer →</a>
+            <a href="#services" class="btn btn-ghost">Our services</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat"><strong>Design</strong><span>Multi-vendor architectures, documented &amp; auditable</span></div>
+            <div class="stat"><strong>Automate</strong><span>Ansible, Python, Terraform, ZTP, CI/CD pipelines</span></div>
+            <div class="stat"><strong>Operate</strong><span>24/7 NOC, MFA-gated alerts, SLA-backed response</span></div>
+          </div>
+        </div>
         <div class="earth-stage reveal">
           <div class="earth-orbit"></div>
           <div class="earth-orbit inner"></div>
@@ -892,11 +892,11 @@
       }
       .np-hero-card:hover { opacity: 0.92; }
 
-      /* ── Mobile: single column — card sits between copy and earth ── */
+      /* ── Mobile: single column — card first, then copy, then earth ── */
       @media (max-width: 960px) {
         .hero-grid { grid-template-rows: auto; row-gap: 0; }
+        .hero-grid .np-hero-card { grid-column: 1; grid-row: auto; order: -1; justify-self: stretch; width: 100%; margin: 0 0 24px; }
         .hero-grid .hero-copy  { grid-column: 1; grid-row: auto; }
-        .hero-grid .np-hero-card { grid-column: 1; grid-row: auto; justify-self: stretch; width: 100%; margin: 24px 0 0; }
         .hero-grid .earth-stage { grid-column: 1; grid-row: auto; }
       }
 
