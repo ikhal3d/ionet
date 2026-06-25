@@ -855,11 +855,6 @@
         .np-pill { font-size: 11px; padding: 3px 10px; }
       }
 
-      /* Hide the floating hero card on mobile — the np-band below covers it */
-      @media (max-width: 960px) {
-        .np-hero-card { display: none; }
-      }
-
       /* ── netplex hero card ── */
       /* Card anchored to earth-stage so left:50% is literally the earth's centre */
       .np-hero-card {
@@ -882,6 +877,11 @@
         width: 400px;
       }
       .np-hero-card:hover { opacity: 0.92; }
+
+      /* Hide on mobile — the orange np-band below handles it there */
+      @media (max-width: 960px) {
+        .np-hero-card { display: none; }
+      }
 
       .np-hero-logo {
         display: flex;
