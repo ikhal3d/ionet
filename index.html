@@ -855,31 +855,9 @@
         .np-pill { font-size: 11px; padding: 3px 10px; }
       }
 
-      /* On mobile the hero-grid stacks — card must sit inside the earth,
-         not 2cm above it where it collides with the hero copy text       */
+      /* Hide the floating hero card on mobile — the np-band below covers it */
       @media (max-width: 960px) {
-        .np-hero-card {
-          top: 16px;
-          transform: translateX(-50%);   /* drop the upward offset, stay inside earth */
-          width: calc(100% - 32px);
-          max-width: 380px;
-          box-shadow: 0 4px 20px rgba(232,102,26,0.35);
-        }
-        .np-hero-wm  { font-size: 22px; }
-        .np-hero-icon { width: 22px; height: 22px; }
-        .np-hero-tag  { font-size: 12px; }
-        .np-hero-link { font-size: 11px; }
-      }
-
-      @media (max-width: 480px) {
-        .np-hero-card {
-          flex-wrap: wrap;
-          gap: 8px;
-          padding: 10px 12px;
-        }
-        .np-hero-logo { flex-shrink: 0; }
-        .np-hero-tag  { width: 100%; order: 3; }
-        .np-hero-link { margin-left: auto; }
+        .np-hero-card { display: none; }
       }
 
       /* ── netplex hero card ── */
